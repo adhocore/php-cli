@@ -12,17 +12,17 @@ namespace Ahc\Cli;
  */
 class Color
 {
-    const FG_RED    = 31;
-    const FG_GREEN  = 32;
+    const FG_RED = 31;
+    const FG_GREEN = 32;
     const FG_YELLOW = 33;
-    const FG_BLUE   = 36;
+    const FG_BLUE = 36;
     // @todo
 
     protected static $format = "\033[:bold:;:fg:;:bg:m:text:\033[0m";
 
     protected static $styles = [];
 
-    protected static $muted  = false;
+    protected static $muted = false;
 
     public static function error($text, array $style = [], $eol = false)
     {

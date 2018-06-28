@@ -51,7 +51,7 @@ class OptionTest extends TestCase
         $this->assertSame(10, $o->filter('10'));
 
         $in = 'apple';
-        $o  = new Option('-f, --fruit', 'Age', 'orange', 'strtoupper');
+        $o = new Option('-f, --fruit', 'Age', 'orange', 'strtoupper');
 
         $this->assertNotSame($o->filter($in), $in);
         $this->assertSame('APPLE', $o->filter($in));
@@ -64,7 +64,7 @@ class OptionTest extends TestCase
 
     public function data()
     {
-        $f = require __DIR__ . '/fixture.php';
+        $f = require __DIR__.'/fixture.php';
 
         return $f['options'];
     }

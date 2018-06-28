@@ -3,10 +3,10 @@
 return [
     'options' => [
         'space req' => [
-            'cmd' => '-v --virtual <req>',
+            'cmd'    => '-v --virtual <req>',
             'expect' => [
-                'long'  => '--virtual',
-                'short' => '-v',
+                'long'     => '--virtual',
+                'short'    => '-v',
                 'required' => true,
                 'variadic' => false,
                 'name'     => 'virtual',
@@ -14,10 +14,10 @@ return [
             ],
         ],
         'comma opt' => [
-            'cmd' => '-f,--fruit [opt]',
+            'cmd'    => '-f,--fruit [opt]',
             'expect' => [
-                'long'  => '--fruit',
-                'short' => '-f',
+                'long'     => '--fruit',
+                'short'    => '-f',
                 'required' => false,
                 'variadic' => false,
                 'name'     => 'fruit',
@@ -25,10 +25,10 @@ return [
             ],
         ],
         'pipe ...' => [
-            'cmd' => '-a|--apple [opt...]',
+            'cmd'    => '-a|--apple [opt...]',
             'expect' => [
-                'long'  => '--apple',
-                'short' => '-a',
+                'long'     => '--apple',
+                'short'    => '-a',
                 'required' => false,
                 'variadic' => true,
                 'name'     => 'apple',
@@ -37,10 +37,10 @@ return [
             ],
         ],
         '--no' => [
-            'cmd' => '-n|--no-shit',
+            'cmd'    => '-n|--no-shit',
             'expect' => [
-                'long'  => '--no-shit',
-                'short' => '-n',
+                'long'     => '--no-shit',
+                'short'    => '-n',
                 'required' => false,
                 'variadic' => false,
                 'name'     => 'shit',
@@ -49,10 +49,10 @@ return [
             ],
         ],
         '--with' => [
-            'cmd' => '-w|--with-this',
+            'cmd'    => '-w|--with-this',
             'expect' => [
-                'long'  => '--with-this',
-                'short' => '-w',
+                'long'     => '--with-this',
+                'short'    => '-w',
                 'required' => false,
                 'variadic' => false,
                 'name'     => 'this',
@@ -62,10 +62,10 @@ return [
             ],
         ],
         'camel case' => [
-            'cmd' => '-C|--camel-case',
+            'cmd'    => '-C|--camel-case',
             'expect' => [
-                'long'  => '--camel-case',
-                'short' => '-C',
+                'long'     => '--camel-case',
+                'short'    => '-C',
                 'required' => false,
                 'variadic' => false,
                 'name'     => 'camel-case',
@@ -98,6 +98,6 @@ return [
         [
             'argv'   => ['--virtual'],
             'throws' => [\RuntimeException::class, 'Option -v|--virtual is required'],
-        ]
+        ],
     ],
 ];
