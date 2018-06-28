@@ -25,6 +25,6 @@
     "require": {
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.0.0"
+        "phpunit/phpunit": "^5.7 || ^6.0"
     }
 }
