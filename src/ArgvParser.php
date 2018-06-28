@@ -20,22 +20,22 @@ class ArgvParser
 
     protected $_desc;
 
-    protected $_options      = [];
+    protected $_options = [];
 
-    protected $_values       = [];
+    protected $_values = [];
 
-    protected $_args         = [];
+    protected $_args = [];
 
-    protected $_events       = [];
+    protected $_events = [];
 
     protected $_allowUnknown = false;
 
-    protected $_wasVariadic  = false;
+    protected $_wasVariadic = false;
 
     public function __construct($name, $desc = null, $allowUnknown = false)
     {
-        $this->_name         = $name;
-        $this->_desc         = $desc;
+        $this->_name = $name;
+        $this->_desc = $desc;
         $this->_allowUnknown = $allowUnknown;
 
         $this->addDefaultOptions();
@@ -65,7 +65,7 @@ class ArgvParser
         }
 
         $this->_values[$option->attributeName()] = $option->default();
-        $this->_options[$option->long()]         = $option;
+        $this->_options[$option->long()] = $option;
 
         return $this;
     }
@@ -83,8 +83,8 @@ class ArgvParser
     {
         \array_shift($argv);
 
-        $argv   = $this->normalize($argv);
-        $count  = \count($argv);
+        $argv = $this->normalize($argv);
+        $count = \count($argv);
 
         for ($i = 0; $i < $count; $i++) {
             list($arg, $nextArg) = [$argv[$i], isset($argv[$i + 1]) ? $argv[$i + 1] : null];
@@ -110,10 +110,10 @@ class ArgvParser
 
     protected function parseOptions($arg, $nextArg, &$i)
     {
-        $value   = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
+        $value = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
         $isValue = $value !== null;
 
-        $this->_lastOption  = $option = $this->optionFor($arg);
+        $this->_lastOption = $option = $this->optionFor($arg);
         $this->_wasVariadic = $option ? $option->variadic() : false;
 
         if (!$option) {
@@ -139,7 +139,7 @@ class ArgvParser
         // Has some value, error!
         if ($this->_values) {
             throw new \RuntimeException(
-                \sprintf("Option %s not registered", $arg)
+                \sprintf('Option %s not registered', $arg)
             );
         }
 
@@ -262,8 +262,6 @@ class ArgvParser
                 return $option;
             }
         }
-
-        return null;
     }
 
     protected function emit($event)

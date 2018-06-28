@@ -11,7 +11,7 @@ class ArgvParserTest extends TestCase
     {
         $p = new ArgvParser('ArgvParser');
 
-        $p->version('0.0.' . rand(1, 10));
+        $p->version('0.0.'.rand(1, 10));
 
         $data = $this->data();
         foreach ($data['options'] as $option) {
@@ -36,6 +36,6 @@ class ArgvParserTest extends TestCase
 
     public function data()
     {
-        return require __DIR__ . '/fixture.php';
+        return require __DIR__.'/fixture.php';
     }
 }
