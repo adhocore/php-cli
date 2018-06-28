@@ -34,8 +34,8 @@ class ArgvParser
 
     public function __construct($name, $desc = null, $allowUnknown = false)
     {
-        $this->_name = $name;
-        $this->_desc = $desc;
+        $this->_name         = $name;
+        $this->_desc         = $desc;
         $this->_allowUnknown = $allowUnknown;
 
         $this->addDefaultOptions();
@@ -65,7 +65,7 @@ class ArgvParser
         }
 
         $this->_values[$option->attributeName()] = $option->default();
-        $this->_options[$option->long()] = $option;
+        $this->_options[$option->long()]         = $option;
 
         return $this;
     }
@@ -83,7 +83,7 @@ class ArgvParser
     {
         \array_shift($argv);
 
-        $argv = $this->normalize($argv);
+        $argv  = $this->normalize($argv);
         $count = \count($argv);
 
         for ($i = 0; $i < $count; $i++) {
@@ -110,10 +110,10 @@ class ArgvParser
 
     protected function parseOptions($arg, $nextArg, &$i)
     {
-        $value = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
+        $value   = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
         $isValue = $value !== null;
 
-        $this->_lastOption = $option = $this->optionFor($arg);
+        $this->_lastOption  = $option  = $this->optionFor($arg);
         $this->_wasVariadic = $option ? $option->variadic() : false;
 
         if (!$option) {
