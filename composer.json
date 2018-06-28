@@ -1,0 +1,30 @@
+{
+    "name": "adhocore/cli",
+    "description": "Command line interface library for PHP",
+    "type": "library",
+    "keywords": [
+        "php", "command", "argv-parser", "cli", "cli-color", "cli-action"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jitendra Adhikari",
+            "email": "jiten.adhikary@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Ahc\\Cli\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ahc\\Cli\\Test\\": "tests/"
+        }
+    },
+    "require": {
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6.0.0"
+    }
+}
