@@ -32,9 +32,9 @@ class Option
 
     public function __construct($cmd, $desc = '', $default = null, callable $filter = null)
     {
-        $this->desc = $desc;
-        $this->default = $default;
-        $this->filter = $filter;
+        $this->desc     = $desc;
+        $this->default  = $default;
+        $this->filter   = $filter;
         $this->required = \strpos($cmd, '<') !== false;
         $this->optional = \strpos($cmd, '[') !== false;
 
