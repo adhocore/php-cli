@@ -18,6 +18,8 @@ class Option
 
     protected $desc;
 
+    protected $rawCmd;
+
     protected $default;
 
     protected $required = true;
@@ -28,10 +30,9 @@ class Option
 
     protected $filter;
 
-    protected $collect = [];
-
-    public function __construct($cmd, $desc = '', $default = null, callable $filter = null)
+    public function __construct(string $cmd, string $desc = null, $default = null, callable $filter = null)
     {
+        $this->rawCmd   = $cmd;
         $this->desc     = $desc;
         $this->default  = $default;
         $this->filter   = $filter;
@@ -45,7 +46,7 @@ class Option
         $this->parse($cmd);
     }
 
-    protected function parse($cmd)
+    protected function parse(string $cmd)
     {
         if (\strpos($cmd, '-with-') !== false) {
             $this->default = false;
@@ -61,12 +62,12 @@ class Option
         }
     }
 
-    public function long()
+    public function long(): string
     {
         return $this->long;
     }
 
-    public function short()
+    public function short(): string
     {
         return $this->short;
     }
@@ -76,7 +77,7 @@ class Option
         return \str_replace(['--', 'no-', 'with-'], '', $this->long);
     }
 
-    public function attributeName()
+    public function attributeName(): string
     {
         $words = \str_replace('-', ' ', $this->name());
 
@@ -85,27 +86,27 @@ class Option
         return \lcfirst($words);
     }
 
-    public function is($arg)
+    public function is($arg): bool
     {
         return $this->short === $arg || $this->long === $arg;
     }
 
-    public function required()
+    public function required(): bool
     {
         return $this->required;
     }
 
-    public function variadic()
+    public function variadic(): bool
     {
         return $this->variadic;
     }
 
-    public function default()
+    public function default(): bool
     {
         return $this->default;
     }
 
-    public function bool()
+    public function bool(): bool
     {
         return \preg_match('/\-no|\-with/', $this->long) > 0;
     }
