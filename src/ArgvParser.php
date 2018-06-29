@@ -12,27 +12,44 @@ namespace Ahc\Cli;
  */
 class ArgvParser
 {
+    /** @var string */
     protected $_version;
 
+    /** @var Option|null The last seen option */
     protected $_lastOption;
 
+    /** @var string */
     protected $_name;
 
+    /** @var string */
     protected $_desc;
 
+    /** @var Option[] Registered options */
     protected $_options = [];
 
+    /** @var array Parsed values indexed by option name */
     protected $_values = [];
 
+    /** @var array Arguments that dont belong to any specific option */
     protected $_args = [];
 
+    /** @var callable[] Events for options */
     protected $_events = [];
 
+    /** @var bool Whether to allow unknown (not registered) options */
     protected $_allowUnknown = false;
 
+    /** @var bool If the last seen option was variadic */
     protected $_wasVariadic = false;
 
-    public function __construct($name, $desc = null, $allowUnknown = false)
+    /**
+     * Constructor.
+     *
+     * @param string $name
+     * @param string $desc
+     * @param bool   $allowUnknown
+     */
+    public function __construct(string $name, string $desc = null, bool $allowUnknown = false)
     {
         $this->_name         = $name;
         $this->_desc         = $desc;
@@ -47,14 +64,31 @@ class ArgvParser
         $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
     }
 
-    public function version($version)
+    /**
+     * Sets version.
+     *
+     * @param string $version
+     *
+     * @return self
+     */
+    public function version(string $version): self
     {
         $this->_version = $version;
 
         return $this;
     }
 
-    public function option($cmd, $desc = '', callable $filter = null, $default = null)
+    /**
+     * Registers new option.
+     *
+     * @param string        $cmd     [description]
+     * @param string        $desc    [description]
+     * @param callable|null $filter  [description]
+     * @param mixed         $default [description]
+     *
+     * @return self
+     */
+    public function option(string $cmd, string $desc = '', callable $filter = null, $default = null): self
     {
         $option = new Option($cmd, $desc, $default, $filter);
 
@@ -70,7 +104,14 @@ class ArgvParser
         return $this;
     }
 
-    public function on(callable $fn)
+    /**
+     * Sets event handler for last option.
+     *
+     * @param callable $fn [description]
+     *
+     * @return self
+     */
+    public function on(callable $fn): self
     {
         \end($this->_options);
 
@@ -79,7 +120,16 @@ class ArgvParser
         return $this;
     }
 
-    public function parse(array $argv)
+    /**
+     * Parse the argv input.
+     *
+     * @param array $argv The first item is ignored.
+     *
+     * @return self       [description]
+     *
+     * @throws \RuntimeException When argument is missing or invalid.
+     */
+    public function parse(array $argv): self
     {
         \array_shift($argv);
 
@@ -92,14 +142,14 @@ class ArgvParser
             if ($arg[0] !== '-' || !empty($literal) || ($literal = $arg === '--')) {
                 $this->parseArgs($arg);
             } else {
-                $i += (int) $this->parseOptions($arg, $nextArg, $i);
+                $i += (int) $this->parseOptions($arg, $nextArg);
             }
         }
 
         return $this->validate();
     }
 
-    protected function parseArgs($arg)
+    protected function parseArgs(string $arg)
     {
         if ($this->_wasVariadic) {
             $this->_values[$this->_lastOption->attributeName()][] = $arg;
@@ -108,7 +158,7 @@ class ArgvParser
         }
     }
 
-    protected function parseOptions($arg, $nextArg, &$i)
+    protected function parseOptions(string $arg, string $nextArg = null)
     {
         $value   = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
         $isValue = $value !== null;
@@ -128,7 +178,7 @@ class ArgvParser
         return $isValue;
     }
 
-    protected function handleUnknown($arg, $value)
+    protected function handleUnknown(string $arg, string $value = null)
     {
         if ($this->_allowUnknown) {
             $this->_values[$arg] = $value;
@@ -147,7 +197,7 @@ class ArgvParser
         return $this->showHelp();
     }
 
-    protected function setValue(Option $option, $value)
+    protected function setValue(Option $option, string $value = null)
     {
         $name = $option->attributeName();
 
@@ -158,7 +208,7 @@ class ArgvParser
         $this->_values[$name] = $this->prepareValue($option, $value);
     }
 
-    protected function prepareValue(Option $option, $value)
+    protected function prepareValue(Option $option, string $value = null)
     {
         if ($option->bool()) {
             return !$option->default();
@@ -171,7 +221,7 @@ class ArgvParser
         return null === $value ? null : $option->filter($value);
     }
 
-    protected function validate()
+    protected function validate(): self
     {
         foreach ($this->_options as $option) {
             if (!$option->required()) {
@@ -190,7 +240,14 @@ class ArgvParser
         return $this;
     }
 
-    public function values($withDefaults = true)
+    /**
+     * Get values indexed by camelized attribute name.
+     *
+     * @param bool $withDefaults
+     *
+     * @return array
+     */
+    public function values($withDefaults = true): array
     {
         $values = $this->_values;
 
@@ -201,12 +258,26 @@ class ArgvParser
         return $values;
     }
 
+    /**
+     * Get values.
+     *
+     * @param bool $withDefaults
+     *
+     * @return array
+     */
     public function args()
     {
         return $this->_args;
     }
 
-    public function __get($key)
+    /**
+     * Magic getter for specific value by its key.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function __get(string $key)
     {
         return isset($this->_values[$key]) ? $this->_values[$key] : null;
     }
@@ -225,7 +296,7 @@ class ArgvParser
         exit(0);
     }
 
-    protected function normalize(array $args)
+    protected function normalize(array $args): array
     {
         $normalized = [];
 
@@ -242,7 +313,7 @@ class ArgvParser
         return $normalized;
     }
 
-    protected function splitShort($arg)
+    protected function splitShort(string $arg): array
     {
         $args = \str_split(\substr($arg, 1));
 
@@ -251,7 +322,7 @@ class ArgvParser
         }, $args);
     }
 
-    protected function optionFor($arg)
+    protected function optionFor(string $arg)
     {
         if (isset($this->_options[$arg])) {
             return $this->_options[$arg];
@@ -264,7 +335,7 @@ class ArgvParser
         }
     }
 
-    protected function emit($event)
+    protected function emit(string $event)
     {
         if (empty($this->_events[$event])) {
             return;
