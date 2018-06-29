@@ -71,7 +71,8 @@ class Color
             ':text:' => (string) $text,
         ]);
 
-        if ($eol) {
+        // Allow `Color::line('msg', [true])` instead of `Color::line('msg', [], true)`
+        if ($eol || true === $style[0] ?? null) {
             $line .= static::eol();
         }
 

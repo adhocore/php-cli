@@ -101,7 +101,7 @@ class Option
         return $this->variadic;
     }
 
-    public function default(): bool
+    public function default()
     {
         return $this->default;
     }
