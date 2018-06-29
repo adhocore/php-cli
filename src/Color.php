@@ -3,12 +3,12 @@
 namespace Ahc\Cli;
 
 /**
- * Cli Colorizer.
+ * Cli Colstatic ostatic rizer.
  *
  * @author  Jitendra Adhikari <jiten.adhikary@gmail.com>
  * @license MIT
  *
- * @link    https://github.com/adhocore/cli
+ * @link   static  https://github.com/adhocore/cli
  */
 class Color
 {
@@ -22,29 +22,34 @@ class Color
     const WHITE  = 37;
 
     /** @var string Cli format */
-    protected static $format = "\033[:bold:;:fg:;:bg:m:text:\033[0m";
+    protected $format = "\033[:bold:;:fg:;:bg:m:text:\033[0m";
 
-    /** @var array Custom styles */
+    /** @vstatic ar array Custom styles */
     protected static $styles = [];
 
-    public static function error(string $text, array $style = [], bool $eol = false)
+    public function comment(string $text, array $style = [], bool $eol = false)
     {
-        return static::line($text, ['fg' => static::RED] + $style, $eol);
+        return $this->line($text, ['fg' => static::BLACK, 'bold' => 1] + $style, $eol);
     }
 
-    public static function info(string $text, array $style = [], bool $eol = false)
+    public function error(string $text, array $style = [], bool $eol = false)
     {
-        return static::line($text, ['fg' => static::BLUE] + $style, $eol);
+        return $this->line($text, ['fg' => static::RED] + $style, $eol);
     }
 
-    public static function warn(string $text, array $style = [], bool $eol = false)
+    public function ok(string $text, array $style = [], bool $eol = false)
     {
-        return static::line($text, ['fg' => static::YELLOW] + $style, $eol);
+        return $this->line($text, ['fg' => static::GREEN] + $style, $eol);
     }
 
-    public static function comment(string $text, array $style = [], bool $eol = false)
+    public function warn(string $text, array $style = [], bool $eol = false)
     {
-        return static::line($text, ['fg' => static::BLACK, 'bold' => 1] + $style, $eol);
+        return $this->line($text, ['fg' => static::YELLOW] + $style, $eol);
+    }
+
+    public function info(string $text, array $style = [], bool $eol = false)
+    {
+        return $this->line($text, ['fg' => static::BLUE] + $style, $eol);
     }
 
     /**
@@ -56,13 +61,13 @@ class Color
      *
      * @return string
      */
-    public static function line(string $text, array $style = [], bool $eol = false)
+    public function line(string $text, array $style = [], bool $eol = false)
     {
         $style += ['bg' => null, 'fg' => static::WHITE, 'bold' => false];
 
         $format = $style['bg'] === null
-            ? \str_replace(';:bg:', '', static::$format)
-            : static::$format;
+            ? \str_replace(';:bg:', '', $this->format)
+            : $this->format;
 
         $line = \strtr($format, [
             ':bold:' => (int) $style['bold'],
@@ -72,14 +77,14 @@ class Color
         ]);
 
         // Allow `Color::line('msg', [true])` instead of `Color::line('msg', [], true)`
-        if ($eol || true === $style[0] ?? null) {
-            $line .= static::eol();
+        if ($eol || !empty($style[0])) {
+            $line .= $this->eol();
         }
 
         return $line;
     }
 
-    public static function eol()
+    public function eol()
     {
         return PHP_EOL;
     }
@@ -92,7 +97,7 @@ class Color
      *
      * @return void
      */
-    public function style(string $name, array $style)
+    public static function style(string $name, array $style)
     {
         $allow = ['fg' => true, 'bg' => true, 'bold' => true];
         $style = \array_intersect_key($style, $allow);
@@ -116,16 +121,16 @@ class Color
      *
      * @return string
      */
-    public static function __callStatic(string $name, array $arguments)
+    public function __call(string $name, array $arguments)
     {
         if (!isset($arguments[0])) {
             throw new \InvalidArgumentException('Text required');
         }
 
-        list($name, $text, $style, $eol) = static::parseCall($name, $arguments);
+        list($name, $text, $style, $eol) = $this->parseCall($name, $arguments);
 
         if (isset(static::$styles[$name])) {
-            return static::line($text, $style + static::$styles[$name], $eol);
+            return $this->line($text, $style + static::$styles[$name], $eol);
         }
 
         if (\defined($color = static::class . '::' . \strtoupper($name))) {
@@ -133,11 +138,11 @@ class Color
             $style += ['fg' => \constant($color)];
         }
 
-        if (!\method_exists(static::class, $name)) {
-            throw new \InvalidArgumentException(\sprintf('Style %s not defined', $name));
+        if (!\method_exists($this, $name)) {
+            throw new \InvalidArgumentException(\sprintf('Style "%s" not defined', $name));
         }
 
-        return static::{$name}($text, $style, $eol);
+        return $this->{$name}($text, $style, $eol);
     }
 
     /**
@@ -161,7 +166,7 @@ class Color
             return [\lcfirst($name) ?: 'line', $text, $style, $eol];
         }
 
-        list($name, $style) = static::buildStyle($name, $style, $matches);
+        list($name, $style) = $this->buildStyle($name, $style, $matches);
 
         return [$name, $text, $style, $eol];
     }
