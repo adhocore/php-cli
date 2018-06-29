@@ -15,6 +15,14 @@ class Writer
     /** @var string Write method to be relayed to Colorizer */
     protected $method;
 
+    /** @var Color */
+    protected $colorizer;
+
+    public function __construct()
+    {
+        $this->colorizer = new Color;
+    }
+
     /**
      * Magically set methods.
      *
@@ -22,7 +30,7 @@ class Writer
      *
      * @return self
      */
-    public function __get($name)
+    public function __get(string $name): self
     {
         if (\strpos($this->method, $name) === false) {
             $this->method .= $this->method ? \ucfirst($name) : $name;
@@ -39,12 +47,12 @@ class Writer
      *
      * @return void
      */
-    public function write($text, $eol = false)
+    public function write(string $text, bool $eol = false)
     {
         list($method, $this->method) = [$this->method ?: 'line', ''];
 
         $stream = \stripos($method, 'error') !== false ? \STDERR : \STDOUT;
 
-        \fwrite($stream, Color::{$method}($text, [], $eol));
+        \fwrite($stream, $this->colorizer->{$method}($text, [], $eol));
     }
 }
