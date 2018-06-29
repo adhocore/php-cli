@@ -81,10 +81,10 @@ class ArgvParser
     /**
      * Registers new option.
      *
-     * @param string        $cmd     [description]
-     * @param string        $desc    [description]
-     * @param callable|null $filter  [description]
-     * @param mixed         $default [description]
+     * @param string        $cmd     JWTException
+     * @param string        $desc    JWTException
+     * @param callable|null $filter  JWTException
+     * @param mixed         $default JWTException
      *
      * @return self
      */
@@ -107,7 +107,7 @@ class ArgvParser
     /**
      * Sets event handler for last option.
      *
-     * @param callable $fn [description]
+     * @param callable $fn JWTException
      *
      * @return self
      */
@@ -125,9 +125,9 @@ class ArgvParser
      *
      * @param array $argv The first item is ignored.
      *
-     * @return self       [description]
-     *
      * @throws \RuntimeException When argument is missing or invalid.
+     *
+     * @return self
      */
     public function parse(array $argv): self
     {

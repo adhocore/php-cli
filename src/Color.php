@@ -55,9 +55,9 @@ class Color
     /**
      * Returns a formatted/colored line.
      *
-     * @param  string $text
-     * @param  array   $style
-     * @param  bool $eol End of line
+     * @param string $text
+     * @param array  $style
+     * @param bool   $eol   End of line
      *
      * @return string
      */
@@ -116,8 +116,8 @@ class Color
     /**
      * Magically build styles.
      *
-     * @param  string $name      Example: 'boldError', 'bgGreenBold' etc
-     * @param  array  $arguments
+     * @param string $name      Example: 'boldError', 'bgGreenBold' etc
+     * @param array  $arguments
      *
      * @return string
      */
@@ -148,8 +148,8 @@ class Color
     /**
      * Parse the name argument pairs to determine callable method and style params.
      *
-     * @param  string $name
-     * @param  array  $arguments
+     * @param string $name
+     * @param array  $arguments
      *
      * @return array
      */
