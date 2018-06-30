@@ -149,6 +149,7 @@ abstract class Parser
     }
 
     abstract protected function handleUnknown(string $arg, string $value = null);
+
     abstract protected function emit(string $event);
 
     protected function setValue(Option $option, string $value = null)

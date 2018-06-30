@@ -209,8 +209,7 @@ class ArgvParser extends Parser
 }
 
 // @codeCoverageIgnoreStart
-if (!\function_exists(__NAMESPACE__ . '\\_exit'))
-{
+if (!\function_exists(__NAMESPACE__ . '\\_exit')) {
     function _exit($code = 0)
     {
         exit($code);
