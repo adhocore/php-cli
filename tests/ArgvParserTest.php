@@ -87,7 +87,7 @@ class ArgvParserTest extends TestCase
     public function test_options_repeat()
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The option "--apple" is already registered');
+        $this->expectExceptionMessage('The parameter "--apple" is already registered');
 
         $p = $this->newParser()->option('-a --apple', 'Apple')->option('-a --apple', 'Apple');
     }
@@ -201,6 +201,14 @@ class ArgvParserTest extends TestCase
         $p = $this->newParser()->option('-x --xyz')->parse(['php', '-x']);
 
         $this->assertNull($p->xyz);
+    }
+
+    public function test_args()
+    {
+        $p = $this->newParser()->arguments('<a> [b]')->option('-x --xyz')
+            ->parse(['php', 'A', '-x', 'X', 'B', 'C', 'D']);
+
+        $this->assertSame(['a' => 'A', 'b' => 'B', 'C', 'D'], $p->args());
     }
 
     protected function newParser(string $version = '0.0.1', string $desc = null, bool $allowUnknown = false)

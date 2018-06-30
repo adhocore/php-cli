@@ -77,8 +77,12 @@ class ArgvParser extends Parser
                 throw new \InvalidArgumentException('Only last argument can be variadic');
             }
 
-            $this->_arguments[$argument->name()]       = $argument;
-            $this->_values[$argument->attributeName()] = $argument->default();
+            $name = $argument->attributeName();
+
+            $this->ifAlreadyRegistered($name, $argument);
+
+            $this->_arguments[$name] = $argument;
+            $this->_values[$name]    = $argument->default();
         }
 
         return $this;
@@ -97,17 +101,24 @@ class ArgvParser extends Parser
     public function option(string $cmd, string $desc = '', callable $filter = null, $default = null): self
     {
         $option = new Option($cmd, $desc, $default, $filter);
+        $name   = $option->attributeName();
 
-        if (isset($this->_options[$option->long()])) {
-            throw new \InvalidArgumentException(
-                \sprintf('The option "%s" is already registered', $option->long())
-            );
-        }
+        $this->ifAlreadyRegistered($name, $option);
 
-        $this->_values[$option->attributeName()] = $option->default();
-        $this->_options[$option->long()]         = $option;
+        $this->_options[$name] = $option;
+        $this->_values[$name]  = $option->default();
 
         return $this;
+    }
+
+    protected function ifAlreadyRegistered(string $name, Parameter $param)
+    {
+        if (\array_key_exists($name, $this->_values)) {
+            throw new \InvalidArgumentException(\sprintf(
+                'The parameter "%s" is already registered',
+                $param instanceof Option ? $param->long() : $param->name()
+            ));
+        }
     }
 
     /**
@@ -176,7 +187,12 @@ class ArgvParser extends Parser
      */
     public function __get(string $key)
     {
-        return isset($this->_values[$key]) ? $this->_values[$key] : null;
+        return $this->_values[$key] ?? null;
+    }
+
+    public function args(): array
+    {
+        return \array_diff_key($this->_values, $this->_options);
     }
 
     protected function showHelp()

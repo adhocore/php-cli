@@ -20,6 +20,8 @@ class OptionTest extends TestCase
             $more += ['bool' => $o->bool()];
         }
 
+        $this->assertEquals($cmd, $o->raw());
+
         $this->assertEquals($expect, [
             'long'     => $o->long(),
             'short'    => $o->short(),

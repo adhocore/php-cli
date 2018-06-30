@@ -43,10 +43,12 @@ abstract class Parser
         $argv  = $this->normalize($argv);
         $count = \count($argv);
 
+        $literal = false;
         for ($i = 0; $i < $count; $i++) {
-            list($arg, $nextArg) = [$argv[$i], isset($argv[$i + 1]) ? $argv[$i + 1] : null];
+            list($arg, $nextArg) = [$argv[$i], $argv[$i + 1] ?? null];
 
-            if ($arg[0] !== '-' || !empty($literal) || ($literal = $arg === '--')) {
+            $literal = $literal ?: $arg === '--';
+            if ($arg[0] !== '-' || $literal) {
                 $this->parseArgs($arg);
             } else {
                 $i += (int) $this->parseOptions($arg, $nextArg);
@@ -86,7 +88,7 @@ abstract class Parser
 
     protected function parseArgs(string $arg)
     {
-        if ($arg == '--') {
+        if ($arg === '--') {
             return;
         }
 
@@ -129,7 +131,7 @@ abstract class Parser
             return $isValue;
         }
 
-        $this->emit($option->long());
+        $this->emit($option->attributeName());
         $this->setValue($option, $value);
 
         return $isValue;
@@ -137,10 +139,6 @@ abstract class Parser
 
     protected function optionFor(string $arg)
     {
-        if (isset($this->_options[$arg])) {
-            return $this->_options[$arg];
-        }
-
         foreach ($this->_options as $option) {
             if ($option->is($arg)) {
                 return $option;
