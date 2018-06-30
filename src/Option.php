@@ -12,6 +12,8 @@ namespace Ahc\Cli;
  */
 class Option
 {
+    use InflectsString;
+
     protected $short;
 
     protected $long;
@@ -72,18 +74,14 @@ class Option
         return $this->short;
     }
 
-    public function name()
+    public function name(): string
     {
         return \str_replace(['--', 'no-', 'with-'], '', $this->long);
     }
 
     public function attributeName(): string
     {
-        $words = \str_replace('-', ' ', $this->name());
-
-        $words = \str_replace(' ', '', \ucwords($words));
-
-        return \lcfirst($words);
+        return $this->toCamelCase($this->name());
     }
 
     public function is($arg): bool
@@ -94,6 +92,11 @@ class Option
     public function required(): bool
     {
         return $this->required;
+    }
+
+    public function optional(): bool
+    {
+        return $this->optional;
     }
 
     public function variadic(): bool
