@@ -10,13 +10,12 @@ namespace Ahc\Cli;
  *
  * @link    https://github.com/adhocore/cli
  */
-class ArgvParser
+class ArgvParser extends Parser
 {
+    use InflectsString;
+
     /** @var string */
     protected $_version;
-
-    /** @var Option|null The last seen option */
-    protected $_lastOption;
 
     /** @var string */
     protected $_name;
@@ -24,23 +23,11 @@ class ArgvParser
     /** @var string */
     protected $_desc;
 
-    /** @var Option[] Registered options */
-    protected $_options = [];
-
-    /** @var array Parsed values indexed by option name */
-    protected $_values = [];
-
-    /** @var array Arguments that dont belong to any specific option */
-    protected $_args = [];
-
     /** @var callable[] Events for options */
     protected $_events = [];
 
     /** @var bool Whether to allow unknown (not registered) options */
     protected $_allowUnknown = false;
-
-    /** @var bool If the last seen option was variadic */
-    protected $_wasVariadic = false;
 
     /**
      * Constructor.
@@ -55,11 +42,6 @@ class ArgvParser
         $this->_desc         = $desc;
         $this->_allowUnknown = $allowUnknown;
 
-        $this->addDefaultOptions();
-    }
-
-    protected function addDefaultOptions()
-    {
         $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
         $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
     }
@@ -79,12 +61,36 @@ class ArgvParser
     }
 
     /**
+     * Registers argument definitions (all at once). Only last one can be variadic.
+     *
+     * @param string $definitions
+     *
+     * @return self
+     */
+    public function arguments(string $definitions): self
+    {
+        $definitions = \explode(' ', $definitions);
+        foreach ($definitions as $i => $definition) {
+            $argument = new Argument($definition);
+
+            if ($argument->variadic() && isset($definitions[$i + 1])) {
+                throw new \InvalidArgumentException('Only last argument can be variadic');
+            }
+
+            $this->_arguments[$argument->name()]       = $argument;
+            $this->_values[$argument->attributeName()] = $argument->default();
+        }
+
+        return $this;
+    }
+
+    /**
      * Registers new option.
      *
-     * @param string        $cmd     JWTException
-     * @param string        $desc    JWTException
-     * @param callable|null $filter  JWTException
-     * @param mixed         $default JWTException
+     * @param string        $cmd
+     * @param string        $desc
+     * @param callable|null $filter
+     * @param mixed         $default
      *
      * @return self
      */
@@ -94,7 +100,7 @@ class ArgvParser
 
         if (isset($this->_options[$option->long()])) {
             throw new \InvalidArgumentException(
-                \sprintf('The option %s is already registered', $option->long())
+                \sprintf('The option "%s" is already registered', $option->long())
             );
         }
 
@@ -107,7 +113,7 @@ class ArgvParser
     /**
      * Sets event handler for last option.
      *
-     * @param callable $fn JWTException
+     * @param callable $fn
      *
      * @return self
      */
@@ -120,124 +126,27 @@ class ArgvParser
         return $this;
     }
 
-    /**
-     * Parse the argv input.
-     *
-     * @param array $argv The first item is ignored.
-     *
-     * @throws \RuntimeException When argument is missing or invalid.
-     *
-     * @return self
-     */
-    public function parse(array $argv): self
-    {
-        \array_shift($argv);
-
-        $argv  = $this->normalize($argv);
-        $count = \count($argv);
-
-        for ($i = 0; $i < $count; $i++) {
-            list($arg, $nextArg) = [$argv[$i], isset($argv[$i + 1]) ? $argv[$i + 1] : null];
-
-            if ($arg[0] !== '-' || !empty($literal) || ($literal = $arg === '--')) {
-                $this->parseArgs($arg);
-            } else {
-                $i += (int) $this->parseOptions($arg, $nextArg);
-            }
-        }
-
-        return $this->validate();
-    }
-
-    protected function parseArgs(string $arg)
-    {
-        if ($this->_wasVariadic) {
-            $this->_values[$this->_lastOption->attributeName()][] = $arg;
-        } else {
-            $this->_args[] = $arg;
-        }
-    }
-
-    protected function parseOptions(string $arg, string $nextArg = null)
-    {
-        $value   = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
-        $isValue = $value !== null;
-
-        $this->_lastOption  = $option  = $this->optionFor($arg);
-        $this->_wasVariadic = $option ? $option->variadic() : false;
-
-        if (!$option) {
-            $this->handleUnknown($arg, $value);
-
-            return $isValue;
-        }
-
-        $this->emit($option->long());
-        $this->setValue($option, $value);
-
-        return $isValue;
-    }
-
     protected function handleUnknown(string $arg, string $value = null)
     {
         if ($this->_allowUnknown) {
-            $this->_values[$arg] = $value;
+            $this->_values[$this->toCamelCase($arg)] = $value;
 
             return;
         }
 
+        $values = \array_filter($this->_values, function ($value) {
+            return $value !== null;
+        });
+
         // Has some value, error!
-        if ($this->_values) {
+        if ($values) {
             throw new \RuntimeException(
-                \sprintf('Option %s not registered', $arg)
+                \sprintf('Option "%s" not registered', $arg)
             );
         }
 
         // Has no value, show help!
         return $this->showHelp();
-    }
-
-    protected function setValue(Option $option, string $value = null)
-    {
-        $name = $option->attributeName();
-
-        if (null === $value && null !== $this->_values[$name]) {
-            return;
-        }
-
-        $this->_values[$name] = $this->prepareValue($option, $value);
-    }
-
-    protected function prepareValue(Option $option, string $value = null)
-    {
-        if ($option->bool()) {
-            return !$option->default();
-        }
-
-        if ($option->variadic()) {
-            return (array) $value;
-        }
-
-        return null === $value ? null : $option->filter($value);
-    }
-
-    protected function validate(): self
-    {
-        foreach ($this->_options as $option) {
-            if (!$option->required()) {
-                continue;
-            }
-
-            $value = $this->_values[$option->attributeName()];
-
-            if (null === $value || [] === $value) {
-                throw new \RuntimeException(
-                    \sprintf('Option %s|%s is required', $option->short(), $option->long())
-                );
-            }
-        }
-
-        return $this;
     }
 
     /**
@@ -247,7 +156,7 @@ class ArgvParser
      *
      * @return array
      */
-    public function values($withDefaults = true): array
+    public function values(bool $withDefaults = true): array
     {
         $values = $this->_values;
 
@@ -256,18 +165,6 @@ class ArgvParser
         }
 
         return $values;
-    }
-
-    /**
-     * Get values.
-     *
-     * @param bool $withDefaults
-     *
-     * @return array
-     */
-    public function args()
-    {
-        return $this->_args;
     }
 
     /**
@@ -284,55 +181,19 @@ class ArgvParser
 
     protected function showHelp()
     {
-        echo "{$this->_name}, version {$this->_version}\n";
+        echo "{$this->_name}, version {$this->_version}" . PHP_EOL;
 
-        exit('help');
+        // @todo: build help msg!
+        echo "help\n";
+
+        _exit();
     }
 
     protected function showVersion()
     {
-        echo "{$this->_name}, version {$this->_version}\n";
+        echo $this->_version . PHP_EOL;
 
-        exit(0);
-    }
-
-    protected function normalize(array $args): array
-    {
-        $normalized = [];
-
-        foreach ($args as $arg) {
-            if (\preg_match('/^\-\w{2,}/', $arg)) {
-                $normalized = \array_merge($normalized, $this->splitShort($arg));
-            } elseif (\preg_match('/^\-\-\w{2,}\=/', $arg)) {
-                $normalized = \array_merge($normalized, explode('=', $arg));
-            } else {
-                $normalized[] = $arg;
-            }
-        }
-
-        return $normalized;
-    }
-
-    protected function splitShort(string $arg): array
-    {
-        $args = \str_split(\substr($arg, 1));
-
-        return \array_map(function ($a) {
-            return "-$a";
-        }, $args);
-    }
-
-    protected function optionFor(string $arg)
-    {
-        if (isset($this->_options[$arg])) {
-            return $this->_options[$arg];
-        }
-
-        foreach ($this->_options as $option) {
-            if ($option->is($arg)) {
-                return $option;
-            }
-        }
+        _exit();
     }
 
     protected function emit(string $event)
@@ -346,3 +207,13 @@ class ArgvParser
         $callback();
     }
 }
+
+// @codeCoverageIgnoreStart
+if (!\function_exists(__NAMESPACE__ . '\\_exit'))
+{
+    function _exit($code = 0)
+    {
+        exit($code);
+    }
+}
+// @codeCoverageIgnoreEnd
