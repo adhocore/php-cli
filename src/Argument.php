@@ -10,27 +10,8 @@ namespace Ahc\Cli;
  *
  * @link    https://github.com/adhocore/cli
  */
-class Argument
+class Argument extends Parameter
 {
-    use InflectsString;
-
-    protected $name;
-
-    protected $rawArg;
-
-    protected $default;
-
-    protected $required = false;
-
-    protected $variadic = false;
-
-    public function __construct(string $arg)
-    {
-        $this->rawArg = $arg;
-
-        $this->parse($arg);
-    }
-
     protected function parse(string $arg)
     {
         $this->required = $arg[0] === '<';
@@ -42,26 +23,6 @@ class Argument
             $name                             = \str_replace('+', ' ', $name);
             list($this->name, $this->default) = \explode(':', $name, 2);
         }
-    }
-
-    public function name(): string
-    {
-        return $this->name;
-    }
-
-    public function attributeName(): string
-    {
-        return $this->toCamelCase($this->name);
-    }
-
-    public function required(): bool
-    {
-        return $this->required;
-    }
-
-    public function variadic(): bool
-    {
-        return $this->variadic;
     }
 
     public function default()
