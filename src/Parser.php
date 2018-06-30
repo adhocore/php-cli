@@ -182,20 +182,20 @@ abstract class Parser
 
     protected function validate()
     {
-        foreach ($this->_options + $this->_arguments as $option) {
-            if (!$option->required()) {
+        foreach ($this->_options + $this->_arguments as $item) {
+            if (!$item->required()) {
                 continue;
             }
 
-            $value = $this->_values[$option->attributeName()];
-            $isArg = $option instanceof Argument;
+            list($name, $label) = [$item->name(), 'Argument'];
+            if ($item instanceof Option) {
+                list($name, $label) = [$item->long(), 'Option'];
+            }
 
-            if (null === $value || [] === $value) {
-                throw new \RuntimeException(\sprintf(
-                    '%s "%s" is required',
-                    $isArg ? 'Argument' : 'Option',
-                    $isArg ? $option->name() : $option->long()
-                ));
+            if (\in_array($this->_values[$item->attributeName()], [null, []])) {
+                throw new \RuntimeException(
+                    \sprintf('%s "%s" is required', $label, $name)
+                );
             }
         }
     }
