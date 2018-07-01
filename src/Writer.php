@@ -45,14 +45,35 @@ class Writer
      * @param string $text
      * @param bool   $eol
      *
-     * @return void
+     * @return self
      */
-    public function write(string $text, bool $eol = false)
+    public function write(string $text, bool $eol = false): self
     {
         list($method, $this->method) = [$this->method ?: 'line', ''];
 
         $stream = \stripos($method, 'error') !== false ? \STDERR : \STDOUT;
 
-        \fwrite($stream, $this->colorizer->{$method}($text, [], $eol));
+        if ($method === 'eol') {
+            \fwrite($stream, PHP_EOL);
+        } else {
+            \fwrite($stream, $this->colorizer->{$method}($text, [], $eol));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Write to stdout or stderr magically.
+     *
+     * @param string $method
+     * @param array  $arguments
+     *
+     * @return self
+     */
+    public function __call(string $method, array $arguments): self
+    {
+        $this->method = $method;
+
+        return $this->write($arguments[0] ?? '', $arguments[1] ?? false);
     }
 }

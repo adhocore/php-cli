@@ -97,10 +97,6 @@ class ArgvParserTest extends TestCase
         $p = $this->newParser('', '', true)->parse(['php', '--hot-path', '/path']);
         $this->assertSame('/path', $p->hotPath, 'Allow unknown');
 
-        ob_start();
-        $p = $this->newParser()->parse(['php', '--unknown', '1']);
-        $this->assertContains('help', ob_get_clean(), 'Show help');
-
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Option "--random" not registered');
 
@@ -180,22 +176,6 @@ class ArgvParserTest extends TestCase
         $this->assertSame('hello event', ob_get_clean());
     }
 
-    public function test_default_options()
-    {
-        ob_start();
-        $p = $this->newParser('v1.0.1')->parse(['php', '--version']);
-        $this->assertContains('v1.0.1', ob_get_clean(), 'Long');
-
-        ob_start();
-        $p = $this->newParser('v2.0.1')->parse(['php', '-V']);
-        $this->assertContains('v2.0.1', ob_get_clean(), 'Short');
-
-        ob_start();
-        $p = $this->newParser()->parse(['php', '--help']);
-        $this->assertContains('ArgvParserTest', $buffer = ob_get_clean());
-        $this->assertContains('help', $buffer);
-    }
-
     public function test_no_value()
     {
         $p = $this->newParser()->option('-x --xyz')->parse(['php', '-x']);
@@ -211,7 +191,7 @@ class ArgvParserTest extends TestCase
         $this->assertSame(['a' => 'A', 'b' => 'B', 'C', 'D'], $p->args());
     }
 
-    protected function newParser(string $version = '0.0.1', string $desc = null, bool $allowUnknown = false)
+    protected function newParser(string $version = '0.0.1', string $desc = '', bool $allowUnknown = false)
     {
         $p = new ArgvParser('ArgvParserTest', $desc, $allowUnknown);
 

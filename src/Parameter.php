@@ -28,7 +28,7 @@ abstract class Parameter
 
     protected $variadic = false;
 
-    public function __construct(string $raw, string $desc = null, $default = null)
+    public function __construct(string $raw, string $desc = '', $default = null)
     {
         $this->raw      = $raw;
         $this->desc     = $desc;
@@ -50,6 +50,11 @@ abstract class Parameter
     public function name(): string
     {
         return $this->name;
+    }
+
+    public function desc(): string
+    {
+        return $this->desc;
     }
 
     public function attributeName(): string
