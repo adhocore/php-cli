@@ -207,19 +207,58 @@ class ArgvParser extends Parser
 
     protected function showHelp()
     {
-        echo "{$this->_name}, version {$this->_version}" . PHP_EOL;
+        $args = $this->_arguments ? ' [ARGUMENTS]' : '';
+        $opts = $this->_options ? ' [OPTIONS]' : '';
 
-        // @todo: build help msg!
-        echo "help\n";
+        ($w = new Writer)
+            ->bold("Command {$this->_name}, version {$this->_version}", true)->eol()
+            ->comment($this->_desc, true)->eol()
+            ->bold('Usage: ')->yellow("{$this->_name}{$args}{$opts}", true);
 
-        _exit();
+        if ($args) {
+            $this->showArguments($w);
+        }
+
+        if ($opts) {
+            $this->showOptions($w);
+        }
+
+        $w->eol()->yellow('Note: <required> [optional]')->eol();
+
+        return _exit();
+    }
+
+    protected function showArguments(Writer $w)
+    {
+        $w->eol()->boldGreen('Arguments:', true);
+
+        $maxLen  = \max(\array_map('strlen', \array_keys($this->_arguments)));
+
+        foreach ($this->_arguments as $arg) {
+            $name = $arg->name();
+            $name = $arg->required() ? "<$name>" : "[$name]";
+            $w->bold('  ' . \str_pad($name, $maxLen + 4))->comment($arg->desc(), true);
+        }
+    }
+
+    protected function showOptions(Writer $w)
+    {
+        $w->eol()->boldGreen('Options:', true);
+
+        $maxLen = \max(\array_map('strlen', \array_keys($this->_options)));
+
+        foreach ($this->_options as $opt) {
+            $name = $opt->short() . '|' . $opt->long();
+            $name = $opt->required() ? "<$name>" : "[$name]";
+            $w->bold('  ' . \str_pad($name, $maxLen + 9))->comment($opt->desc(), true);
+        }
     }
 
     protected function showVersion()
     {
         echo $this->_version . PHP_EOL;
 
-        _exit();
+        return _exit();
     }
 
     protected function emit(string $event)
@@ -239,6 +278,8 @@ if (!\function_exists(__NAMESPACE__ . '\\_exit')) {
     function _exit($code = 0)
     {
         exit($code);
+
+        return false;
     }
 }
 // @codeCoverageIgnoreEnd
