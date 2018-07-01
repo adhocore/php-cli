@@ -44,6 +44,10 @@ class ArgvParser extends Parser
 
         $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
         $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
+
+        $this->onExit(function () {
+            exit(0);
+        });
     }
 
     /**
@@ -147,6 +151,20 @@ class ArgvParser extends Parser
         return $this;
     }
 
+    /**
+     * Register exit handler.
+     *
+     * @param callable $fn
+     *
+     * @return self
+     */
+    public function onExit(callable $fn): self
+    {
+        $this->_events['_exit'] = $fn;
+
+        return $this;
+    }
+
     protected function handleUnknown(string $arg, string $value = null)
     {
         if ($this->_allowUnknown) {
@@ -225,7 +243,7 @@ class ArgvParser extends Parser
 
         $w->eol()->yellow('Note: <required> [optional]')->eol();
 
-        return _exit();
+        return $this->emit('_exit');
     }
 
     protected function showArguments(Writer $w)
@@ -258,10 +276,10 @@ class ArgvParser extends Parser
     {
         (new Writer)->bold($this->_version, true);
 
-        return _exit();
+        return $this->emit('_exit');
     }
 
-    protected function emit(string $event)
+    public function emit(string $event)
     {
         if (empty($this->_events[$event])) {
             return;
@@ -269,15 +287,6 @@ class ArgvParser extends Parser
 
         $callback = $this->_events[$event];
 
-        $callback();
+        return $callback();
     }
 }
-
-// @codeCoverageIgnoreStart
-if (!\function_exists(__NAMESPACE__ . '\\_exit')) {
-    function _exit($code = 0)
-    {
-        exit($code);
-    }
-}
-// @codeCoverageIgnoreEnd
