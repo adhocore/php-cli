@@ -36,7 +36,7 @@ class ArgvParser extends Parser
      * @param string $desc
      * @param bool   $allowUnknown
      */
-    public function __construct(string $name, string $desc = null, bool $allowUnknown = false)
+    public function __construct(string $name, string $desc = '', bool $allowUnknown = false)
     {
         $this->_name         = $name;
         $this->_desc         = $desc;
@@ -58,6 +58,16 @@ class ArgvParser extends Parser
         $this->_version = $version;
 
         return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->_name;
+    }
+
+    public function getDesc(): string
+    {
+        return $this->_desc;
     }
 
     /**
