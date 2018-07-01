@@ -40,6 +40,8 @@ class DefaultOptionTest extends CliTestCase
     {
         $p = new ArgvParser('ArgvParserTest', $desc, $allowUnknown);
 
-        return $p->version($version);
+        return $p->version($version)->onExit(function () {
+            return false;
+        });
     }
 }
