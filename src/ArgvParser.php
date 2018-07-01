@@ -256,7 +256,7 @@ class ArgvParser extends Parser
 
     protected function showVersion()
     {
-        echo $this->_version . PHP_EOL;
+        (new Writer)->bold($this->_version, true);
 
         return _exit();
     }
