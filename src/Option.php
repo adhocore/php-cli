@@ -18,7 +18,7 @@ class Option extends Parameter
 
     protected $filter;
 
-    public function __construct(string $raw, string $desc = null, $default = null, callable $filter = null)
+    public function __construct(string $raw, string $desc = '', $default = null, callable $filter = null)
     {
         $this->filter = $filter;
 
