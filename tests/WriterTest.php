@@ -3,7 +3,6 @@
 namespace Ahc\Cli\Test;
 
 use Ahc\Cli\Writer;
-use PHPUnit\Framework\TestCase;
 
 class WriterTest extends CliTestCase
 {

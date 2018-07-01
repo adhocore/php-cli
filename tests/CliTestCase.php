@@ -5,7 +5,7 @@ namespace Ahc\Cli\Test;
 use PHPUnit\Framework\TestCase;
 
 /**
- * To test console output
+ * To test console output.
  */
 class CliTestCase extends TestCase
 {
@@ -47,4 +47,3 @@ class StreamInterceptor extends \php_user_filter
         return PSFS_PASS_ON;
     }
 }
-
