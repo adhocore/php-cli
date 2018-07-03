@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahc\Cli;
+namespace Ahc\Cli\Input;
 
 /**
  * Cli Option.

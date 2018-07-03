@@ -1,6 +1,8 @@
 <?php
 
-namespace Ahc\Cli;
+namespace Ahc\Cli\Input;
+
+use Ahc\Cli\Helper\InflectsString;
 
 /**
  * Cli Parameter.
