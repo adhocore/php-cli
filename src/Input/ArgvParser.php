@@ -187,9 +187,7 @@ class ArgvParser extends Parser
             return;
         }
 
-        $values = \array_filter($this->_values, function ($value) {
-            return $value !== null;
-        });
+        $values = \array_filter($this->_values);
 
         // Has some value, error!
         if ($values) {
