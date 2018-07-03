@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahc\Cli;
+namespace Ahc\Cli\Output;
 
 /**
  * Cli Colstatic ostatic rizer.
@@ -86,7 +86,7 @@ class Color
 
     public function eol()
     {
-        return PHP_EOL;
+        return \PHP_EOL;
     }
 
     /**

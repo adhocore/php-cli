@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahc\Cli;
+namespace Ahc\Cli\Output;
 
 /**
  * Cli Writer.
@@ -53,8 +53,9 @@ class Writer
 
         $stream = \stripos($method, 'error') !== false ? \STDERR : \STDOUT;
 
-        if ($method === 'eol') {
-            \fwrite($stream, PHP_EOL);
+        if (\in_array($method, ['eol', 'raw'])) {
+            $texts = ['eol' => \PHP_EOL];
+            \fwrite($stream, $texts[$method] ?? $text);
         } else {
             \fwrite($stream, $this->colorizer->{$method}($text, [], $eol));
         }
