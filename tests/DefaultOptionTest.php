@@ -2,7 +2,7 @@
 
 namespace Ahc\Cli\Test;
 
-use Ahc\Cli\ArgvParser;
+use Ahc\Cli\Input\ArgvParser;
 
 class DefaultOptionTest extends CliTestCase
 {

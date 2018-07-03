@@ -2,7 +2,7 @@
 
 namespace Ahc\Cli\Test;
 
-use Ahc\Cli\Option;
+use Ahc\Cli\Input\Option;
 use PHPUnit\Framework\TestCase;
 
 class OptionTest extends TestCase

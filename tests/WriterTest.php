@@ -2,7 +2,7 @@
 
 namespace Ahc\Cli\Test;
 
-use Ahc\Cli\Writer;
+use Ahc\Cli\Output\Writer;
 
 class WriterTest extends CliTestCase
 {

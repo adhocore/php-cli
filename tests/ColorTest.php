@@ -2,7 +2,7 @@
 
 namespace Ahc\Cli\Test;
 
-use Ahc\Cli\Color;
+use Ahc\Cli\Output\Color;
 use PHPUnit\Framework\TestCase;
 
 class ColorTest extends TestCase
