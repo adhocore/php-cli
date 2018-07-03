@@ -1,6 +1,10 @@
 <?php
 
-namespace Ahc\Cli;
+namespace Ahc\Cli\Input;
+
+use Ahc\Cli\Helper\InflectsString;
+use Ahc\Cli\Helper\OutputHelper;
+use Ahc\Cli\Output\Writer;
 
 /**
  * Argv parser for the cli.
@@ -42,12 +46,22 @@ class ArgvParser extends Parser
         $this->_desc         = $desc;
         $this->_allowUnknown = $allowUnknown;
 
-        $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
-        $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
-
-        $this->onExit(function () {
+        $this->defaults()->onExit(function () {
             exit(0);
         });
+    }
+
+    protected function defaults(): self
+    {
+        $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
+        $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
+        $this->option('-v, --verbosity', 'Verbosity level', null, 0)->on(function () {
+            $this->_values['verbosity']++;
+
+            return false;
+        });
+
+        return $this;
     }
 
     /**
@@ -64,12 +78,12 @@ class ArgvParser extends Parser
         return $this;
     }
 
-    public function getName(): string
+    public function name(): string
     {
         return $this->_name;
     }
 
-    public function getDesc(): string
+    public function desc(): string
     {
         return $this->_desc;
     }
@@ -197,7 +211,8 @@ class ArgvParser extends Parser
      */
     public function values(bool $withDefaults = true): array
     {
-        $values = $this->_values;
+        $values            = $this->_values;
+        $values['version'] = $this->_version;
 
         if (!$withDefaults) {
             unset($values['help'], $values['version']);
@@ -225,51 +240,17 @@ class ArgvParser extends Parser
 
     protected function showHelp()
     {
-        $args = $this->_arguments ? ' [ARGUMENTS]' : '';
-        $opts = $this->_options ? ' [OPTIONS]' : '';
-
-        ($w = new Writer)
+        (new Writer)
             ->bold("Command {$this->_name}, version {$this->_version}", true)->eol()
             ->comment($this->_desc, true)->eol()
-            ->bold('Usage: ')->yellow("{$this->_name}{$args}{$opts}", true);
+            ->bold('Usage: ')->yellow("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
 
-        if ($args) {
-            $this->showArguments($w);
-        }
+        $helper = new OutputHelper;
 
-        if ($opts) {
-            $this->showOptions($w);
-        }
-
-        $w->eol()->yellow('Note: <required> [optional]')->eol();
+        $helper->showArgumentsHelp($this->_arguments);
+        $helper->showOptionsHelp($this->_options, '', 'Legend: <required> [optional]');
 
         return $this->emit('_exit');
-    }
-
-    protected function showArguments(Writer $w)
-    {
-        $w->eol()->boldGreen('Arguments:', true);
-
-        $maxLen  = \max(\array_map('strlen', \array_keys($this->_arguments)));
-
-        foreach ($this->_arguments as $arg) {
-            $name = $arg->name();
-            $name = $arg->required() ? "<$name>" : "[$name]";
-            $w->bold('  ' . \str_pad($name, $maxLen + 4))->comment($arg->desc(), true);
-        }
-    }
-
-    protected function showOptions(Writer $w)
-    {
-        $w->eol()->boldGreen('Options:', true);
-
-        $maxLen = \max(\array_map('strlen', \array_keys($this->_options)));
-
-        foreach ($this->_options as $opt) {
-            $name = $opt->short() . '|' . $opt->long();
-            $name = $opt->required() ? "<$name>" : "[$name]";
-            $w->bold('  ' . \str_pad($name, $maxLen + 9))->comment($opt->desc(), true);
-        }
     }
 
     protected function showVersion()
@@ -279,7 +260,7 @@ class ArgvParser extends Parser
         return $this->emit('_exit');
     }
 
-    public function emit(string $event)
+    public function emit(string $event, $value = null)
     {
         if (empty($this->_events[$event])) {
             return;
@@ -287,6 +268,11 @@ class ArgvParser extends Parser
 
         $callback = $this->_events[$event];
 
-        return $callback();
+        return $callback($value);
+    }
+
+    public function tap($object)
+    {
+        return $object;
     }
 }
