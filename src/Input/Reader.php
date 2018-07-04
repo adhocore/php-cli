@@ -45,24 +45,4 @@ class Reader
 
         return $fn ? $fn($in) : $in;
     }
-
-    /**
-     * Read hidden intput, like password, secret key!
-     *
-     * @return mixed
-     */
-    public function hidden()
-    {
-        $old = $this->stream;
-
-        if ($fh = \fopen('/dev/tty', 'r')) {
-            $this->stream = $fh;
-        }
-
-        $in = $this->read();
-
-        $this->stream = $old;
-
-        return $in;
-    }
 }
