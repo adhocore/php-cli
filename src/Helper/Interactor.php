@@ -2,6 +2,7 @@
 
 namespace Ahc\Cli\Helper;
 
+use Ahc\Cli\Input\Reader;
 use Ahc\Cli\Output\Writer;
 
 /**
@@ -12,8 +13,17 @@ use Ahc\Cli\Output\Writer;
  *
  * @link    https://github.com/adhocore/cli
  */
-class Interactor extends Writer
+class Interactor
 {
+    protected $reader;
+    protected $writer;
+
+    public function __construct(string $input = null, string $output = null)
+    {
+        $this->reader = new Reader($input);
+        $this->writer = new Writer($output);
+    }
+
     public function confirm(string $text, string $default = 'y'): bool
     {
         $choice = $this->choice($text, ['y', 'n'], $default);
@@ -23,15 +33,24 @@ class Interactor extends Writer
 
     public function choice(string $text, array $choices, $default = null, bool $case = false)
     {
-        $choice = $this->yellow($text)->listOptions($choices, $default, false)->read($default);
+        $this->writer->yellow($text);
+
+        $this->listOptions($choices, $default, false);
+
+        $choice = $this->reader->read($default);
 
         return $this->isValidChoice($choice, $choices, $case) ? $choice : $default;
     }
 
     public function choices(string $text, array $choices, $default = null, bool $case = false)
     {
-        $valid  = [];
-        $choice = $this->yellow($text)->listOptions($choices, $default, true)->read($default);
+        $valid = [];
+
+        $this->writer->yellow($text);
+
+        $this->listOptions($choices, $default, true);
+
+        $choice = $this->reader->read($default);
 
         if (\is_string($choice)) {
             $choice = \explode(',', \str_replace(' ', '', $choice));
@@ -49,16 +68,19 @@ class Interactor extends Writer
     public function prompt(string $text, $default = null, callable $fn = null, int $retry = 3)
     {
         $error = 'Invalid value. Please try again!';
-        $this->yellow($text)->comment(null !== $default ? " [$default]: " : ': ');
+
+        $this->writer->yellow($text)->comment(null !== $default ? " [$default]: " : ': ');
 
         try {
-            $input = $this->read($default, $fn);
+            $input = $this->reader->read($default, $fn);
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }
 
         if ($retry > 0 && (isset($e) || \strlen($input) === 0)) {
-            return $this->bgRed($error, true)->prompt($text, $default, $fn, $retry - 1);
+            $this->writer->bgRed($error, true);
+
+            return $this->prompt($text, $default, $fn, $retry - 1);
         }
 
         return $input ?? $default;
@@ -75,7 +97,7 @@ class Interactor extends Writer
         return $fn ? $fn($in) : $in;
     }
 
-    protected function listOptions(array $choices, $default = null, bool $multi = false)
+    protected function listOptions(array $choices, $default = null, bool $multi = false): self
     {
         if (!$this->isAssocChoice($choices)) {
             return $this->promptOptions($choices, $default);
@@ -84,12 +106,14 @@ class Interactor extends Writer
         $maxLen = \max(\array_map('strlen', \array_keys($choices)));
 
         foreach ($choices as $choice => $desc) {
-            $this->eol()->cyan(\str_pad("  [$choice]", $maxLen + 6))->comment($desc);
+            $this->writer->eol()->cyan(\str_pad("  [$choice]", $maxLen + 6))->comment($desc);
         }
 
         $label = $multi ? 'Choices (comma separated)' : 'Choice';
 
-        return $this->eol()->yellow($label)->promptOptions(\array_keys($choices), $default);
+        $this->writer->eol()->yellow($label);
+
+        return $this->promptOptions(\array_keys($choices), $default);
     }
 
     protected function promptOptions(array $choices, $default): self
@@ -100,7 +124,9 @@ class Interactor extends Writer
             $options = \str_replace($value, \strtoupper($value), $options);
         }
 
-        return $this->cyan(' (' . $options . '): ');
+        $this->writer->cyan(' (' . $options . '): ');
+
+        return $this;
     }
 
     protected function isValidChoice($choice, array $choices, bool $case)
@@ -109,12 +135,10 @@ class Interactor extends Writer
             $choices = \array_keys($choices);
         }
 
-        foreach ($choices as $option) {
-            if ($case && $choice == $option) {
-                return true;
-            }
+        $fn = ['\strcmp', '\strcasecmp'][(int) $case];
 
-            if (!$case && \strcasecmp($choice, $option) == 0) {
+        foreach ($choices as $option) {
+            if ($fn($choice, $option) == 0) {
                 return true;
             }
         }
@@ -129,5 +153,24 @@ class Interactor extends Writer
         }
 
         return \array_keys($array) != \range(0, \count($array) - 1);
+    }
+
+    /**
+     * Channel method calls to reader/writer.
+     *
+     * @param string $method
+     * @param array  $arguments
+     *
+     * @return self
+     */
+    public function __call(string $method, array $arguments): self
+    {
+        if (\in_array($method, ['read'])) {
+            $this->reader->{$method}(...$arguments);
+        } else {
+            $this->writer->{$method}($arguments[0] ?? '', $arguments[1] ?? false);
+        }
+
+        return $this;
     }
 }
