@@ -12,8 +12,14 @@ namespace Ahc\Cli\Input;
  */
 class Reader
 {
+    /** @var resource Input file handle */
     protected $stream;
 
+    /**
+     * Constructor.
+     *
+     * @param string|null $path Read path. Defaults to STDIN.
+     */
     public function __construct(string $path = null)
     {
         $this->stream = $path ? \fopen($path, 'r') : \STDIN;
@@ -40,6 +46,11 @@ class Reader
         return $fn ? $fn($in) : $in;
     }
 
+    /**
+     * Read hidden intput, like password, secret key!
+     *
+     * @return mixed
+     */
     public function hidden()
     {
         $old = $this->stream;
