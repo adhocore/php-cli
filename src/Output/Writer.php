@@ -24,7 +24,7 @@ class Writer
     /** @var Color */
     protected $colorizer;
 
-    public function __construct(string $path = null)
+    public function __construct(string $path = null, Color $colorizer = null)
     {
         if ($path) {
             $path = \fopen($path, 'w');
@@ -33,7 +33,7 @@ class Writer
         $this->stream  = $path ?: \STDOUT;
         $this->eStream = $path ?: \STDERR;
 
-        $this->colorizer = new Color;
+        $this->colorizer = $colorizer ?? new Color;
     }
 
     /**
