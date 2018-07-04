@@ -12,14 +12,27 @@ namespace Ahc\Cli\Output;
  */
 class Writer
 {
+    /** @var resource Output file handle */
+    protected $stream;
+
+    /** @var resource Error output file handle */
+    protected $eStream;
+
     /** @var string Write method to be relayed to Colorizer */
     protected $method;
 
     /** @var Color */
     protected $colorizer;
 
-    public function __construct()
+    public function __construct(string $path = null)
     {
+        if ($path) {
+            $path = \fopen($path, 'w');
+        }
+
+        $this->stream  = $path ?: \STDOUT;
+        $this->eStream = $path ?: \STDERR;
+
         $this->colorizer = new Color;
     }
 
@@ -51,16 +64,53 @@ class Writer
     {
         list($method, $this->method) = [$this->method ?: 'line', ''];
 
-        $stream = \stripos($method, 'error') !== false ? \STDERR : \STDOUT;
+        $text  = $this->colorizer->{$method}($text, []);
+        $error = \stripos($method, 'error') !== false;
 
-        if (\in_array($method, ['eol', 'raw'])) {
-            $texts = ['eol' => \PHP_EOL];
-            \fwrite($stream, $texts[$method] ?? $text);
-        } else {
-            \fwrite($stream, $this->colorizer->{$method}($text, [], $eol));
+        if ($eol) {
+            $text .= \PHP_EOL;
         }
 
+        return $this->doWrite($text, $error);
+    }
+
+    protected function doWrite(string $text, bool $error = false): self
+    {
+        $stream = $error ? $this->eStream : $this->stream;
+
+        \fwrite($stream, $text);
+
         return $this;
+    }
+
+    public function up(int $n = 1)
+    {
+        return $this->doWrite(\str_repeat("\e[A", \max($n, 1)));
+    }
+
+    public function down(int $n = 1)
+    {
+        return $this->doWrite(\str_repeat("\e[B", \max($n, 1)));
+    }
+
+    public function right(int $n = 1)
+    {
+        return $this->doWrite(\str_repeat("\e[C", \max($n, 1)));
+    }
+
+    public function left(int $n = 1)
+    {
+        return $this->doWrite(\str_repeat("\e[D", \max($n, 1)));
+    }
+
+    public function eol(int $n = 1)
+    {
+        return $this->doWrite(\str_repeat(PHP_EOL, \max($n, 1)));
+    }
+
+    public function raw($text, bool $error = false)
+    {
+        return $this->doWrite((string) $text, $error);
     }
 
     /**
