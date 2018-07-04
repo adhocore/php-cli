@@ -44,8 +44,6 @@ class Interactor
 
     public function choices(string $text, array $choices, $default = null, bool $case = false)
     {
-        $valid = [];
-
         $this->writer->yellow($text);
 
         $this->listOptions($choices, $default, true);
@@ -55,6 +53,8 @@ class Interactor
         if (\is_string($choice)) {
             $choice = \explode(',', \str_replace(' ', '', $choice));
         }
+
+        $valid = [];
 
         foreach ($choice as $option) {
             if ($this->isValidChoice($option, $choices, $case)) {
@@ -84,17 +84,6 @@ class Interactor
         }
 
         return $input ?? $default;
-    }
-
-    public function read($default = null, callable $fn = null)
-    {
-        $in = \trim(\fgets(\STDIN));
-
-        if ('' === $in && null !== $default) {
-            return $default;
-        }
-
-        return $fn ? $fn($in) : $in;
     }
 
     protected function listOptions(array $choices, $default = null, bool $multi = false): self
@@ -169,6 +158,6 @@ class Interactor
             return $this->reader->{$method}(...$arguments);
         }
 
-        return $this->writer->{$method}($arguments[0] ?? '', $arguments[1] ?? false);
+        return $this->writer->{$method}(...$arguments);
     }
 }
