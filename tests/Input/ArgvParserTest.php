@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahc\Cli\Test;
+namespace Ahc\Cli\Test\Input;
 
 use Ahc\Cli\Input\ArgvParser;
 use PHPUnit\Framework\TestCase;
@@ -189,6 +189,13 @@ class ArgvParserTest extends TestCase
             ->parse(['php', 'A', '-x', 'X', 'B', 'C', 'D']);
 
         $this->assertSame(['a' => 'A', 'b' => 'B', 'C', 'D'], $p->args());
+    }
+
+    public function test_tap()
+    {
+        $this->assertInstanceOf(static::class, $this->newParser()->tap($this));
+        $this->assertSame('asdf', $this->newParser()->tap('asdf'));
+        $this->assertSame(234, $this->newParser()->tap(234));
     }
 
     protected function newParser(string $version = '0.0.1', string $desc = '', bool $allowUnknown = false)

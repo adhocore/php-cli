@@ -1,8 +1,9 @@
 <?php
 
-namespace Ahc\Cli\Test;
+namespace Ahc\Cli\Test\Output;
 
 use Ahc\Cli\Output\Writer;
+use Ahc\Cli\Test\CliTestCase;
 
 class WriterTest extends CliTestCase
 {
@@ -36,5 +37,23 @@ class WriterTest extends CliTestCase
 
         $this->assertContains('bold->red->bgGreen', $this->buffer());
         $this->assertSame("\033[1;31;42mbold->red->bgGreen\033[0m", $this->buffer());
+    }
+
+    public function test_cursor()
+    {
+        $w = new Writer($ou = __DIR__ . '/output');
+
+        $w->up()->down()->right()->left()->raw(new class
+        {
+            public function __toString()
+            {
+                return __FUNCTION__;
+            }
+        });
+
+        $out = file_get_contents($ou);
+        $this->assertSame("\e[A\e[B\e[C\e[D__toString", $out);
+
+        unlink($ou);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahc\Cli\Test;
+namespace Ahc\Cli\Test\Input;
 
 use Ahc\Cli\Input\Option;
 use PHPUnit\Framework\TestCase;

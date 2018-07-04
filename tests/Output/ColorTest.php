@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahc\Cli\Test;
+namespace Ahc\Cli\Test\Output;
 
 use Ahc\Cli\Output\Color;
 use PHPUnit\Framework\TestCase;
