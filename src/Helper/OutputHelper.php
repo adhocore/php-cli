@@ -17,6 +17,13 @@ use Ahc\Cli\Output\Writer;
  */
 class OutputHelper
 {
+    protected $writer;
+
+    public function __construct(Writer $writer = null)
+    {
+        $this->writer = $writer ?? new Writer;
+    }
+
     /**
      * @param Argument[] $arguments
      *
@@ -55,32 +62,39 @@ class OutputHelper
 
     protected function showHelp(string $for, array $items, int $space, string $header = '', string $footer = '')
     {
-        $w = new Writer;
-
         if ($header) {
-            $w->bold($header, true);
+            $this->writer->bold($header, true);
         }
 
-        $w->eol()->boldGreen($for . ':', true);
+        $this->writer->eol()->boldGreen($for . ':', true);
 
         if (empty($items)) {
-            $w->bold('  (n/a)', true);
+            $this->writer->bold('  (n/a)', true);
 
             return;
         }
 
-        ksort($items);
-
-        $maxLen = \max(\array_map('strlen', \array_keys($items)));
-
-        foreach ($items as $item) {
+        foreach ($this->sortItems($items, $padLen) as $item) {
             $name = $this->getName($item);
-            $w->bold('  ' . \str_pad($name, $maxLen + $space))->comment($item->desc(), true);
+            $this->writer->bold('  ' . \str_pad($name, $padLen + $space))->comment($item->desc(), true);
         }
 
         if ($footer) {
-            $w->eol()->yellow($footer, true);
+            $this->writer->eol()->yellow($footer, true);
         }
+    }
+
+    protected function sortItems(array $items, &$offset = 0)
+    {
+        $offset = 0;
+
+        uasort($items, function ($a, $b) use (&$offset) {
+            $offset = \max(\strlen($a->name()), \strlen($b->name()), $offset);
+
+            return $a->name() <=> $b->name();
+        });
+
+        return $items;
     }
 
     protected function getName($item)
