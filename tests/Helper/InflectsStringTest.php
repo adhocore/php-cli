@@ -3,7 +3,6 @@
 namespace Ahc\Cli\Test\Helper;
 
 use Ahc\Cli\Helper\InflectsString;
-
 use PHPUnit\Framework\TestCase;
 
 class InflectsStringTest extends TestCase

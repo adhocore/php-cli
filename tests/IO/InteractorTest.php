@@ -2,13 +2,7 @@
 
 namespace Ahc\Cli\Test\Helper;
 
-use Ahc\Cli\Helper\OutputHelper;
-use Ahc\Cli\Input\Argument;
-use Ahc\Cli\Input\ArgvParser as Command;
-use Ahc\Cli\Input\Option;
 use Ahc\Cli\IO\Interactor;
-use Ahc\Cli\Output\Color;
-use Ahc\Cli\Output\Writer;
 use PHPUnit\Framework\TestCase;
 
 class InteractorTest extends TestCase

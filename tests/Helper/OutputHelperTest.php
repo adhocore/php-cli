@@ -92,8 +92,7 @@ class OutputHelperTest extends TestCase
 
     public function newHelper()
     {
-        return new OutputHelper(new Writer(static::$ou, new class extends Color
-        {
+        return new OutputHelper(new Writer(static::$ou, new class extends Color {
             protected $format = ':text:';
         }));
     }
