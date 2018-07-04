@@ -26,7 +26,7 @@ class Interactor
 
     public function confirm(string $text, string $default = 'y'): bool
     {
-        $choice = $this->choice($text, ['y', 'n'], $default);
+        $choice = $this->choice($text, ['y', 'n'], $default, false);
 
         return \strtolower($choice[0] ?? $default) === 'y';
     }
@@ -137,11 +137,7 @@ class Interactor
 
     protected function isAssocChoice(array $array)
     {
-        if (empty($array)) {
-            return false;
-        }
-
-        return \array_keys($array) != \range(0, \count($array) - 1);
+        return !empty($array) && \array_keys($array) != \range(0, \count($array) - 1);
     }
 
     /**
