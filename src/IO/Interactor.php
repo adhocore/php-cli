@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahc\Cli\Helper;
+namespace Ahc\Cli\IO;
 
 use Ahc\Cli\Input\Reader;
 use Ahc\Cli\Output\Writer;
