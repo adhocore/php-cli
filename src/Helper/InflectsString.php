@@ -14,7 +14,7 @@ trait InflectsString
 {
     public function toCamelCase(string $string)
     {
-        $words = \str_replace('-', ' ', $string);
+        $words = \str_replace(['-', '_'], ' ', $string);
 
         $words = \str_replace(' ', '', \ucwords($words));
 
