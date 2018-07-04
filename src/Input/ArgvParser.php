@@ -47,7 +47,9 @@ class ArgvParser extends Parser
         $this->_allowUnknown = $allowUnknown;
 
         $this->defaults()->onExit(function () {
+            // @codeCoverageIgnoreStart
             exit(0);
+            // @codeCoverageIgnoreEnd
         });
     }
 
