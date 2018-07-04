@@ -2,8 +2,8 @@
 
 namespace Ahc\Cli;
 
-use Ahc\Cli\Input\Command;
 use Ahc\Cli\Helper\OutputHelper;
+use Ahc\Cli\Input\Command;
 
 /**
  * A command application.

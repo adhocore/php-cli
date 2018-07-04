@@ -31,9 +31,9 @@ class Reader
      * @param mixed         $default The default value.
      * @param callable|null $fn      The validator/sanitizer callback.
      *
-     * @return mixed
-     *
      * @throws \Exception When value is not valid.
+     *
+     * @return mixed
      */
     public function read($default = null, callable $fn = null)
     {

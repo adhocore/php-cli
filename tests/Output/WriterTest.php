@@ -43,8 +43,7 @@ class WriterTest extends CliTestCase
     {
         $w = new Writer($ou = __DIR__ . '/output');
 
-        $w->up()->down()->right()->left()->raw(new class
-        {
+        $w->up()->down()->right()->left()->raw(new class {
             public function __toString()
             {
                 return __FUNCTION__;
