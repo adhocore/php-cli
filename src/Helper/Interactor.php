@@ -161,16 +161,14 @@ class Interactor
      * @param string $method
      * @param array  $arguments
      *
-     * @return self
+     * @return mixed
      */
-    public function __call(string $method, array $arguments): self
+    public function __call(string $method, array $arguments)
     {
-        if (\in_array($method, ['read'])) {
-            $this->reader->{$method}(...$arguments);
-        } else {
-            $this->writer->{$method}($arguments[0] ?? '', $arguments[1] ?? false);
+        if (\method_exists($this->reader, $method)) {
+            return $this->reader->{$method}(...$arguments);
         }
 
-        return $this;
+        return $this->writer->{$method}($arguments[0] ?? '', $arguments[1] ?? false);
     }
 }

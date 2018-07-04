@@ -16,7 +16,7 @@ class Reader
 
     public function __construct(string $path = null)
     {
-        $this->stream = $path ? \fopen($path, 'w') : \STDIN;
+        $this->stream = $path ? \fopen($path, 'r') : \STDIN;
     }
 
     /**
@@ -31,12 +31,27 @@ class Reader
      */
     public function read($default = null, callable $fn = null)
     {
-        $in = \trim(\fgets(\STDIN));
+        $in = \rtrim(\fgets($this->stream), "\r\n");
 
         if ('' === $in && null !== $default) {
             return $default;
         }
 
         return $fn ? $fn($in) : $in;
+    }
+
+    public function hidden()
+    {
+        $old = $this->stream;
+
+        if ($fh = \fopen('/dev/tty', 'r')) {
+            $this->stream = $fh;
+        }
+
+        $in = $this->read();
+
+        $this->stream = $old;
+
+        return $in;
     }
 }
