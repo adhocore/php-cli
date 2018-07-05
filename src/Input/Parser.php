@@ -119,8 +119,7 @@ abstract class Parser
 
     protected function parseOptions(string $arg, string $nextArg = null)
     {
-        $value   = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
-        $isValue = $value !== null;
+        $value = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
 
         $this->_lastOption  = $option  = $this->optionFor($arg);
         $this->_wasVariadic = $option ? $option->variadic() : false;
@@ -128,16 +127,14 @@ abstract class Parser
         if (!$option) {
             $this->handleUnknown($arg, $value);
 
-            return $isValue;
+            return !\is_null($value);
         }
 
         if (false === $this->emit($option->attributeName(), $value)) {
             return false;
         }
 
-        $this->setValue($option, $value);
-
-        return $isValue;
+        return $this->setValue($option, $value);
     }
 
     protected function optionFor(string $arg)
@@ -153,29 +150,28 @@ abstract class Parser
 
     abstract protected function emit(string $event, $value = null);
 
-    protected function setValue(Option $option, string $value = null)
+    protected function setValue(Option $option, string $value = null): bool
     {
-        $name = $option->attributeName();
+        $name  = $option->attributeName();
+        $value = $this->prepareValue($option, $value);
 
-        if (null === $value = $this->prepareValue($option, $value)) {
-            return;
-        }
+        $this->_values[$name] = $value ?? $this->_values[$name];
 
-        $this->_values[$name] = $value;
+        return !\in_array($value, [true, false, null], true);
     }
 
     protected function prepareValue(Option $option, string $value = null)
     {
-        if ($option->bool()) {
-            return !$option->default();
+        if (\is_bool($default = $option->default())) {
+            return !$default;
         }
 
         if ($option->variadic()) {
             return (array) $value;
         }
 
-        if (null === $value && $option->optional()) {
-            $value = true;
+        if (null === $value && !$option->required()) {
+            return true;
         }
 
         return null === $value ? null : $option->filter($value);
