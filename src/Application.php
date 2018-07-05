@@ -39,10 +39,10 @@ class Application
         // @codeCoverageIgnoreStart
         $this->onExit = $onExit ?? function () {
              exit(0);
-         };
+        };
         // @codeCoverageIgnoreEnd
 
-        $this->command = $this->command('__default__', 'Default command', true);
+        $this->command = $this->command('__default__', 'Default command', '', true);
 
         unset($this->commands['__default__']);
 
@@ -68,7 +68,7 @@ class Application
         return $this->argv;
     }
 
-    public function command(string $name, string $desc = '', bool $allowUnknown = false, string $alias = ''): Command
+    public function command(string $name, string $desc = '', string $alias = '', bool $allowUnknown = false): Command
     {
         if ($this->commands[$name] ?? $this->aliases[$name] ?? $this->commands[$alias] ?? $this->aliases[$alias] ?? null) {
             throw new \InvalidArgumentException(\sprintf('Command "%s" already added', $name));
@@ -90,8 +90,6 @@ class Application
         return
              // cmd
             $this->commands[$argv[1]]
-            // cmd:subcmd
-            ?? $this->commands[$argv[1] . ':' . $argv[2]]
             // cmd alias
             ?? $this->commands[$this->aliases[$argv[1]] ?? null]
             // default.
@@ -120,13 +118,14 @@ class Application
 
     }
 
-    protected function aliasesFor(Command $command)
+    protected function aliasesFor(Command $command): array
     {
         $aliases = [$name = $command->name()];
 
         foreach ($this->aliases as $alias => $command) {
-            if ($command === $name) {
+            if (\in_array($name, [$alias, $command])) {
                 $aliases[] = $alias;
+                $aliases[] = $command;
             }
         }
 
