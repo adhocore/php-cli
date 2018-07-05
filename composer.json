@@ -3,8 +3,9 @@
     "description": "Command line interface library for PHP",
     "type": "library",
     "keywords": [
-        "php", "command", "argv-parser", "cli", "cli-color", "cli-action", "console",
-        "cli-writer", "argument-parser", "cli-option"
+        "php7", "command", "argv-parser", "cli", "cli-color", "cli-action", "console",
+        "cli-writer", "argument-parser", "cli-option", "stream-output", "stream-input",
+        "cli-app", "console-app", "php-cli"
     ],
     "license": "MIT",
     "authors": [
