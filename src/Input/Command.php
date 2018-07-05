@@ -167,17 +167,18 @@ class Command extends Parser
     }
 
     /**
-     * Sets event handler for last option.
+     * Sets event handler for last (or given) option.
      *
      * @param callable $fn
+     * @param string   $option
      *
      * @return self
      */
-    public function on(callable $fn): self
+    public function on(callable $fn, string $option = null): self
     {
         \end($this->_options);
 
-        $this->_events[\key($this->_options)] = $fn;
+        $this->_events[$option ?? \key($this->_options)] = $fn;
 
         return $this;
     }
@@ -280,6 +281,11 @@ class Command extends Parser
     {
         if (empty($this->_events[$event])) {
             return;
+        }
+
+        // Factory events
+        if (\in_array($event, ['help', 'version'])) {
+           return ($this->_events[$event])();
         }
 
         return ($this->_events[$event])($value);
