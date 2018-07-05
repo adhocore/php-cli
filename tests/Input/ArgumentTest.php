@@ -11,6 +11,7 @@ class ArgumentTest extends TestCase
     {
         $a = new Argument('<a>');
         $this->assertTrue($a->required());
+        $this->assertFalse($a->optional());
 
         $a = new Argument('[b:ball]');
         $this->assertFalse($a->required());

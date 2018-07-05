@@ -179,7 +179,7 @@ class CommandTest extends TestCase
     {
         $p = $this->newCommand()->option('-x --xyz')->parse(['php', '-x']);
 
-        $this->assertNull($p->xyz);
+        $this->assertTrue($p->xyz, 'not required becomes true');
     }
 
     public function test_args()

@@ -26,7 +26,7 @@ class ApplicationTest extends TestCase
         $a = $this->newApp('project', '1.0.1');
         $this->assertEmpty($a->commands());
 
-        $a->command('new', 'Create new project', false, 'n');
+        $a->command('new', 'Create new project', 'n');
         $this->assertNotEmpty($a->commands());
         $this->assertCount(1, $a->commands());
 
@@ -39,29 +39,29 @@ class ApplicationTest extends TestCase
     {
         $a = $this->newApp('project', '1.0.1');
 
-        $a->command('clean', 'Cleanup project status', false);
+        $a->command('clean', 'Cleanup project status');
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Command "clean" already added');
-        $a->command('clean', 'Cleanup project status', false, 'c');
+        $a->command('clean', 'Cleanup project status', 'c');
     }
 
     public function test_command_dup_alias()
     {
         $a = $this->newApp('project', '1.0.1');
 
-        $a->command('clean', 'Cleanup project status', false, 'c');
+        $a->command('clean', 'Cleanup project status', 'c');
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Command "c" already added');
-        $a->command('c', 'Cleanup project status', false, 'd');
+        $a->command('c', 'Cleanup project status', 'd');
     }
 
     public function test_parse()
     {
         $a = $this->newApp('git');
 
-        $a->command('add', 'stage change', false, 'a')->arguments('<files...>');
+        $a->command('add', 'stage change', 'a')->arguments('<files...>');
         $c = $a->parse(['git', 'add', 'file1', 'file2']);
 
         $this->assertSame(['file1', 'file2'], $c->files);
@@ -73,7 +73,7 @@ class ApplicationTest extends TestCase
         $ou = __DIR__ . '/output';
         $a  = $this->newApp('git', '0.0.2');
 
-        $a->command('add', 'stage change', false, 'a')->arguments('<files...>');
+        $a->command('add', 'stage change', 'a')->arguments('<files...>');
         $a->showHelp(new Writer($ou));
 
         $out = file_get_contents($ou);
@@ -88,11 +88,11 @@ class ApplicationTest extends TestCase
     public function test_action()
     {
         ($a = $this->newApp('git', '0.0.2'))
-            ->command('add', 'stage change', false, 'a')
+            ->command('add', 'stage change', 'a')
                 ->arguments('<files...>')->action(function ($files) {
                     echo 'Add ' . implode(' and ', $files);
                 })->tap($a)
-            ->command('config', 'list config', false, 'c')
+            ->command('config', 'list config', 'c')
                 ->option('-l --list <scope>', 'list config')->action(function ($list) {
                     echo "Config $list: user.email=user+100@gmail.com";
                 });
