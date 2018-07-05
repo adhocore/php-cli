@@ -4,11 +4,15 @@ namespace Ahc\Cli;
 
 use Ahc\Cli\Input\Command;
 use Ahc\Cli\Helper\OutputHelper;
+use Ahc\Cli\Output\Writer;
 
 /**
- * A command application.
+ * A cli application.
  *
- * @codeCoverageIgnore
+ * @author  Jitendra Adhikari <jiten.adhikary@gmail.com>
+ * @license MIT
+ *
+ * @link    https://github.com/adhocore/cli
  */
 class Application
 {
@@ -18,22 +22,30 @@ class Application
     /** @var array Raw argv sent to parse() */
     protected $argv = [];
 
+    /** @var array Command aliases [alias => cmd] */
     protected $aliases = [];
 
+    /** @var string */
     protected $name;
 
     /** @var string App version */
     protected $version = '0.0.1';
 
-    public function __construct(string $name, string $version, callable $onExit = null)
+    public function __construct(string $name, string $version = '', callable $onExit = null)
     {
         $this->name    = $name;
         $this->version = $version;
 
-        $this->command = (new Command('__default__', 'Default command', true))->version($this->version);
-        $this->onExit  = $onExit ?? function () {
-            exit(0);
-        };
+        // @codeCoverageIgnoreStart
+        $this->onExit = $onExit ?? function () {
+             exit(0);
+         };
+        // @codeCoverageIgnoreEnd
+
+        $this->command = $this->command('__default__', 'Default command', true);
+
+        unset($this->commands['__default__']);
+
     }
 
     public function name(): string
@@ -58,7 +70,7 @@ class Application
 
     public function command(string $name, string $desc = '', bool $allowUnknown = false, string $alias = ''): Command
     {
-        if (isset($this->commands[$name])) {
+        if ($this->commands[$name] ?? $this->aliases[$name] ?? $this->commands[$alias] ?? $this->aliases[$alias] ?? null) {
             throw new \InvalidArgumentException(\sprintf('Command "%s" already added', $name));
         }
 
@@ -66,7 +78,9 @@ class Application
             $this->aliases[$alias] = $name;
         }
 
-        return $this->commands[$name] = (new Command($name, $desc, $allowUnknown))->version($this->version)->onExit($this->onExit);
+        $command = (new Command($name, $desc, $allowUnknown, $this))->version($this->version)->onExit($this->onExit);
+
+        return $this->commands[$name] = $command;
     }
 
     public function commandFor(array $argv): Command
@@ -86,23 +100,47 @@ class Application
 
     public function parse(array $argv)
     {
-        $this->command = $this->commandFor($argv)->parse($argv);
+        $this->argv = $argv;
 
-        $this->doAction($this->command);
+        $command = $this->commandFor($argv);
+        $aliases = $this->aliasesFor($command);
 
-        return $this->command;
+        // Eat the cmd name!
+        foreach ($argv as $i => $arg) {
+            if (\in_array($arg, $aliases)) {
+                unset($argv[$i]);
+            }
+        }
+
+        $command->parse($argv);
+
+        $this->doAction($command);
+
+        return $command;
+
     }
 
-    public function showHelp()
+    protected function aliasesFor(Command $command)
     {
+        $aliases = [$name = $command->name()];
+
+        foreach ($this->aliases as $alias => $command) {
+            if ($command === $name) {
+                $aliases[] = $alias;
+            }
+        }
+
+        return $aliases;
+    }
+
+     public function showHelp(Writer $writer = null)
+     {
         $header = "{$this->name}, version {$this->version}";
         $footer = 'Run `<command> --help` for specific help';
 
-        (new OutputHelper)->showCommandsHelp($this->commands, $header, $footer);
+        (new OutputHelper($writer))->showCommandsHelp($this->commands, $header, $footer);
 
-        $exit = $this->onExit;
-
-        $exit();
+        return ($this->onExit)();
     }
 
     protected function doAction(Command $command)
