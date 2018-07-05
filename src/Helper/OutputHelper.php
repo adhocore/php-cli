@@ -31,7 +31,7 @@ class OutputHelper
      */
     public function showArgumentsHelp(array $arguments, string $header = '', string $footer = ''): self
     {
-        $this->showHelp('Arguments', $arguments, 4, $header, $footer);
+        $this->showHelp('Arguments', $arguments, 6, $header, $footer);
 
         return $this;
     }
@@ -43,7 +43,7 @@ class OutputHelper
      */
     public function showOptionsHelp(array $options, string $header = '', string $footer = ''): self
     {
-        $this->showHelp('Options', $options, 9, $header, $footer);
+        $this->showHelp('Options', $options, 13, $header, $footer);
 
         return $this;
     }
@@ -55,7 +55,7 @@ class OutputHelper
      */
     public function showCommandsHelp(array $commands, string $header = '', string $footer = ''): self
     {
-        $this->showHelp('Commands', $commands, 2, $header, $footer);
+        $this->showHelp('Commands', $commands, 4, $header, $footer);
 
         return $this;
     }

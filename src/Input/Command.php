@@ -67,6 +67,12 @@ class Command extends Parser
             return false;
         });
 
+        // @codeCoverageIgnoreStart
+        $this->onExit(function () {
+            exit(0);
+        });
+        // @codeCoverageIgnoreEnd
+
         return $this;
     }
 

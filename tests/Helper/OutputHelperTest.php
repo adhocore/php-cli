@@ -35,8 +35,8 @@ class OutputHelperTest extends TestCase
             'Arg Header',
             '',
             'Arguments:',
-            '  [config]  ',
-            '  <path>    ',
+            '  [config]    ',
+            '  <path>      ',
             '',
             'Arg Footer',
         ], $this->output());
@@ -53,8 +53,8 @@ class OutputHelperTest extends TestCase
             'Opt Header',
             '',
             'Options:',
-            '  <-n|--full-name>  Full name',
-            '  [-h|--help]       Show help',
+            '  <-n|--full-name>      Full name',
+            '  [-h|--help]           Show help',
             '',
             'Opt Footer',
         ], $this->output());
@@ -71,8 +71,8 @@ class OutputHelperTest extends TestCase
             'Cmd Header',
             '',
             'Commands:',
-            '  mkdir  Make a folder',
-            '  rm     Remove file or folder',
+            '  mkdir    Make a folder',
+            '  rm       Remove file or folder',
             '',
             'Cmd Footer',
         ], $this->output());
