@@ -4,7 +4,7 @@ namespace Ahc\Cli\Test\Helper;
 
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\Input\Argument;
-use Ahc\Cli\Input\ArgvParser as Command;
+use Ahc\Cli\Input\Command;
 use Ahc\Cli\Input\Option;
 use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
