@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahc\Cli;
+namespace Ahc\Cli\Input;
 
 /**
  * Argv parser for the cli.
@@ -131,7 +131,10 @@ abstract class Parser
             return $isValue;
         }
 
-        $this->emit($option->attributeName());
+        if (false === $this->emit($option->attributeName(), $value)) {
+            return false;
+        }
+
         $this->setValue($option, $value);
 
         return $isValue;
@@ -148,7 +151,7 @@ abstract class Parser
 
     abstract protected function handleUnknown(string $arg, string $value = null);
 
-    abstract protected function emit(string $event);
+    abstract protected function emit(string $event, $value = null);
 
     protected function setValue(Option $option, string $value = null)
     {

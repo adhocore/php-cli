@@ -1,8 +1,9 @@
 <?php
 
-namespace Ahc\Cli\Test;
+namespace Ahc\Cli\Test\Input;
 
-use Ahc\Cli\ArgvParser;
+use Ahc\Cli\Input\ArgvParser;
+use Ahc\Cli\Test\CliTestCase;
 
 class DefaultOptionTest extends CliTestCase
 {
@@ -34,6 +35,13 @@ class DefaultOptionTest extends CliTestCase
     {
         $p = $this->newParser()->arguments('[apple]')->parse(['php', '--unknown', '1']);
         $this->assertContains('[apple]', $this->buffer(), 'Show help');
+    }
+
+    public function test_verbosity()
+    {
+        $p = $this->newParser()->parse(['php', '-vv', '-vvv']);
+
+        $this->assertSame(5, $p->verbosity);
     }
 
     protected function newParser(string $version = '0.0.1', string $desc = '', bool $allowUnknown = false)

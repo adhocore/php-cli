@@ -1,6 +1,8 @@
 <?php
 
-namespace Ahc\Cli;
+namespace Ahc\Cli\Input;
+
+use Ahc\Cli\Helper\InflectsString;
 
 /**
  * Cli Parameter.
@@ -14,18 +16,25 @@ abstract class Parameter
 {
     use InflectsString;
 
+    /** @var string */
     protected $name;
 
+    /** @var string */
     protected $raw;
 
+    /** @var string */
     protected $desc;
 
+    /** @var mixed */
     protected $default;
 
+    /** @var bool */
     protected $required = false;
 
+    /** @var bool */
     protected $optional = false;
 
+    /** @var bool */
     protected $variadic = false;
 
     public function __construct(string $raw, string $desc = '', $default = null)
@@ -40,6 +49,13 @@ abstract class Parameter
         $this->parse($raw);
     }
 
+    /**
+     * Parse raw string representation of parameter.
+     *
+     * @param string $raw
+     *
+     * @return void
+     */
     abstract protected function parse(string $raw);
 
     public function raw(): string

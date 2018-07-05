@@ -5,3 +5,5 @@
 /vendor/
 composer.lock
 *.local.*
+clover.xml
+coverage.xml

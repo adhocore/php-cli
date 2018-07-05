@@ -1,6 +1,6 @@
 <?php
 
-namespace Ahc\Cli;
+namespace Ahc\Cli\Input;
 
 /**
  * Cli Option.
@@ -25,6 +25,9 @@ class Option extends Parameter
         parent::__construct($raw, $desc, $default);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function parse(string $raw)
     {
         if (\strpos($raw, '-with-') !== false) {
@@ -63,6 +66,13 @@ class Option extends Parameter
         return \preg_match('/\-no|\-with/', $this->long) > 0;
     }
 
+    /**
+     * Run the filter/sanitizer/validato callback for this prop.
+     *
+     * @param mixed $raw
+     *
+     * @return mixed
+     */
     public function filter($raw)
     {
         if ($this->filter) {
