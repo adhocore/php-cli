@@ -3,8 +3,8 @@
 namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Input\Argument;
-use Ahc\Cli\Input\Parser as Command;
 use Ahc\Cli\Input\Option;
+use Ahc\Cli\Input\Parser as Command;
 use Ahc\Cli\Output\Writer;
 
 /**
