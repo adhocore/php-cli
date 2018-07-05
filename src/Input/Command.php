@@ -285,7 +285,7 @@ class Command extends Parser
 
         // Factory events
         if (\in_array($event, ['help', 'version'])) {
-           return ($this->_events[$event])();
+            return ($this->_events[$event])();
         }
 
         return ($this->_events[$event])($value);

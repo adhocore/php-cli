@@ -38,7 +38,7 @@ class Application
 
         // @codeCoverageIgnoreStart
         $this->onExit = $onExit ?? function () {
-             exit(0);
+            exit(0);
         };
         // @codeCoverageIgnoreEnd
 
@@ -135,8 +135,8 @@ class Application
         return $aliases;
     }
 
-     public function showHelp(Writer $writer = null)
-     {
+    public function showHelp(Writer $writer = null)
+    {
         $header = "{$this->name}, version {$this->version}";
         $footer = 'Run `<command> --help` for specific help';
 
