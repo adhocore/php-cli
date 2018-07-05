@@ -2,6 +2,7 @@
 
 namespace Ahc\Cli\Input;
 
+use Ahc\Cli\Application;
 use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\Output\Writer;
@@ -13,8 +14,6 @@ use Ahc\Cli\Output\Writer;
  * @license MIT
  *
  * @link    https://github.com/adhocore/cli
- *
- * @codeCoverageIgnore
  */
 class Command extends Parser
 {
@@ -38,6 +37,9 @@ class Command extends Parser
     /** @var bool Whether to allow unknown (not registered) options */
     protected $_allowUnknown = false;
 
+    /** @var Application The cli app this command is bound to */
+    protected $_app;
+
     /**
      * Constructor.
      *
@@ -45,11 +47,12 @@ class Command extends Parser
      * @param string $desc
      * @param bool   $allowUnknown
      */
-    public function __construct(string $name, string $desc = '', bool $allowUnknown = false)
+    public function __construct(string $name, string $desc = '', bool $allowUnknown = false, Application $app = null)
     {
         $this->_name         = $name;
         $this->_desc         = $desc;
         $this->_allowUnknown = $allowUnknown;
+        $this->_app          = $app;
 
         $this->defaults();
     }
@@ -62,9 +65,13 @@ class Command extends Parser
             $this->_values['verbosity']++;
 
             return false;
-        })->onExit(function () {
+        });
+
+        // @codeCoverageIgnoreStart
+        $this->onExit(function () {
             exit(0);
         });
+        // @codeCoverageIgnoreEnd
 
         return $this;
     }
@@ -91,6 +98,11 @@ class Command extends Parser
     public function desc(): string
     {
         return $this->_desc;
+    }
+
+    public function app()
+    {
+        return $this->_app;
     }
 
     /**
@@ -155,17 +167,18 @@ class Command extends Parser
     }
 
     /**
-     * Sets event handler for last option.
+     * Sets event handler for last (or given) option.
      *
      * @param callable $fn
+     * @param string   $option
      *
      * @return self
      */
-    public function on(callable $fn): self
+    public function on(callable $fn, string $option = null): self
     {
         \end($this->_options);
 
-        $this->_events[\key($this->_options)] = $fn;
+        $this->_events[$option ?? \key($this->_options)] = $fn;
 
         return $this;
     }
@@ -241,23 +254,25 @@ class Command extends Parser
         return \array_diff_key($this->_values, $this->_options);
     }
 
-    public function showHelp()
+    public function showHelp(Writer $writer = null)
     {
-        (new Writer)
+        $writer = $writer ?? new Writer;
+
+        $writer
             ->bold("Command {$this->_name}, version {$this->_version}", true)->eol()
             ->comment($this->_desc, true)->eol()
             ->bold('Usage: ')->yellow("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
 
-        (new OutputHelper)
+        (new OutputHelper($writer))
             ->showArgumentsHelp($this->_arguments)
             ->showOptionsHelp($this->_options, '', 'Legend: <required> [optional]');
 
         return $this->emit('_exit');
     }
 
-    public function showVersion()
+    public function showVersion(Writer $writer = null)
     {
-        (new Writer)->bold($this->_version, true);
+        ($writer ?? new Writer)->bold($this->_version, true);
 
         return $this->emit('_exit');
     }
@@ -268,14 +283,17 @@ class Command extends Parser
             return;
         }
 
-        $callback = $this->_events[$event];
+        // Factory events
+        if (\in_array($event, ['help', 'version'])) {
+            return ($this->_events[$event])();
+        }
 
-        return $callback($value);
+        return ($this->_events[$event])($value);
     }
 
-    public function tap($object)
+    public function tap($object = null)
     {
-        return $object;
+        return $object ?? $this->_app;
     }
 
     public function action(callable $action = null)

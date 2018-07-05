@@ -31,7 +31,7 @@ class OutputHelper
      */
     public function showArgumentsHelp(array $arguments, string $header = '', string $footer = ''): self
     {
-        $this->showHelp('Arguments', $arguments, 4, $header, $footer);
+        $this->showHelp('Arguments', $arguments, 6, $header, $footer);
 
         return $this;
     }
@@ -43,7 +43,7 @@ class OutputHelper
      */
     public function showOptionsHelp(array $options, string $header = '', string $footer = ''): self
     {
-        $this->showHelp('Options', $options, 9, $header, $footer);
+        $this->showHelp('Options', $options, 13, $header, $footer);
 
         return $this;
     }
@@ -55,11 +55,14 @@ class OutputHelper
      */
     public function showCommandsHelp(array $commands, string $header = '', string $footer = ''): self
     {
-        $this->showHelp('Commands', $commands, 2, $header, $footer);
+        $this->showHelp('Commands', $commands, 4, $header, $footer);
 
         return $this;
     }
 
+    /**
+     * Show help with headers and footers.
+     */
     protected function showHelp(string $for, array $items, int $space, string $header = '', string $footer = '')
     {
         if ($header) {
@@ -84,12 +87,15 @@ class OutputHelper
         }
     }
 
-    protected function sortItems(array $items, &$offset = 0)
+    /**
+     * Sort items by name. As a side effect sets max length of all names.
+     */
+    protected function sortItems(array $items, &$max = 0): array
     {
-        $offset = 0;
+        $max = 0;
 
-        uasort($items, function ($a, $b) use (&$offset) {
-            $offset = \max(\strlen($a->name()), \strlen($b->name()), $offset);
+        uasort($items, function ($a, $b) use (&$max) {
+            $max = \max(\strlen($a->name()), \strlen($b->name()), $max);
 
             return $a->name() <=> $b->name();
         });
@@ -97,7 +103,10 @@ class OutputHelper
         return $items;
     }
 
-    protected function getName($item)
+    /**
+     * Prepare name for different items.
+     */
+    protected function getName($item): string
     {
         $name = $item->name();
 
