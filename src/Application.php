@@ -42,10 +42,10 @@ class Application
         };
         // @codeCoverageIgnoreEnd
 
-        $this->command = $this->command('__default__', 'Default command', '', true);
+        $this->command = $this->command('__default__', 'Default command', '', true)
+            ->on([$this, 'showHelp'], 'help');
 
         unset($this->commands['__default__']);
-
     }
 
     public function name(): string
@@ -108,6 +108,10 @@ class Application
             if (\in_array($arg, $aliases)) {
                 unset($argv[$i]);
             }
+
+            if ($arg[0] === '-') {
+                break;
+            }
         }
 
         $command->parse($argv);
@@ -115,7 +119,6 @@ class Application
         $this->doAction($command);
 
         return $command;
-
     }
 
     protected function aliasesFor(Command $command): array
