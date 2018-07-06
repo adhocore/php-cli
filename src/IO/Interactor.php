@@ -33,8 +33,8 @@ class Interactor
     /**
      * Confirms if user agrees to prompt as indicated by given text.
      *
-     * @param  string $text    Eg: `Are you sure?`
-     * @param  string $default One of `y|n`
+     * @param string $text    Eg: `Are you sure?`
+     * @param string $default One of `y|n`
      *
      * @return bool
      */
@@ -48,10 +48,10 @@ class Interactor
     /**
      * Let user make a choice out of available choices.
      *
-     * @param  string       $text    Prompt text.
-     * @param  array        $choices Possible choices for user.
-     * @param  mixed        $default Default value- if not chosen or invalid.
-     * @param  bool         $case    If user input should be case sensitive.
+     * @param string $text    Prompt text.
+     * @param array  $choices Possible choices for user.
+     * @param mixed  $default Default value- if not chosen or invalid.
+     * @param bool   $case    If user input should be case sensitive.
      *
      * @return mixed User input or default.
      */
@@ -69,10 +69,10 @@ class Interactor
     /**
      * Let user make multiple choices out of available choices.
      *
-     * @param  string       $text    Prompt text.
-     * @param  array        $choices Possible choices for user.
-     * @param  mixed        $default Default value- if not chosen or invalid.
-     * @param  bool         $case    If user input should be case sensitive.
+     * @param string $text    Prompt text.
+     * @param array  $choices Possible choices for user.
+     * @param mixed  $default Default value- if not chosen or invalid.
+     * @param bool   $case    If user input should be case sensitive.
      *
      * @return mixed User input or default.
      */
@@ -102,11 +102,11 @@ class Interactor
     /**
      * Prompt user for free input.
      *
-     * @param  string        $text    Prompt text.
-     * @param  mixed         $default
-     * @param  callable|null $fn      The sanitizer/validator for user input
-     *                                Any exception message is printed and prompted again.
-     * @param  int           $retry   How many more times to retry on failure.
+     * @param string        $text    Prompt text.
+     * @param mixed         $default
+     * @param callable|null $fn      The sanitizer/validator for user input
+     *                               Any exception message is printed and prompted again.
+     * @param int           $retry   How many more times to retry on failure.
      *
      * @return mixed
      */
@@ -134,9 +134,9 @@ class Interactor
     /**
      * Show choices list.
      *
-     * @param  array $choices Available choices.
-     * @param  mixed $default
-     * @param  bool  $multi   Indicates multiple choices.
+     * @param array $choices Available choices.
+     * @param mixed $default
+     * @param bool  $multi   Indicates multiple choices.
      *
      * @return self
      */
@@ -162,8 +162,8 @@ class Interactor
     /**
      * Show prompt with possible options.
      *
-     * @param  array  $choices
-     * @param  mixed  $default
+     * @param array $choices
+     * @param mixed $default
      *
      * @return self
      */
@@ -183,9 +183,9 @@ class Interactor
     /**
      * Check if user choice is one of possible choices.
      *
-     * @param  string  $choice  User choice.
-     * @param  array   $choices Possible choices.
-     * @param  bool    $case    If input is case sensitive.
+     * @param string $choice  User choice.
+     * @param array  $choices Possible choices.
+     * @param bool   $case    If input is case sensitive.
      *
      * @return bool
      */
@@ -209,7 +209,7 @@ class Interactor
     /**
      * Check if the choices array is associative.
      *
-     * @param  array   $array Choices
+     * @param array $array Choices
      *
      * @return bool
      */
