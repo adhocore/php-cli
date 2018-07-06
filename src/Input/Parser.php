@@ -60,6 +60,13 @@ abstract class Parser
         return $this;
     }
 
+    /**
+     * Normalize argv args. Like splitting `-abc` and `--xyz=...`
+     *
+     * @param array $args
+     *
+     * @return array
+     */
     protected function normalize(array $args): array
     {
         $normalized = [];
@@ -137,6 +144,13 @@ abstract class Parser
         return $this->setValue($option, $value);
     }
 
+    /**
+     * Get matching option by arg (name) or null.
+     *
+     * @param string $arg
+     *
+     * @return Option|null
+     */
     protected function optionFor(string $arg)
     {
         foreach ($this->_options as $option) {
@@ -144,12 +158,40 @@ abstract class Parser
                 return $option;
             }
         }
+
+        return null;
     }
 
+    /**
+     * Handle Unknown option.
+     *
+     * @param string      $arg   Option name
+     * @param string|null $value Value
+     *
+     * @return void
+     *
+     * @throws \RuntimeException When given arg is not registered and allow unkown flag is not set.
+     */
     abstract protected function handleUnknown(string $arg, string $value = null);
 
+    /**
+     * Emit the event with value.
+     *
+     * @param string $event Event name (is option name technically)
+     * @param mixed  $value Value (is option value technically)
+     *
+     * @return mixed
+     */
     abstract protected function emit(string $event, $value = null);
 
+    /**
+     * Sets value of an option.
+     *
+     * @param Option      $option
+     * @param string|null $value
+     *
+     * @return bool Indicating whether it has eaten adjoining arg to its right.
+     */
     protected function setValue(Option $option, string $value = null): bool
     {
         $name  = $option->attributeName();
@@ -160,6 +202,14 @@ abstract class Parser
         return !\in_array($value, [true, false, null], true);
     }
 
+    /**
+     * Prepares value as per context and runs thorugh filter if possible.
+     *
+     * @param  Option      $option
+     * @param  string|null $value
+     *
+     * @return mixed
+     */
     protected function prepareValue(Option $option, string $value = null)
     {
         if (\is_bool($default = $option->default())) {
@@ -177,6 +227,11 @@ abstract class Parser
         return null === $value ? null : $option->filter($value);
     }
 
+    /**
+     * Validate if all required arguments/options have proper values.
+     *
+     * @throw \RuntimeException If value missing for required ones.
+     */
     protected function validate()
     {
         foreach ($this->_options + $this->_arguments as $item) {
