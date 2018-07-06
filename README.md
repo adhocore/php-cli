@@ -141,4 +141,87 @@ For above example, the output would be:
 
 Same version number is passed to all attached Commands. So you can trigger version on any of the commands.
 
-...wip
+### Cli Interaction
+
+You can perform user interaction like printing colored output or reading user input programatically with provided `Ahc\Cli\IO\Interactor`.
+
+```php
+$interactor = new Ahc\Cli\IO\Interactor;
+// For mocking io: `$interactor = new Ahc\Cli\IO\Interactor($inputPath, $outputPath)`
+
+$confirm = $interactor->confirm('Are you happy?', 'n'); // Default: n (no)
+$confirm // is a boolean
+    ? $interactor->greenBold('You are happy :)', true)  // Output green bold text
+    : $interactor->redBold('You are sad :(', true);     // Output red bold text
+
+// Single choice
+$fruits = ['a' => 'apple', 'b' => 'banana'];
+$choice = $interactor->choice('Select a fruit', $fruits, 'b');
+$interactor->greenBold("You selected: {$fruits[$choice]}", true);
+
+// Multiple choices
+$fruits  = ['a' => 'apple', 'b' => 'banana', 'c' => 'cherry'];
+$choices = $interactor->choices('Select fruit(s)', $fruits, ['b', 'c']);
+$choices = \array_map(function ($c) use ($fruits) { return $fruits[$c]; }, $choices);
+$interactor->greenBold('You selected: ' . implode(', ', $choices), true);
+
+// Promt free input
+$any = $interactor->prompt('Anything', rand(1, 100)); // Random default
+$interactor->greenBold("Anything is: $any", true);
+
+// Prompting with validation
+$nameValidator = function ($value) {
+    if (\strlen($value) < 5) {
+        throw new \Exception('Name should be atleast 5 chars');
+    }
+
+    return $value;
+};
+
+// No default, Retry 5 more times
+$name = $interactor->prompt('Name', null, $nameValidator, 5);
+$interactor->greenBold("The name is: $name", true);
+```
+
+#### IO Components
+
+The interactor is composed of `Ahc\Cli\Input\Reader` and `Ahc\Cli\Output\Writer` while the `Writer` itself is composed of `Ahc\Cli\Output\Color`. All these components can be used standalone.
+
+```php
+$color  = new Ahc\Cli\Output\Color;
+$writer = new Ahc\Cli\Output\Writer;
+$reader = new Ahc\Cli\Input\Reader;
+
+echo $color->warn('This is warning');
+echo $color->info('This is info');
+echo $color->error('This is error');
+
+// Custom style:
+Ahc\Cli\Output\Color::style('mystyle', [
+    'bg' => Ahc\Cli\Output\Color::CYAN,
+    'fg' => Ahc\Cli\Output\Color::WHITE,
+    'bold' => 1, // You can experiment with 0, 1, 2, 3 ... as well
+]);
+
+echo $color->mystyle('My text');
+
+// Output formatting
+// ('<colorName>', 'bold', 'bg', 'fg', 'warn', 'info', 'error', 'ok', 'comment')
+$writer->bold->green->write('It is bold green');
+$writer->boldGreen('It is bold green'); // Same as above
+$writer->comment('This is grayish comment', true); // True indicates append EOL character.
+$writer->bgPurpleBold('This is white on purple background');
+
+// All writes are forwarded to STDOUT
+// But if you specify error, then to STDERR
+$writer->errorBold('This is error');
+
+// Moving cursors: Up 2 steps, then down 1 step, then right 5 steps and left 2 steps!
+$writer->up(2)->down()->right(5)->left(2);
+
+// Write a normal raw text.
+$writer->raw('Enter name: ');
+
+// No default, callback fn `ucwords()`
+$reader->read(null, 'ucwords');
+```
