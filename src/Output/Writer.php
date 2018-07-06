@@ -24,6 +24,9 @@ class Writer
     /** @var Color */
     protected $colorizer;
 
+    /** @var Cursor */
+    protected $cursor;
+
     public function __construct(string $path = null, Color $colorizer = null)
     {
         if ($path) {
@@ -33,6 +36,7 @@ class Writer
         $this->stream  = $path ?: \STDOUT;
         $this->eStream = $path ?: \STDERR;
 
+        $this->cursor    = new Cursor;
         $this->colorizer = $colorizer ?? new Color;
     }
 
@@ -83,26 +87,6 @@ class Writer
         return $this;
     }
 
-    public function up(int $n = 1): self
-    {
-        return $this->doWrite(\str_repeat("\e[A", \max($n, 1)));
-    }
-
-    public function down(int $n = 1): self
-    {
-        return $this->doWrite(\str_repeat("\e[B", \max($n, 1)));
-    }
-
-    public function right(int $n = 1): self
-    {
-        return $this->doWrite(\str_repeat("\e[C", \max($n, 1)));
-    }
-
-    public function left(int $n = 1): self
-    {
-        return $this->doWrite(\str_repeat("\e[D", \max($n, 1)));
-    }
-
     public function eol(int $n = 1): self
     {
         return $this->doWrite(\str_repeat(PHP_EOL, \max($n, 1)));
@@ -123,8 +107,12 @@ class Writer
      */
     public function __call(string $method, array $arguments): self
     {
+        if (\method_exists($this->cursor, $method)) {
+            return $this->doWrite($this->cursor->{$method}(...$arguments));
+        }
+
         $this->method = $method;
 
-        return $this->write($arguments[0] ?? '', $arguments[1] ?? false);
+        return $this->write(...$arguments);
     }
 }
