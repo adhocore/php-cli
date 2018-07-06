@@ -13,6 +13,15 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 - Inspired by nodejs [commander](https://github.com/tj/commander.js) (thanks tj)
 - For PHP7 and for good
 
+#### What's included
+
+- Argv parser
+- Cli application
+- Colorizer
+- Cursor manipulator
+- Stream writer
+- Stream reader
+
 ## Installation
 ```bash
 composer require adhocore/cli
@@ -42,8 +51,8 @@ $command
 
 // Print all values:
 print_r($command->values());
-/***
-Array
+
+/*Array
 (
     [help] =>
     [version] => 0.0.1
@@ -58,8 +67,7 @@ Array
     [subdir] => true
     [empty] => false
     [depth] => 5
-)
-***/
+)*/
 
 // Pick a value by name
 $command->dir;   // dir1
@@ -143,7 +151,7 @@ Same version number is passed to all attached Commands. So you can trigger versi
 
 ### Cli Interaction
 
-You can perform user interaction like printing colored output or reading user input programatically with provided `Ahc\Cli\IO\Interactor`.
+You can perform user interaction like printing colored output, reading user input programatically and  moving the cursors around with provided `Ahc\Cli\IO\Interactor`.
 
 ```php
 $interactor = new Ahc\Cli\IO\Interactor;
@@ -183,14 +191,16 @@ $name = $interactor->prompt('Name', null, $nameValidator, 5);
 $interactor->greenBold("The name is: $name", true);
 ```
 
-#### IO Components
+### IO Components
 
 The interactor is composed of `Ahc\Cli\Input\Reader` and `Ahc\Cli\Output\Writer` while the `Writer` itself is composed of `Ahc\Cli\Output\Color`. All these components can be used standalone.
 
+#### Color
+
+Color looks cool!
+
 ```php
-$color  = new Ahc\Cli\Output\Color;
-$writer = new Ahc\Cli\Output\Writer;
-$reader = new Ahc\Cli\Input\Reader;
+$color = new Ahc\Cli\Output\Color;
 
 echo $color->warn('This is warning');
 echo $color->info('This is info');
@@ -204,6 +214,29 @@ Ahc\Cli\Output\Color::style('mystyle', [
 ]);
 
 echo $color->mystyle('My text');
+```
+
+#### Cursor
+
+Move cursor around, erase line up or down, clear screen.
+
+```php
+$cursor = new Ahc\Cli\Output\Cursor;
+
+echo  $cursor->up(1) . $cursor->down(2)
+    . $cursor->right(3) . $cursor->left(4)
+    . $cursor->next(0) . $cursor->prev(2);
+    . $cursor->eraseLine() . $cursor->clear()
+    . $cursor->clearUp() . $cursor->clearDown()
+    . $cursor->moveTo(5, 8); // x, y
+```
+
+#### Writer
+
+Write anything in style.
+
+```php
+$writer = new Ahc\Cli\Output\Writer;
 
 // Output formatting
 // ('<colorName>', 'bold', 'bg', 'fg', 'warn', 'info', 'error', 'ok', 'comment')
@@ -216,12 +249,20 @@ $writer->bgPurpleBold('This is white on purple background');
 // But if you specify error, then to STDERR
 $writer->errorBold('This is error');
 
-// Moving cursors: Up 2 steps, then down 1 step, then right 5 steps and left 2 steps!
-$writer->up(2)->down()->right(5)->left(2);
-
 // Write a normal raw text.
 $writer->raw('Enter name: ');
+```
+
+#### Reader
+
+Read and pre process user input.
+
+```php
+$reader = new Ahc\Cli\Input\Reader;
 
 // No default, callback fn `ucwords()`
 $reader->read(null, 'ucwords');
+
+// Default 'abc', callback `trim()`
+$reader->read('abc', 'trim');
 ```
