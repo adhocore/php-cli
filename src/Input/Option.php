@@ -56,7 +56,7 @@ class Option extends Parameter
         return $this->short;
     }
 
-    public function is($arg): bool
+    public function is(string $arg): bool
     {
         return $this->short === $arg || $this->long === $arg;
     }

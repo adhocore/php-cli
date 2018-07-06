@@ -100,6 +100,11 @@ class Command extends Parser
         return $this->_desc;
     }
 
+    /**
+     * Get the app this command belongs to.
+     *
+     * @return null|Application
+     */
     public function app()
     {
         return $this->_app;
@@ -156,6 +161,11 @@ class Command extends Parser
         return $this;
     }
 
+    /**
+     * What if the given name is already registered.
+     *
+     * @throws \InvalidArgumentException If given param name is already registered.
+     */
     protected function ifAlreadyRegistered(string $name, Parameter $param)
     {
         if (\array_key_exists($name, $this->_values)) {
@@ -197,6 +207,9 @@ class Command extends Parser
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function handleUnknown(string $arg, string $value = null)
     {
         if ($this->_allowUnknown) {
@@ -249,6 +262,11 @@ class Command extends Parser
         return $this->_values[$key] ?? null;
     }
 
+    /**
+     * Get the command arguments i.e which is not an option.
+     *
+     * @return array
+     */
     public function args(): array
     {
         return \array_diff_key($this->_values, $this->_options);
@@ -277,6 +295,9 @@ class Command extends Parser
         return $this->emit('_exit');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function emit(string $event, $value = null)
     {
         if (empty($this->_events[$event])) {
@@ -291,11 +312,25 @@ class Command extends Parser
         return ($this->_events[$event])($value);
     }
 
+    /**
+     * Tap return given object or if that is null then app instance. This aids for chaining.
+     *
+     * @param mixed $object
+     *
+     * @return mixed
+     */
     public function tap($object = null)
     {
         return $object ?? $this->_app;
     }
 
+    /**
+     * Get or set command action.
+     *
+     * @param callable|null $action If provided it is set
+     *
+     * @return callable|self If $action provided then self, otherwise the preset action.
+     */
     public function action(callable $action = null)
     {
         if (\func_num_args() === 0) {

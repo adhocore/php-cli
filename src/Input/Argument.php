@@ -12,6 +12,9 @@ namespace Ahc\Cli\Input;
  */
 class Argument extends Parameter
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function parse(string $arg)
     {
         $this->required = $arg[0] === '<';

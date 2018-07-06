@@ -17,6 +17,7 @@ use Ahc\Cli\Output\Writer;
  */
 class OutputHelper
 {
+    /** @var Writer */
     protected $writer;
 
     public function __construct(Writer $writer = null)
@@ -94,7 +95,7 @@ class OutputHelper
     {
         $max = 0;
 
-        uasort($items, function ($a, $b) use (&$max) {
+        \uasort($items, function ($a, $b) use (&$max) {
             $max = \max(\strlen($a->name()), \strlen($b->name()), $max);
 
             return $a->name() <=> $b->name();

@@ -18,12 +18,26 @@ class Interactor
     protected $reader;
     protected $writer;
 
+    /**
+     * Constructor.
+     *
+     * @param string|null $input  Input stream path.
+     * @param string|null $output Output steam path.
+     */
     public function __construct(string $input = null, string $output = null)
     {
         $this->reader = new Reader($input);
         $this->writer = new Writer($output);
     }
 
+    /**
+     * Confirms if user agrees to prompt as indicated by given text.
+     *
+     * @param string $text    Eg: `Are you sure?`
+     * @param string $default One of `y|n`
+     *
+     * @return bool
+     */
     public function confirm(string $text, string $default = 'y'): bool
     {
         $choice = $this->choice($text, ['y', 'n'], $default, false);
@@ -31,6 +45,16 @@ class Interactor
         return \strtolower($choice[0] ?? $default) === 'y';
     }
 
+    /**
+     * Let user make a choice out of available choices.
+     *
+     * @param string $text    Prompt text.
+     * @param array  $choices Possible choices for user.
+     * @param mixed  $default Default value- if not chosen or invalid.
+     * @param bool   $case    If user input should be case sensitive.
+     *
+     * @return mixed User input or default.
+     */
     public function choice(string $text, array $choices, $default = null, bool $case = false)
     {
         $this->writer->yellow($text);
@@ -42,6 +66,16 @@ class Interactor
         return $this->isValidChoice($choice, $choices, $case) ? $choice : $default;
     }
 
+    /**
+     * Let user make multiple choices out of available choices.
+     *
+     * @param string $text    Prompt text.
+     * @param array  $choices Possible choices for user.
+     * @param mixed  $default Default value- if not chosen or invalid.
+     * @param bool   $case    If user input should be case sensitive.
+     *
+     * @return mixed User input or default.
+     */
     public function choices(string $text, array $choices, $default = null, bool $case = false)
     {
         $this->writer->yellow($text);
@@ -65,6 +99,17 @@ class Interactor
         return $valid ?: (array) $default;
     }
 
+    /**
+     * Prompt user for free input.
+     *
+     * @param string        $text    Prompt text.
+     * @param mixed         $default
+     * @param callable|null $fn      The sanitizer/validator for user input
+     *                               Any exception message is printed and prompted again.
+     * @param int           $retry   How many more times to retry on failure.
+     *
+     * @return mixed
+     */
     public function prompt(string $text, $default = null, callable $fn = null, int $retry = 3)
     {
         $error = 'Invalid value. Please try again!';
@@ -86,6 +131,15 @@ class Interactor
         return $input ?? $default;
     }
 
+    /**
+     * Show choices list.
+     *
+     * @param array $choices Available choices.
+     * @param mixed $default
+     * @param bool  $multi   Indicates multiple choices.
+     *
+     * @return self
+     */
     protected function listOptions(array $choices, $default = null, bool $multi = false): self
     {
         if (!$this->isAssocChoice($choices)) {
@@ -105,6 +159,14 @@ class Interactor
         return $this->promptOptions(\array_keys($choices), $default);
     }
 
+    /**
+     * Show prompt with possible options.
+     *
+     * @param array $choices
+     * @param mixed $default
+     *
+     * @return self
+     */
     protected function promptOptions(array $choices, $default): self
     {
         $options = \implode('/', $choices);
@@ -118,6 +180,15 @@ class Interactor
         return $this;
     }
 
+    /**
+     * Check if user choice is one of possible choices.
+     *
+     * @param string $choice  User choice.
+     * @param array  $choices Possible choices.
+     * @param bool   $case    If input is case sensitive.
+     *
+     * @return bool
+     */
     protected function isValidChoice($choice, array $choices, bool $case)
     {
         if ($this->isAssocChoice($choices)) {
@@ -135,6 +206,13 @@ class Interactor
         return false;
     }
 
+    /**
+     * Check if the choices array is associative.
+     *
+     * @param array $array Choices
+     *
+     * @return bool
+     */
     protected function isAssocChoice(array $array)
     {
         return !empty($array) && \array_keys($array) != \range(0, \count($array) - 1);
