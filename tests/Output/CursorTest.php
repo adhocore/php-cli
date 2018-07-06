@@ -40,4 +40,3 @@ class CursorTest extends TestCase
         $this->assertSame("\e[2;1H\e[8;5H", ob_get_clean());
     }
 }
-
