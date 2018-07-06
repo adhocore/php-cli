@@ -12,7 +12,7 @@ namespace Ahc\Cli\Helper;
  */
 trait InflectsString
 {
-    public function toCamelCase(string $string)
+    public function toCamelCase(string $string): string
     {
         $words = \str_replace(['-', '_'], ' ', $string);
 

@@ -27,27 +27,27 @@ class Color
     /** @vstatic ar array Custom styles */
     protected static $styles = [];
 
-    public function comment(string $text, array $style = [])
+    public function comment(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::BLACK, 'bold' => 1] + $style);
     }
 
-    public function error(string $text, array $style = [])
+    public function error(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::RED] + $style);
     }
 
-    public function ok(string $text, array $style = [])
+    public function ok(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::GREEN] + $style);
     }
 
-    public function warn(string $text, array $style = [])
+    public function warn(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::YELLOW] + $style);
     }
 
-    public function info(string $text, array $style = [])
+    public function info(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::BLUE] + $style);
     }
@@ -60,7 +60,7 @@ class Color
      *
      * @return string
      */
-    public function line(string $text, array $style = [])
+    public function line(string $text, array $style = []): string
     {
         $style += ['bg' => null, 'fg' => static::WHITE, 'bold' => false];
 
@@ -110,7 +110,7 @@ class Color
      *
      * @return string
      */
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): string
     {
         if (!isset($arguments[0])) {
             throw new \InvalidArgumentException('Text required');
@@ -142,7 +142,7 @@ class Color
      *
      * @return array
      */
-    protected function parseCall(string $name, array $arguments)
+    protected function parseCall(string $name, array $arguments): array
     {
         list($text, $style) = $arguments + ['', []];
 
@@ -169,7 +169,7 @@ class Color
      *
      * @return arrsy
      */
-    protected function buildStyle(string $name, array $style, array $matches)
+    protected function buildStyle(string $name, array $style, array $matches): array
     {
         foreach ($matches[0] as $i => $match) {
             $name  = \str_replace($match, '', $name);

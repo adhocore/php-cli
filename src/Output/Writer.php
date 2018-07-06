@@ -83,32 +83,32 @@ class Writer
         return $this;
     }
 
-    public function up(int $n = 1)
+    public function up(int $n = 1): self
     {
         return $this->doWrite(\str_repeat("\e[A", \max($n, 1)));
     }
 
-    public function down(int $n = 1)
+    public function down(int $n = 1): self
     {
         return $this->doWrite(\str_repeat("\e[B", \max($n, 1)));
     }
 
-    public function right(int $n = 1)
+    public function right(int $n = 1): self
     {
         return $this->doWrite(\str_repeat("\e[C", \max($n, 1)));
     }
 
-    public function left(int $n = 1)
+    public function left(int $n = 1): self
     {
         return $this->doWrite(\str_repeat("\e[D", \max($n, 1)));
     }
 
-    public function eol(int $n = 1)
+    public function eol(int $n = 1): self
     {
         return $this->doWrite(\str_repeat(PHP_EOL, \max($n, 1)));
     }
 
-    public function raw($text, bool $error = false)
+    public function raw($text, bool $error = false): self
     {
         return $this->doWrite((string) $text, $error);
     }
