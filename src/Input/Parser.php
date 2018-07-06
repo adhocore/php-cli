@@ -61,7 +61,7 @@ abstract class Parser
     }
 
     /**
-     * Normalize argv args. Like splitting `-abc` and `--xyz=...`
+     * Normalize argv args. Like splitting `-abc` and `--xyz=...`.
      *
      * @param array $args
      *
@@ -168,9 +168,9 @@ abstract class Parser
      * @param string      $arg   Option name
      * @param string|null $value Value
      *
-     * @return void
-     *
      * @throws \RuntimeException When given arg is not registered and allow unkown flag is not set.
+     *
+     * @return void
      */
     abstract protected function handleUnknown(string $arg, string $value = null);
 
@@ -205,8 +205,8 @@ abstract class Parser
     /**
      * Prepares value as per context and runs thorugh filter if possible.
      *
-     * @param  Option      $option
-     * @param  string|null $value
+     * @param Option      $option
+     * @param string|null $value
      *
      * @return mixed
      */
