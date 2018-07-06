@@ -96,7 +96,7 @@ class Application
             ?? $this->command;
     }
 
-    public function parse(array $argv)
+    public function parse(array $argv): Command
     {
         $this->argv = $argv;
 

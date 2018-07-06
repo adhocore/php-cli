@@ -39,19 +39,19 @@ class WriterTest extends CliTestCase
         $this->assertSame("\033[1;31;42mbold->red->bgGreen\033[0m", $this->buffer());
     }
 
-    public function test_cursor()
+    public function test_raw()
     {
         $w = new Writer($ou = __DIR__ . '/output');
 
-        $w->up()->down()->right()->left()->raw(new class {
+        $w->raw(new class {
             public function __toString()
             {
                 return __FUNCTION__;
             }
-        });
+        })->clear();
 
         $out = file_get_contents($ou);
-        $this->assertSame("\e[A\e[B\e[C\e[D__toString", $out);
+        $this->assertSame("__toString\e[2J", $out);
 
         unlink($ou);
     }
