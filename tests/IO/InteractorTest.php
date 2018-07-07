@@ -2,8 +2,8 @@
 
 namespace Ahc\Cli\Test\Helper;
 
-use Ahc\Cli\IO\Interactor;
 use Ahc\Cli\Input\Reader;
+use Ahc\Cli\IO\Interactor;
 use Ahc\Cli\Output\Writer;
 use PHPUnit\Framework\TestCase;
 
