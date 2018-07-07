@@ -30,6 +30,16 @@ class Interactor
         $this->writer = new Writer($output);
     }
 
+    public function reader(): Reader
+    {
+        return $this->reader;
+    }
+
+    public function writer(): Writer
+    {
+        return $this->writer;
+    }
+
     /**
      * Confirms if user agrees to prompt as indicated by given text.
      *

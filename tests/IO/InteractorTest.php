@@ -3,6 +3,8 @@
 namespace Ahc\Cli\Test\Helper;
 
 use Ahc\Cli\IO\Interactor;
+use Ahc\Cli\Input\Reader;
+use Ahc\Cli\Output\Writer;
 use PHPUnit\Framework\TestCase;
 
 class InteractorTest extends TestCase
@@ -20,6 +22,15 @@ class InteractorTest extends TestCase
     {
         unlink(static::$in);
         unlink(static::$ou);
+    }
+
+    public function test_components()
+    {
+        $i = $this->newInteractor();
+
+        // Useless test :)
+        $this->assertInstanceOf(Reader::class, $i->reader());
+        $this->assertInstanceOf(Writer::class, $i->writer());
     }
 
     public function test_confirm()
