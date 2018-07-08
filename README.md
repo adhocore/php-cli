@@ -13,6 +13,8 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 - Inspired by nodejs [commander](https://github.com/tj/commander.js) (thanks tj)
 - For PHP7 and for good
 
+![Screen Preview](https://i.imgur.com/qIYg9Zn.gif "Preview from adhocore/phalcon-ext which uses this cli package")
+
 #### What's included
 
 **Core**
