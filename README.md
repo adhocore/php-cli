@@ -15,12 +15,17 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 
 #### What's included
 
-- Argv parser
-- Cli application
-- Colorizer
-- Cursor manipulator
-- Stream writer
-- Stream reader
+**Core**
+
+- [Argv parser](#as-argv-parser)
+- [Cli application](#as-console-app)
+
+**IO**
+
+- [Colorizer](#color)
+- [Cursor manipulator](#cursor)
+- [Stream writer](#writer)
+- [Stream reader](#reader)
 
 ## Installation
 ```bash
@@ -70,7 +75,7 @@ print_r($command->values());
 )*/
 
 // Pick a value by name
-$command->dir;   // dir1
+$command->dir;   // dir
 $command->dirs;  // [dir1, dir2]
 $command->depth; // 5
 ```
@@ -238,8 +243,9 @@ Write anything in style.
 ```php
 $writer = new Ahc\Cli\Output\Writer;
 
-// Output formatting
-// ('<colorName>', 'bold', 'bg', 'fg', 'warn', 'info', 'error', 'ok', 'comment')
+// Output formatting: You can call methods composed of:
+//  ('<colorName>', 'bold', 'bg', 'fg', 'warn', 'info', 'error', 'ok', 'comment')
+// ... in any order (eg: bgRedFgBlaock, boldRed, greenBold, commentBgPurple and so on ...)
 $writer->bold->green->write('It is bold green');
 $writer->boldGreen('It is bold green'); // Same as above
 $writer->comment('This is grayish comment', true); // True indicates append EOL character.
@@ -266,3 +272,7 @@ $reader->read(null, 'ucwords');
 // Default 'abc', callback `trim()`
 $reader->read('abc', 'trim');
 ```
+
+### Related
+
+- [adhocore/phalcon-ext](https://github.com/adhocore/phalcon-ext)
