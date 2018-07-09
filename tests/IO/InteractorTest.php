@@ -57,7 +57,7 @@ class InteractorTest extends TestCase
         $i = $this->newInteractor('A'); // `A` is not `a`
         $this->assertSame('b', $i->choice('Select one', ['a', 'b', 'c'], 'b', true));
 
-        $i = $this->newInteractor('B');
+        $i   = $this->newInteractor('B');
         $cho = $i->choice('Select one', ['a', 'b', 'c'], 'c', false);
 
         $this->assertNotSame('c', $cho);
