@@ -205,7 +205,7 @@ class Interactor
             $choices = \array_keys($choices);
         }
 
-        $fn = ['\strcmp', '\strcasecmp'][(int) $case];
+        $fn = ['\strcasecmp', '\strcmp'][(int) $case];
 
         foreach ($choices as $option) {
             if ($fn($choice, $option) == 0) {

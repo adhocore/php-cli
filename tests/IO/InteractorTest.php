@@ -52,6 +52,18 @@ class InteractorTest extends TestCase
         $this->assertFalse($i->confirm('OK?'));
     }
 
+    public function test_case_sensitivity()
+    {
+        $i = $this->newInteractor('A'); // `A` is not `a`
+        $this->assertSame('b', $i->choice('Select one', ['a', 'b', 'c'], 'b', true));
+
+        $i   = $this->newInteractor('B');
+        $cho = $i->choice('Select one', ['a', 'b', 'c'], 'c', false);
+
+        $this->assertNotSame('c', $cho);
+        $this->assertSame('B', $cho);
+    }
+
     public function test_choice()
     {
         $i = $this->newInteractor('a');

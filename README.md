@@ -13,7 +13,7 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 - Inspired by nodejs [commander](https://github.com/tj/commander.js) (thanks tj)
 - For PHP7 and for good
 
-![Screen Preview](https://i.imgur.com/qIYg9Zn.gif "Preview from adhocore/phalcon-ext which uses this cli package")
+[![Screen Preview](https://i.imgur.com/qIYg9Zn.gif "Preview from adhocore/phalcon-ext which uses this cli package")](https://github.com/adhocore/phalcon-ext/tree/master/example/cli)
 
 #### What's included
 
@@ -197,6 +197,8 @@ $nameValidator = function ($value) {
 $name = $interactor->prompt('Name', null, $nameValidator, 5);
 $interactor->greenBold("The name is: $name", true);
 ```
+
+![Interactive Preview](https://i.imgur.com/qYBNd29.gif "Interactive Preview")
 
 ### IO Components
 
