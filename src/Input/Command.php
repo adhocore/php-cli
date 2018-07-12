@@ -5,6 +5,7 @@ namespace Ahc\Cli\Input;
 use Ahc\Cli\Application;
 use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
+use Ahc\Cli\IO\Interactor;
 use Ahc\Cli\Output\Writer;
 
 /**
@@ -31,14 +32,20 @@ class Command extends Parser
     /** @var string */
     protected $_desc;
 
-    /** @var callable[] Events for options */
-    protected $_events = [];
-
-    /** @var bool Whether to allow unknown (not registered) options */
-    protected $_allowUnknown = false;
+    /** @var string */
+    protected $_usage;
 
     /** @var Application The cli app this command is bound to */
     protected $_app;
+
+    /** @var callable[] Events for options */
+    private $_events = [];
+
+    /** @var bool Whether to allow unknown (not registered) options */
+    private $_allowUnknown = false;
+
+    /** @var bool If the last seen arg was variadic */
+    private $_argVariadic = false;
 
     /**
      * Constructor.
@@ -57,12 +64,17 @@ class Command extends Parser
         $this->defaults();
     }
 
+    /**
+     * Sets default options, actions and exit handler.
+     *
+     * @return void
+     */
     protected function defaults(): self
     {
         $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
         $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
         $this->option('-v, --verbosity', 'Verbosity level', null, 0)->on(function () {
-            $this->_values['verbosity']++;
+            $this->set('verbosity', $this->verbosity + 1);
 
             return false;
         });
@@ -90,11 +102,21 @@ class Command extends Parser
         return $this;
     }
 
+    /**
+     * Gets command name.
+     *
+     * @return string
+     */
     public function name(): string
     {
         return $this->_name;
     }
 
+    /**
+     * Gets command description.
+     *
+     * @return string
+     */
     public function desc(): string
     {
         return $this->_desc;
@@ -111,6 +133,20 @@ class Command extends Parser
     }
 
     /**
+     * Bind command to the app.
+     *
+     * @param Application|null $app
+     *
+     * @return self
+     */
+    public function bind(Application $app = null): self
+    {
+        $this->_app = $app;
+
+        return $this;
+    }
+
+    /**
      * Registers argument definitions (all at once). Only last one can be variadic.
      *
      * @param string $definitions
@@ -120,20 +156,36 @@ class Command extends Parser
     public function arguments(string $definitions): self
     {
         $definitions = \explode(' ', $definitions);
-        foreach ($definitions as $i => $definition) {
-            $argument = new Argument($definition);
 
-            if ($argument->variadic() && isset($definitions[$i + 1])) {
-                throw new \InvalidArgumentException('Only last argument can be variadic');
-            }
-
-            $name = $argument->attributeName();
-
-            $this->ifAlreadyRegistered($name, $argument);
-
-            $this->_arguments[$name] = $argument;
-            $this->_values[$name]    = $argument->default();
+        foreach ($definitions as $raw) {
+            $this->argument($raw);
         }
+
+        return $this;
+    }
+
+    /**
+     * Register an argument.
+     *
+     * @param string $raw
+     * @param string $desc
+     * @param mixed  $default
+     *
+     * @return self
+     */
+    public function argument(string $raw, string $desc = '', $default = null): self
+    {
+        $argument = new Argument($raw, $desc, $default);
+
+        if ($this->_argVariadic) {
+            throw new \InvalidArgumentException('Only last argument can be variadic');
+        }
+
+        if ($argument->variadic()) {
+            $this->_argVariadic = true;
+        }
+
+        $this->register($argument);
 
         return $this;
     }
@@ -141,39 +193,52 @@ class Command extends Parser
     /**
      * Registers new option.
      *
-     * @param string        $cmd
+     * @param string        $raw
      * @param string        $desc
      * @param callable|null $filter
      * @param mixed         $default
      *
      * @return self
      */
-    public function option(string $cmd, string $desc = '', callable $filter = null, $default = null): self
+    public function option(string $raw, string $desc = '', callable $filter = null, $default = null): self
     {
-        $option = new Option($cmd, $desc, $default, $filter);
-        $name   = $option->attributeName();
+        $option = new Option($raw, $desc, $default, $filter);
 
-        $this->ifAlreadyRegistered($name, $option);
-
-        $this->_options[$name] = $option;
-        $this->_values[$name]  = $option->default();
+        $this->register($option);
 
         return $this;
     }
 
     /**
-     * What if the given name is already registered.
+     * Gets user options (i.e without defaults).
      *
-     * @throws \InvalidArgumentException If given param name is already registered.
+     * @return string
      */
-    protected function ifAlreadyRegistered(string $name, Parameter $param)
+    public function userOptions(): array
     {
-        if (\array_key_exists($name, $this->_values)) {
-            throw new \InvalidArgumentException(\sprintf(
-                'The parameter "%s" is already registered',
-                $param instanceof Option ? $param->long() : $param->name()
-            ));
+        $options = $this->allOptions();
+
+        unset($options['help'], $options['version'], $options['verbosity']);
+
+        return $options;
+    }
+
+    /**
+     * Gets or sets usage info.
+     *
+     * @param string|null $usage
+     *
+     * @return string|self
+     */
+    public function usage(string $usage = null)
+    {
+        if (\func_num_args() === 0) {
+            return $this->_usage;
         }
+
+        $this->_usage = $usage;
+
+        return $this;
     }
 
     /**
@@ -186,9 +251,9 @@ class Command extends Parser
      */
     public function on(callable $fn, string $option = null): self
     {
-        \end($this->_options);
+        $names = \array_keys($this->allOptions());
 
-        $this->_events[$option ?? \key($this->_options)] = $fn;
+        $this->_events[$option ?? \end($names)] = $fn;
 
         return $this;
     }
@@ -213,12 +278,12 @@ class Command extends Parser
     protected function handleUnknown(string $arg, string $value = null)
     {
         if ($this->_allowUnknown) {
-            $this->_values[$this->toCamelCase($arg)] = $value;
+            $this->set($this->toCamelCase($arg), $value);
 
             return;
         }
 
-        $values = \array_filter($this->_values);
+        $values = \array_filter($this->values(false));
 
         // Has some value, error!
         if ($values) {
@@ -232,65 +297,35 @@ class Command extends Parser
     }
 
     /**
-     * Get values indexed by camelized attribute name.
-     *
-     * @param bool $withDefaults
-     *
-     * @return array
-     */
-    public function values(bool $withDefaults = true): array
-    {
-        $values            = $this->_values;
-        $values['version'] = $this->_version;
-
-        if (!$withDefaults) {
-            unset($values['help'], $values['version']);
-        }
-
-        return $values;
-    }
-
-    /**
-     * Magic getter for specific value by its key.
-     *
-     * @param string $key
+     * Shows command help then aborts.
      *
      * @return mixed
      */
-    public function __get(string $key)
+    public function showHelp()
     {
-        return $this->_values[$key] ?? null;
-    }
-
-    /**
-     * Get the command arguments i.e which is not an option.
-     *
-     * @return array
-     */
-    public function args(): array
-    {
-        return \array_diff_key($this->_values, $this->_options);
-    }
-
-    public function showHelp(Writer $writer = null)
-    {
-        $writer = $writer ?? new Writer;
+        $writer = $this->writer();
+        $helper = new OutputHelper($writer);
 
         $writer
             ->bold("Command {$this->_name}, version {$this->_version}", true)->eol()
             ->comment($this->_desc, true)->eol()
             ->bold('Usage: ')->yellow("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
 
-        (new OutputHelper($writer))
-            ->showArgumentsHelp($this->_arguments)
-            ->showOptionsHelp($this->_options, '', 'Legend: <required> [optional]');
+        $helper
+            ->showArgumentsHelp($this->allArguments())
+            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional]');
 
         return $this->emit('_exit');
     }
 
-    public function showVersion(Writer $writer = null)
+    /**
+     * Shows command version then aborts.
+     *
+     * @return mixed
+     */
+    public function showVersion()
     {
-        ($writer ?? new Writer)->bold($this->_version, true);
+        $this->writer()->bold($this->_version, true);
 
         return $this->emit('_exit');
     }
@@ -302,11 +337,6 @@ class Command extends Parser
     {
         if (empty($this->_events[$event])) {
             return;
-        }
-
-        // Factory events
-        if (\in_array($event, ['help', 'version'])) {
-            return ($this->_events[$event])();
         }
 
         return ($this->_events[$event])($value);
@@ -325,6 +355,18 @@ class Command extends Parser
     }
 
     /**
+     * Performs user interaction if required to set some missing values.
+     *
+     * @param Interactor $io
+     *
+     * @return void
+     */
+    public function interact(Interactor $io)
+    {
+        // Subclasses will do the needful.
+    }
+
+    /**
      * Get or set command action.
      *
      * @param callable|null $action If provided it is set
@@ -340,5 +382,15 @@ class Command extends Parser
         $this->_action = $action;
 
         return $this;
+    }
+
+    /**
+     * Get a writer instance.
+     *
+     * @return Writer
+     */
+    protected function writer(): Writer
+    {
+        return $this->_app ? $this->_app->io()->writer() : new Writer;
     }
 }
