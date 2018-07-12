@@ -80,8 +80,8 @@ class Command extends Parser
         });
 
         // @codeCoverageIgnoreStart
-        $this->onExit(function () {
-            exit(0);
+        $this->onExit(function ($exitCode = 0) {
+            exit($exitCode);
         });
         // @codeCoverageIgnoreEnd
 
@@ -315,7 +315,7 @@ class Command extends Parser
             ->showArgumentsHelp($this->allArguments())
             ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional]');
 
-        return $this->emit('_exit');
+        return $this->emit('_exit', 0);
     }
 
     /**
@@ -327,7 +327,7 @@ class Command extends Parser
     {
         $this->writer()->bold($this->_version, true);
 
-        return $this->emit('_exit');
+        return $this->emit('_exit', 0);
     }
 
     /**
