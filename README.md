@@ -139,7 +139,7 @@ $app
 // Parse only parses input but doesnt invoke action
 $app->parse(['git', 'add', 'path1', 'path2', 'path3', '-f']);
 
-// Hanlde will do both parse and invoke action.
+// Handle will do both parse and invoke action.
 $app->handle(['git', 'add', 'path1', 'path2', 'path3', '-f']);
 // Will produce: Add path1, path2, path3 with force
 
