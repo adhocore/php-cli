@@ -4,11 +4,26 @@ namespace Ahc\Cli\Test;
 
 use Ahc\Cli\Application;
 use Ahc\Cli\Input\Command;
-use Ahc\Cli\Output\Writer;
+use Ahc\Cli\IO\Interactor;
 use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends TestCase
 {
+    protected static $in = __DIR__ . '/input';
+    protected static $ou = __DIR__ . '/output';
+
+    public function setUp()
+    {
+        file_put_contents(static::$in, '');
+        file_put_contents(static::$ou, '');
+    }
+
+    public function tearDown()
+    {
+        unlink(static::$in);
+        unlink(static::$ou);
+    }
+
     public function test_new()
     {
         $a = $this->newApp('project', '1.0.1');
@@ -70,48 +85,145 @@ class ApplicationTest extends TestCase
 
     public function test_help()
     {
-        $ou = __DIR__ . '/output';
-        $a  = $this->newApp('git', '0.0.2');
+        $logo = '
+               _ _
+          __ _(_) |_
+         / _` | | __|
+        | (_| | | |_
+         \__, |_|\__|
+         |___/
+        ';
 
-        $a->command('add', 'stage change', 'a')->arguments('<files...>');
-        $a->showHelp(new Writer($ou));
+        $this->newApp('git', '0.0.2')
+            ->logo($logo)
+            ->command('add', 'stage change', 'a')
+                ->arguments('<files...>')
+                ->tap()
+            ->parse(['git', '--help']);
 
-        $out = file_get_contents($ou);
+        $out = file_get_contents(static::$ou);
 
         $this->assertContains('git, version 0.0.2', $out);
+        $this->assertContains($logo, $out);
         $this->assertContains('add', $out);
         $this->assertContains('stage change', $out);
-
-        unlink($ou);
     }
 
     public function test_action()
     {
         ($a = $this->newApp('git', '0.0.2'))
             ->command('add', 'stage change', 'a')
-                ->arguments('<files...>')->action(function ($files) {
+                ->arguments('<files...>')
+                ->action(function ($files) {
                     echo 'Add ' . implode(' and ', $files);
-                })->tap($a)
+                })
+                ->tap($a)
             ->command('config', 'list config', 'c')
-                ->option('-l --list <scope>', 'list config')->action(function ($list) {
+                ->option('-l --list <scope>', 'list config')
+                ->action(function ($list) {
                     echo "Config $list: user.email=user+100@gmail.com";
                 });
 
         ob_start();
-        $a->parse(['git', 'add', 'a.php', 'b.php']);
+        $a->handle(['git', 'add', 'a.php', 'b.php']);
         $buffer = ob_get_clean();
         $this->assertSame('Add a.php and b.php', $buffer);
 
         ob_start();
-        $a->parse(['git', 'c', '--list', 'global']);
+        $a->handle(['git', 'c', '--list', 'global']);
         $buffer = ob_get_clean();
         $this->assertSame('Config global: user.email=user+100@gmail.com', $buffer);
     }
 
+    public function test_no_action()
+    {
+        $a = $this->newApp('git', '0.0.2');
+
+        $a->command('add', 'stage change', 'a')->arguments('<files...>');
+
+        $this->assertFalse($a->handle(['git', 'add', 'a.php', 'b.php']));
+    }
+
+    public function test_action_exception()
+    {
+        $a = $this->newApp('git', '0.0.2');
+
+        $a->command('add', 'stage change', 'a')->arguments('<files...>')->action(function () {
+            throw new \InvalidArgumentException('Dummy InvalidArgumentException');
+        });
+
+        $a->handle(['git', 'add', 'a.php', 'b.php']);
+
+        $this->assertContains('Dummy InvalidArgumentException', file_get_contents(static::$ou));
+    }
+
+    public function test_array_action()
+    {
+        $a = $this->newApp('git', '0.0.2');
+
+        $this->actionCalled = false;
+
+        $a->command('add', 'stage change', 'a')->arguments('<files...>')->action([$this, 'action']);
+        $a->handle(['git', 'add', 'a.php', 'b.php']);
+
+        $this->assertTrue($this->actionCalled);
+    }
+
+    public function action(array $files)
+    {
+        $this->actionCalled = true;
+    }
+
+    public function test_logo()
+    {
+        $a = $this->newApp('test', '0.0.2');
+
+        $this->assertSame($a, $a->logo($logo = '
+            | |_ ___  ___| |_
+            | __/ _ \/ __| __|
+            | ||  __/\__ \ |_
+             \__\___||___/\__|
+        '));
+
+        $this->assertSame($logo, $a->logo());
+    }
+
+    public function test_add()
+    {
+        $a = $this->newApp('test', '0.0.1-test');
+
+        $this->assertSame($a, $a->add(new Command('cmd'), 'c', true));
+        $this->assertSame('cmd', $a->commandFor(['test', 'cmd'])->name());
+    }
+
+    public function test_add_dup()
+    {
+        $a = $this->newApp('test', '0.0.1-test');
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $a->add(new Command('cmd'), 'cm');
+        $a->add(new Command('cm'));
+    }
+
+    public function test_io()
+    {
+        $a = $this->newApp('test', '0.0.1-test');
+
+        $this->assertInstanceOf(Interactor::class, $oio = $a->io());
+
+        $a->io(new Interactor);
+
+        $this->assertInstanceOf(Interactor::class, $a->io());
+        $this->assertNotSame($oio, $a->io());
+    }
+
     protected function newApp(string $name, string $version = '')
     {
-        return new Application($name, $version ?: '0.0.1', function () {
+        $app = new Application($name, $version ?: '0.0.1', function () {
             return false;
         });
+
+        return $app->io(new Interactor(static::$in, static::$ou));
     }
 }

@@ -62,7 +62,7 @@ class CommandTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Only last argument can be variadic');
 
-        $p = $this->newCommand()->arguments('<paths...> [env]');
+        $p = $this->newCommand()->arguments('[paths...]')->argument('[env]', 'Env');
     }
 
     public function test_arguments_with_options()
@@ -163,6 +163,26 @@ class CommandTest extends TestCase
         $this->assertTrue($p->that);
     }
 
+    public function test_user_options()
+    {
+        $p = $this->newCommand();
+
+        $this->assertEmpty($p->userOptions());
+
+        $p = $this->newCommand()->option('-u --user', 'User');
+
+        $this->assertNotEmpty($o = $p->userOptions());
+        $this->assertCount(1, $o);
+        $this->assertSame('user', reset($o)->name());
+    }
+
+    public function test_usage()
+    {
+        $p = $this->newCommand()->usage('Usage: $ cmd [...]');
+
+        $this->assertSame('Usage: $ cmd [...]', $p->usage());
+    }
+
     public function test_event()
     {
         $p = $this->newCommand()->option('--hello')->on(function () {
@@ -206,6 +226,15 @@ class CommandTest extends TestCase
         $c = $this->newCommand('', '', false, new Application('app'));
         $this->assertInstanceOf(Application::class, $c->app());
         $this->assertInstanceOf(Application::class, $c->app());
+    }
+
+    public function test_bind()
+    {
+        $c = $this->newCommand()->bind(new Application('app'));
+        $this->assertInstanceOf(Application::class, $c->app());
+
+        $c = $this->newCommand()->bind(null);
+        $this->assertNull($c->app());
     }
 
     protected function newCommand(string $version = '0.0.1', string $desc = '', bool $allowUnknown = false, $app = null)
