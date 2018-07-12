@@ -30,11 +30,21 @@ class Interactor
         $this->writer = new Writer($output);
     }
 
+    /**
+     * Get reader.
+     *
+     * @return Reader
+     */
     public function reader(): Reader
     {
         return $this->reader;
     }
 
+    /**
+     * Get writer.
+     *
+     * @return Writer
+     */
     public function writer(): Writer
     {
         return $this->writer;
@@ -179,13 +189,18 @@ class Interactor
      */
     protected function promptOptions(array $choices, $default): self
     {
-        $options = \implode('/', $choices);
+        $options = '';
+        $color   = $this->writer->colorizer();
 
-        foreach ((array) $default as $value) {
-            $options = \str_replace($value, \strtoupper($value), $options);
+        foreach ($choices as $choice) {
+            if (\in_array($choice, (array) $default)) {
+                $options .= '/' . $color->boldCyan($choice);
+            } else {
+                $options .= '/' . $color->cyan($choice);
+            }
         }
 
-        $this->writer->cyan(' (' . $options . '): ');
+        $this->writer->raw(' (' . ltrim($options, '/') . '): ');
 
         return $this;
     }
