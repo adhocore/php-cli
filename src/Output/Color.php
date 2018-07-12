@@ -27,26 +27,66 @@ class Color
     /** @vstatic ar array Custom styles */
     protected static $styles = [];
 
+    /**
+     * Returns a line formatted as comment.
+     *
+     * @param string $text
+     * @param array  $style
+     *
+     * @return string
+     */
     public function comment(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::BLACK, 'bold' => 1] + $style);
     }
 
+    /**
+     * Returns a line formatted as comment.
+     *
+     * @param string $text
+     * @param array  $style
+     *
+     * @return string
+     */
     public function error(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::RED] + $style);
     }
 
+    /**
+     * Returns a line formatted as ok msg.
+     *
+     * @param string $text
+     * @param array  $style
+     *
+     * @return string
+     */
     public function ok(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::GREEN] + $style);
     }
 
+    /**
+     * Returns a line formatted as warning.
+     *
+     * @param string $text
+     * @param array  $style
+     *
+     * @return string
+     */
     public function warn(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::YELLOW] + $style);
     }
 
+    /**
+     * Returns a line formatted as info.
+     *
+     * @param string $text
+     * @param array  $style
+     *
+     * @return string
+     */
     public function info(string $text, array $style = []): string
     {
         return $this->line($text, ['fg' => static::BLUE] + $style);
@@ -62,7 +102,7 @@ class Color
      */
     public function line(string $text, array $style = []): string
     {
-        $style += ['bg' => null, 'fg' => static::WHITE, 'bold' => false];
+        $style += ['bg' => null, 'fg' => static::WHITE, 'bold' => 0];
 
         $format = $style['bg'] === null
             ? \str_replace(';:bg:', '', $this->format)
@@ -82,7 +122,7 @@ class Color
      * Register a custom style.
      *
      * @param string $name  Example: 'alert'
-     * @param array  $style Example: ['fg' => Color::RED, 'bg' => Color::YELLOW, 'bold' => true]
+     * @param array  $style Example: ['fg' => Color::RED, 'bg' => Color::YELLOW, 'bold' => 1]
      *
      * @return void
      */

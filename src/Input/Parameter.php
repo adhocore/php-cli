@@ -28,6 +28,9 @@ abstract class Parameter
     /** @var mixed */
     protected $default;
 
+    /** @var callable The sanitizer/filter callback */
+    protected $filter;
+
     /** @var bool */
     protected $required = false;
 
@@ -37,11 +40,12 @@ abstract class Parameter
     /** @var bool */
     protected $variadic = false;
 
-    public function __construct(string $raw, string $desc = '', $default = null)
+    public function __construct(string $raw, string $desc = '', $default = null, callable $filter = null)
     {
         $this->raw      = $raw;
         $this->desc     = $desc;
         $this->default  = $default;
+        $this->filter   = $filter;
         $this->required = \strpos($raw, '<') !== false;
         $this->optional = \strpos($raw, '[') !== false;
         $this->variadic = \strpos($raw, '...') !== false;
@@ -58,43 +62,101 @@ abstract class Parameter
      */
     abstract protected function parse(string $raw);
 
+    /**
+     * Get raw definition.
+     *
+     * @return string
+     */
     public function raw(): string
     {
         return $this->raw;
     }
 
+    /**
+     * Get name.
+     *
+     * @return string
+     */
     public function name(): string
     {
         return $this->name;
     }
 
+    /**
+     * Get description.
+     *
+     * @return string
+     */
     public function desc(): string
     {
         return $this->desc;
     }
 
+    /**
+     * Get normalized name.
+     *
+     * @return string
+     */
     public function attributeName(): string
     {
         return $this->toCamelCase($this->name);
     }
 
+    /**
+     * Check this param is required.
+     *
+     * @return bool
+     */
     public function required(): bool
     {
         return $this->required;
     }
 
+    /**
+     * Check this param is optional.
+     *
+     * @return bool
+     */
     public function optional(): bool
     {
         return $this->optional;
     }
 
+    /**
+     * Check this param is variadic.
+     *
+     * @return bool
+     */
     public function variadic(): bool
     {
         return $this->variadic;
     }
 
+    /**
+     * Gets default value.
+     *
+     * @return mixed
+     */
     public function default()
     {
         return $this->default;
+    }
+
+    /**
+     * Run the filter/sanitizer/validato callback for this prop.
+     *
+     * @param mixed $raw
+     *
+     * @return mixed
+     */
+    public function filter($raw)
+    {
+        if ($this->filter) {
+            $callback = $this->filter;
+
+            return $callback($raw);
+        }
+
+        return $raw;
     }
 }

@@ -93,7 +93,8 @@ class OutputHelper
      */
     protected function sortItems(array $items, &$max = 0): array
     {
-        $max = 0;
+        $first = reset($items);
+        $max   = \strlen($first->name());
 
         \uasort($items, function ($a, $b) use (&$max) {
             $max = \max(\strlen($a->name()), \strlen($b->name()), $max);
@@ -106,6 +107,10 @@ class OutputHelper
 
     /**
      * Prepare name for different items.
+     *
+     * @param Parameter|Command $item
+     *
+     * @return string
      */
     protected function getName($item): string
     {

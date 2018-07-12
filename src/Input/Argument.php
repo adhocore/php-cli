@@ -28,6 +28,9 @@ class Argument extends Parameter
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function default()
     {
         if (!$this->variadic) {

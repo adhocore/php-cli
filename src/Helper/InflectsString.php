@@ -12,6 +12,13 @@ namespace Ahc\Cli\Helper;
  */
 trait InflectsString
 {
+    /**
+     * Convert a string to camel case.
+     *
+     * @param string $string
+     *
+     * @return string
+     */
     public function toCamelCase(string $string): string
     {
         $words = \str_replace(['-', '_'], ' ', $string);

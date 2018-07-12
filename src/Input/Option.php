@@ -12,18 +12,11 @@ namespace Ahc\Cli\Input;
  */
 class Option extends Parameter
 {
-    protected $short;
+    /** @var string Short name */
+    protected $short = '';
 
-    protected $long;
-
-    protected $filter;
-
-    public function __construct(string $raw, string $desc = '', $default = null, callable $filter = null)
-    {
-        $this->filter = $filter;
-
-        parent::__construct($raw, $desc, $default);
-    }
+    /** @var string Long name */
+    protected $long = '';
 
     /**
      * {@inheritdoc}
@@ -46,41 +39,43 @@ class Option extends Parameter
         $this->name = \str_replace(['--', 'no-', 'with-'], '', $this->long);
     }
 
+    /**
+     * Get long name.
+     *
+     * @return string
+     */
     public function long(): string
     {
         return $this->long;
     }
 
+    /**
+     * Get short name.
+     *
+     * @return string
+     */
     public function short(): string
     {
         return $this->short;
     }
 
+    /**
+     * Test if this option matches given arg.
+     *
+     * @return bool
+     */
     public function is(string $arg): bool
     {
         return $this->short === $arg || $this->long === $arg;
     }
 
+    /**
+     * Check if the option is boolean type.
+     *
+     * @return bool
+     */
     public function bool(): bool
     {
         return \preg_match('/\-no|\-with/', $this->long) > 0;
-    }
-
-    /**
-     * Run the filter/sanitizer/validato callback for this prop.
-     *
-     * @param mixed $raw
-     *
-     * @return mixed
-     */
-    public function filter($raw)
-    {
-        if ($this->filter) {
-            $callback = $this->filter;
-
-            return $callback($raw);
-        }
-
-        return $raw;
     }
 }

@@ -136,11 +136,14 @@ $app
         })
 ;
 
-// Maybe it could be named `handle()` or `run()`, but again we keep legacy of `commander.js`
+// Parse only parses input but doesnt invoke action
 $app->parse(['git', 'add', 'path1', 'path2', 'path3', '-f']);
+
+// Handle will do both parse and invoke action.
+$app->handle(['git', 'add', 'path1', 'path2', 'path3', '-f']);
 // Will produce: Add path1, path2, path3 with force
 
-$app->parse(['git', 'co', '-b', 'master-2', '-f']);
+$app->handle(['git', 'co', '-b', 'master-2', '-f']);
 // Will produce: Checkout to new master-2 with force
 ```
 
