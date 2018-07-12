@@ -16,16 +16,16 @@ abstract class Parser
     protected $_lastOption;
 
     /** @var bool If the last seen option was variadic */
-    protected $_wasVariadic = false;
+    private $_wasVariadic = false;
 
     /** @var Option[] Registered options */
-    protected $_options = [];
+    private $_options = [];
 
-    /** @var Option[] Registered arguments */
-    protected $_arguments = [];
+    /** @var Argument[] Registered arguments */
+    private $_arguments = [];
 
     /** @var array Parsed values indexed by option name */
-    protected $_values = [];
+    private $_values = [];
 
     /**
      * Parse the argv input.
@@ -84,6 +84,13 @@ abstract class Parser
         return $normalized;
     }
 
+    /**
+     * Split joined short params like `-ab`.
+     *
+     * @param string $arg
+     *
+     * @return array
+     */
     protected function splitShort(string $arg): array
     {
         $args = \str_split(\substr($arg, 1));
@@ -93,6 +100,13 @@ abstract class Parser
         }, $args);
     }
 
+    /**
+     * Parse single arg.
+     *
+     * @param string $arg
+     *
+     * @return void
+     */
     protected function parseArgs(string $arg)
     {
         if ($arg === '--') {
@@ -100,31 +114,33 @@ abstract class Parser
         }
 
         if ($this->_wasVariadic) {
-            $this->_values[$this->_lastOption->attributeName()][] = $arg;
-
-            return;
+            return $this->set($this->_lastOption->attributeName(), $arg, true);
         }
 
         if (!$argument = \reset($this->_arguments)) {
-            $this->_values[] = $arg;
-
-            return;
+            return $this->set(null, $arg);
         }
 
-        $name = $argument->attributeName();
-        if ($argument->variadic()) {
-            $this->_values[$name][] = $arg;
+        $name   = $argument->attributeName();
+        $variad = $argument->variadic();
 
-            return;
-        }
-
-        $this->_values[$name] = $arg;
+        $this->set($name, $argument->filter($arg), $variad);
 
         // Otherwise we will always collect same arguments again!
-        \array_shift($this->_arguments);
+        if (!$variad) {
+            \array_shift($this->_arguments);
+        }
     }
 
-    protected function parseOptions(string $arg, string $nextArg = null)
+    /**
+     * Parse an option, emit its event and set value.
+     *
+     * @param string      $arg
+     * @param string|null $nextArg
+     *
+     * @return bool Whether to eat next arg.
+     */
+    protected function parseOptions(string $arg, string $nextArg = null): bool
     {
         $value = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
 
@@ -187,17 +203,18 @@ abstract class Parser
     /**
      * Sets value of an option.
      *
-     * @param Option      $option
+     * @param Parameter   $parameter
      * @param string|null $value
      *
      * @return bool Indicating whether it has eaten adjoining arg to its right.
      */
-    protected function setValue(Option $option, string $value = null): bool
+    protected function setValue(Parameter $parameter, string $value = null): bool
     {
-        $name  = $option->attributeName();
-        $value = $this->prepareValue($option, $value);
+        $name = $parameter->attributeName();
 
-        $this->_values[$name] = $value ?? $this->_values[$name];
+        if (null !== $value = $this->prepareValue($parameter, $value)) {
+            $this->set($name, $value);
+        }
 
         return !\in_array($value, [true, false, null], true);
     }
@@ -205,26 +222,44 @@ abstract class Parser
     /**
      * Prepares value as per context and runs thorugh filter if possible.
      *
-     * @param Option      $option
+     * @param Parameter   $parameter
      * @param string|null $value
      *
      * @return mixed
      */
-    protected function prepareValue(Option $option, string $value = null)
+    protected function prepareValue(Parameter $parameter, string $value = null)
     {
-        if (\is_bool($default = $option->default())) {
+        if (\is_bool($default = $parameter->default())) {
             return !$default;
         }
 
-        if ($option->variadic()) {
+        if ($parameter->variadic()) {
             return (array) $value;
         }
 
-        if (null === $value && !$option->required()) {
+        if (null === $value && !$parameter->required()) {
             return true;
         }
 
-        return null === $value ? null : $option->filter($value);
+        return null === $value ? null : $parameter->filter($value);
+    }
+
+    /**
+     * Set a value.
+     *
+     * @param mixed $key
+     * @param mixed $value
+     * @param bool  $variadic
+     */
+    protected function set($key, $value, bool $variadic = false)
+    {
+        if (null === $key) {
+            $this->_values[] = $value;
+        } elseif ($variadic) {
+            $this->_values[$key][] = $value;
+        } else {
+            $this->_values[$key] = $value;
+        }
     }
 
     /**
@@ -250,5 +285,114 @@ abstract class Parser
                 );
             }
         }
+    }
+
+    /**
+     * Register a new argument/option.
+     *
+     * @param Parameter $param
+     *
+     * @return void
+     */
+    protected function register(Parameter $param)
+    {
+        $this->ifAlreadyRegistered($param);
+
+        $name = $param->attributeName();
+        if ($param instanceof Option) {
+            $this->_options[$name] = $param;
+        } else {
+            $this->_arguments[$name] = $param;
+        }
+
+        $this->set($name, $param->default());
+    }
+
+    /**
+     * What if the given name is already registered.
+     *
+     * @throws \InvalidArgumentException If given param name is already registered.
+     */
+    protected function ifAlreadyRegistered(Parameter $param)
+    {
+        if ($this->registered($param->attributeName())) {
+            throw new \InvalidArgumentException(\sprintf(
+                'The parameter "%s" is already registered',
+                $param instanceof Option ? $param->long() : $param->name()
+            ));
+        }
+    }
+
+    /**
+     * Check if either argument/option with given name is registered.
+     *
+     * @param string $attribute
+     *
+     * @return bool
+     */
+    public function registered($attribute): bool
+    {
+        return \array_key_exists($attribute, $this->_values);
+    }
+
+    /**
+     * Get all options.
+     *
+     * @return Option[]
+     */
+    public function allOptions(): array
+    {
+        return $this->_options;
+    }
+
+    /**
+     * Get all arguments.
+     *
+     * @return Argument[]
+     */
+    public function allArguments(): array
+    {
+        return $this->_arguments;
+    }
+
+    /**
+     * Magic getter for specific value by its key.
+     *
+     * @param string $key
+     *
+     * @return mixed
+     */
+    public function __get(string $key)
+    {
+        return $this->_values[$key] ?? null;
+    }
+
+    /**
+     * Get the command arguments i.e which is not an option.
+     *
+     * @return array
+     */
+    public function args(): array
+    {
+        return \array_diff_key($this->_values, $this->_options);
+    }
+
+    /**
+     * Get values indexed by camelized attribute name.
+     *
+     * @param bool $withDefaults
+     *
+     * @return array
+     */
+    public function values(bool $withDefaults = true): array
+    {
+        $values            = $this->_values;
+        $values['version'] = $this->_version;
+
+        if (!$withDefaults) {
+            unset($values['help'], $values['version']);
+        }
+
+        return $values;
     }
 }
