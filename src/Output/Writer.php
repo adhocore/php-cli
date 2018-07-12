@@ -41,6 +41,16 @@ class Writer
     }
 
     /**
+     * Get Colorizer.
+     *
+     * @return Color
+     */
+    public function colorizer(): Color
+    {
+        return $this->colorizer;
+    }
+
+    /**
      * Magically set methods.
      *
      * @param string $name Like `red`, `bgRed`, 'bold', `error` etc
@@ -78,6 +88,14 @@ class Writer
         return $this->doWrite($text, $error);
     }
 
+    /**
+     * Really write to the stream.
+     *
+     * @param  string $text
+     * @param  bool   $error
+     *
+     * @return self
+     */
     protected function doWrite(string $text, bool $error = false): self
     {
         $stream = $error ? $this->eStream : $this->stream;
@@ -87,11 +105,26 @@ class Writer
         return $this;
     }
 
+    /**
+     * Write EOL n times.
+     *
+     * @param int $n
+     *
+     * @return self
+     */
     public function eol(int $n = 1): self
     {
         return $this->doWrite(\str_repeat(PHP_EOL, \max($n, 1)));
     }
 
+    /**
+     * Write raw text (as it is).
+     *
+     * @param string $text
+     * @param bool   $error
+     *
+     * @return self
+     */
     public function raw($text, bool $error = false): self
     {
         return $this->doWrite((string) $text, $error);
