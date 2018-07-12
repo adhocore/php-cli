@@ -3,9 +3,8 @@
 namespace Ahc\Cli;
 
 use Ahc\Cli\Helper\OutputHelper;
-use Ahc\Cli\IO\Interactor;
 use Ahc\Cli\Input\Command;
-use Ahc\Cli\Output\Writer;
+use Ahc\Cli\IO\Interactor;
 
 /**
  * A cli application.
@@ -117,13 +116,13 @@ class Application
     }
 
     /**
-     * Add a command by its name desc alias etc
+     * Add a command by its name desc alias etc.
      *
-     * @param  string $name
-     * @param  string $desc
-     * @param  string $alias
-     * @param  bool   $allowUnknown
-     * @param  bool   $default
+     * @param string $name
+     * @param string $desc
+     * @param string $alias
+     * @param bool   $allowUnknown
+     * @param bool   $default
      *
      * @return Command
      */
@@ -133,8 +132,7 @@ class Application
         string $alias = '',
         bool $allowUnknown = false,
         bool $default = false
-    ): Command
-    {
+    ): Command {
         $command = new Command($name, $desc, $allowUnknown, $this);
 
         $this->add($command, $alias, $default);
@@ -175,7 +173,7 @@ class Application
     /**
      * Gets matching command for given argv.
      *
-     * @param  array  $argv
+     * @param array $argv
      *
      * @return Command
      */

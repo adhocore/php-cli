@@ -91,8 +91,8 @@ class Writer
     /**
      * Really write to the stream.
      *
-     * @param  string $text
-     * @param  bool   $error
+     * @param string $text
+     * @param bool   $error
      *
      * @return self
      */
