@@ -3,7 +3,7 @@
 namespace Ahc\Cli\Output;
 
 /**
- * Cli Curser.
+ * Cli Cursor.
  *
  * @author  Jitendra Adhikari <jiten.adhikary@gmail.com>
  * @license MIT
@@ -12,57 +12,124 @@ namespace Ahc\Cli\Output;
  */
 class Cursor
 {
+    /**
+     * Returns signal to move cursor up `n` times.
+     *
+     * @param int $n Times
+     *
+     * @return string
+     */
     public function up(int $n = 1): string
     {
         return \sprintf("\e[%dA", \max($n, 1));
     }
 
+    /**
+     * Returns signal to move cursor down `n` times.
+     *
+     * @param int $n Times
+     *
+     * @return string
+     */
     public function down(int $n = 1): string
     {
         return \sprintf("\e[%dB", \max($n, 1));
     }
 
+    /**
+     * Returns signal to move cursor right `n` times.
+     *
+     * @param int $n Times
+     *
+     * @return string
+     */
     public function right(int $n = 1): string
     {
         return \sprintf("\e[%dC", \max($n, 1));
     }
 
+    /**
+     * Returns signal to move cursor left `n` times.
+     *
+     * @param int $n Times
+     *
+     * @return string
+     */
     public function left(int $n = 1): string
     {
         return \sprintf("\e[%dD", \max($n, 1));
     }
 
-    public function next(int $n = 1)
+    /**
+     * Returns signal to move cursor next line `n` times.
+     *
+     * @param int $n Times
+     *
+     * @return string
+     */
+    public function next(int $n = 1): string
     {
         return \str_repeat("\e[E", \max($n, 1));
     }
 
-    public function prev(int $n = 1)
+    /**
+     * Returns signal to move cursor prev line `n` times.
+     *
+     * @param int $n Times
+     *
+     * @return string
+     */
+    public function prev(int $n = 1): string
     {
         return \str_repeat("\e[F", \max($n, 1));
     }
 
-    public function eraseLine()
+    /**
+     * Returns signal to erase current line.
+     *
+     * @return string
+     */
+    public function eraseLine(): string
     {
         return "\e[2K";
     }
 
-    public function clear()
+    /**
+     * Returns signal to clear string.
+     *
+     * @return string
+     */
+    public function clear(): string
     {
         return "\e[2J";
     }
 
-    public function clearUp()
+    /**
+     * Returns signal to erase lines upward.
+     *
+     * @return string
+     */
+    public function clearUp(): string
     {
         return "\e[1J";
     }
 
-    public function clearDown()
+    /**
+     * Returns signal to erase lines downward.
+     *
+     * @return string
+     */
+    public function clearDown(): string
     {
         return "\e[J";
     }
 
-    public function moveTo(int $x, int $y)
+    /**
+     * Returns signal to move cursor to given x, y position.
+     *
+     * @return string
+     */
+    public function moveTo(int $x, int $y): string
     {
         return \sprintf("\e[%d;%dH", $y, $x);
     }
