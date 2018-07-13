@@ -315,6 +315,10 @@ class Command extends Parser
             ->showArgumentsHelp($this->allArguments())
             ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional]');
 
+        if ($this->_usage) {
+            $writer->eol()->greenBold('Usage Examples:', true)->raw(\trim($this->_usage))->eol();
+        }
+
         return $this->emit('_exit', 0);
     }
 
