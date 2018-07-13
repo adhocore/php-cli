@@ -278,9 +278,7 @@ class Command extends Parser
     protected function handleUnknown(string $arg, string $value = null)
     {
         if ($this->_allowUnknown) {
-            $this->set($this->toCamelCase($arg), $value);
-
-            return;
+            return $this->set($this->toCamelCase($arg), $value);
         }
 
         $values = \array_filter($this->values(false));
