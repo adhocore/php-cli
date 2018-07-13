@@ -2,6 +2,8 @@
 
 namespace Ahc\Cli\Input;
 
+use Ahc\Cli\Helper\Normalizer;
+
 /**
  * Argv parser for the cli.
  *
@@ -14,6 +16,9 @@ abstract class Parser
 {
     /** @var string|null The last seen variadic option name */
     protected $_lastVariadic;
+
+    /** @var Normalizer */
+    protected $_normalizer;
 
     /** @var Option[] Registered options */
     private $_options = [];
@@ -35,9 +40,11 @@ abstract class Parser
      */
     public function parse(array $argv): self
     {
+        $this->_normalizer = new Normalizer;
+
         \array_shift($argv);
 
-        $argv    = $this->normalize($argv);
+        $argv    = $this->_normalizer->normalizeArgs($argv);
         $count   = \count($argv);
         $literal = false;
 
@@ -59,36 +66,11 @@ abstract class Parser
     }
 
     /**
-     * Normalize argv args. Like splitting `-abc` and `--xyz=...`.
-     *
-     * @param array $args
-     *
-     * @return array
-     */
-    protected function normalize(array $args): array
-    {
-        $normalized = [];
-
-        foreach ($args as $arg) {
-            if (\preg_match('/^\-\w{2,}/', $arg)) {
-                $splitArg   = \implode(' -', \str_split(\ltrim($arg, '-')));
-                $normalized = \array_merge($normalized, \explode(' ', '-' . $splitArg));
-            } elseif (\preg_match('/^\-\-\w{2,}\=/', $arg)) {
-                $normalized = \array_merge($normalized, explode('=', $arg));
-            } else {
-                $normalized[] = $arg;
-            }
-        }
-
-        return $normalized;
-    }
-
-    /**
      * Parse single arg.
      *
      * @param string $arg
      *
-     * @return void
+     * @return mixed
      */
     protected function parseArgs(string $arg)
     {
@@ -183,34 +165,9 @@ abstract class Parser
     protected function setValue(Parameter $parameter, string $value = null): bool
     {
         $name  = $parameter->attributeName();
-        $value = $this->prepareValue($parameter, $value);
+        $value = $this->_normalizer->normalizeValue($parameter, $value);
 
         return $this->set($name, $value);
-    }
-
-    /**
-     * Prepares value as per context and runs thorugh filter if possible.
-     *
-     * @param Parameter   $parameter
-     * @param string|null $value
-     *
-     * @return mixed
-     */
-    protected function prepareValue(Parameter $parameter, string $value = null)
-    {
-        if (\is_bool($default = $parameter->default())) {
-            return !$default;
-        }
-
-        if ($parameter->variadic()) {
-            return (array) $value;
-        }
-
-        if (null === $value) {
-            return $parameter->required() ? null : true;
-        }
-
-        return $parameter->filter($value);
     }
 
     /**
