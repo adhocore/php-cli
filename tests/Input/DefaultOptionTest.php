@@ -22,12 +22,16 @@ class DefaultOptionTest extends CliTestCase
     public function test_help()
     {
         $p = $this->newCommand()
-            ->arguments('[arg]')
+            ->argument('[arg]', 'Some desc')
             ->option('-o --option')
+            ->usage('cmdname --option opt <arg>')
             ->parse(['php', '--help']);
 
         $this->assertContains('cmdname', $buffer = $this->buffer());
+        $this->assertContains('Usage Examples:', $buffer);
+        $this->assertContains('--option opt <arg>', $buffer);
         $this->assertContains('[arg]', $buffer);
+        $this->assertContains('Some desc', $buffer);
         $this->assertContains('[-o|--option]', $buffer);
     }
 
