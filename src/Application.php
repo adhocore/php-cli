@@ -228,6 +228,8 @@ class Application
         foreach ($argv as $i => $arg) {
             if (\in_array($arg, $aliases)) {
                 unset($argv[$i]);
+
+                break;
             }
 
             if ($arg[0] === '-') {
@@ -247,8 +249,6 @@ class Application
      */
     public function handle(array $argv)
     {
-        $io = $this->io();
-
         try {
             $exitCode = 0;
             $command  = $this->parse($argv);
@@ -256,8 +256,9 @@ class Application
             $this->doAction($command);
         } catch (\Throwable $e) {
             $exitCode = 255;
-            $location = 'At file ' . $e->getFile() . '#' . $e->getLine();
-            $io->error($e->getMessage(), true)->bgRed($location, true);
+            $location = 'Thrown in ' . $e->getFile() . ' on line ' . $e->getLine();
+
+            $this->io()->error($e->getMessage(), true)->bgRed($location, true);
         }
 
         return ($this->onExit)($exitCode);

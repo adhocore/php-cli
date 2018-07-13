@@ -12,11 +12,8 @@ namespace Ahc\Cli\Input;
  */
 abstract class Parser
 {
-    /** @var Option|null The last seen option */
-    protected $_lastOption;
-
-    /** @var bool If the last seen option was variadic */
-    private $_wasVariadic = false;
+    /** @var string|null The last seen variadic option name */
+    protected $_lastVariadic;
 
     /** @var Option[] Registered options */
     private $_options = [];
@@ -40,15 +37,16 @@ abstract class Parser
     {
         \array_shift($argv);
 
-        $argv  = $this->normalize($argv);
-        $count = \count($argv);
-
+        $argv    = $this->normalize($argv);
+        $count   = \count($argv);
         $literal = false;
+
         for ($i = 0; $i < $count; $i++) {
             list($arg, $nextArg) = [$argv[$i], $argv[$i + 1] ?? null];
 
-            $literal = $literal ?: $arg === '--';
-            if ($arg[0] !== '-' || $literal) {
+            if ($arg === '--') {
+                $literal = true;
+            } elseif ($arg[0] !== '-' || $literal) {
                 $this->parseArgs($arg);
             } else {
                 $i += (int) $this->parseOptions($arg, $nextArg);
@@ -73,7 +71,8 @@ abstract class Parser
 
         foreach ($args as $arg) {
             if (\preg_match('/^\-\w{2,}/', $arg)) {
-                $normalized = \array_merge($normalized, $this->splitShort($arg));
+                $splitArg   = \implode(' -', \str_split(\ltrim($arg, '-')));
+                $normalized = \array_merge($normalized, \explode(' ', '-' . $splitArg));
             } elseif (\preg_match('/^\-\-\w{2,}\=/', $arg)) {
                 $normalized = \array_merge($normalized, explode('=', $arg));
             } else {
@@ -85,22 +84,6 @@ abstract class Parser
     }
 
     /**
-     * Split joined short params like `-ab`.
-     *
-     * @param string $arg
-     *
-     * @return array
-     */
-    protected function splitShort(string $arg): array
-    {
-        $args = \str_split(\substr($arg, 1));
-
-        return \array_map(function ($a) {
-            return "-$a";
-        }, $args);
-    }
-
-    /**
      * Parse single arg.
      *
      * @param string $arg
@@ -109,12 +92,8 @@ abstract class Parser
      */
     protected function parseArgs(string $arg)
     {
-        if ($arg === '--') {
-            return;
-        }
-
-        if ($this->_wasVariadic) {
-            return $this->set($this->_lastOption->attributeName(), $arg, true);
+        if ($this->_lastVariadic) {
+            return $this->set($this->_lastVariadic, $arg, true);
         }
 
         if (!$argument = \reset($this->_arguments)) {
@@ -144,20 +123,13 @@ abstract class Parser
     {
         $value = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
 
-        $this->_lastOption  = $option  = $this->optionFor($arg);
-        $this->_wasVariadic = $option ? $option->variadic() : false;
-
-        if (!$option) {
-            $this->handleUnknown($arg, $value);
-
-            return !\is_null($value);
+        if (null === $option  = $this->optionFor($arg)) {
+            return $this->handleUnknown($arg, $value);
         }
 
-        if (false === $this->emit($option->attributeName(), $value)) {
-            return false;
-        }
+        $this->_lastVariadic = $option->variadic() ? $option->attributeName() : null;
 
-        return $this->setValue($option, $value);
+        return false === $this->emit($option->attributeName(), $value) ? false : $this->setValue($option, $value);
     }
 
     /**
@@ -186,7 +158,7 @@ abstract class Parser
      *
      * @throws \RuntimeException When given arg is not registered and allow unkown flag is not set.
      *
-     * @return void
+     * @return mixed If true it will indicate that value has been eaten.
      */
     abstract protected function handleUnknown(string $arg, string $value = null);
 
@@ -210,13 +182,10 @@ abstract class Parser
      */
     protected function setValue(Parameter $parameter, string $value = null): bool
     {
-        $name = $parameter->attributeName();
+        $name  = $parameter->attributeName();
+        $value = $this->prepareValue($parameter, $value);
 
-        if (null !== $value = $this->prepareValue($parameter, $value)) {
-            $this->set($name, $value);
-        }
-
-        return !\in_array($value, [true, false, null], true);
+        return $this->set($name, $value);
     }
 
     /**
@@ -237,21 +206,23 @@ abstract class Parser
             return (array) $value;
         }
 
-        if (null === $value && !$parameter->required()) {
-            return true;
+        if (null === $value) {
+            return $parameter->required() ? null : true;
         }
 
-        return null === $value ? null : $parameter->filter($value);
+        return $parameter->filter($value);
     }
 
     /**
-     * Set a value.
+     * Set a raw value.
      *
      * @param mixed $key
      * @param mixed $value
      * @param bool  $variadic
+     *
+     * @return bool
      */
-    protected function set($key, $value, bool $variadic = false)
+    protected function set($key, $value, bool $variadic = false): bool
     {
         if (null === $key) {
             $this->_values[] = $value;
@@ -260,6 +231,8 @@ abstract class Parser
         } else {
             $this->_values[$key] = $value;
         }
+
+        return !\in_array($value, [true, false, null], true);
     }
 
     /**
@@ -269,21 +242,19 @@ abstract class Parser
      */
     protected function validate()
     {
-        foreach ($this->_options + $this->_arguments as $item) {
-            if (!$item->required()) {
-                continue;
-            }
+        $missingItems = \array_filter($this->_options + $this->_arguments, function ($item) {
+            return $item->required() && \in_array($this->_values[$item->attributeName()], [null, []]);
+        });
 
+        foreach ($missingItems as $item) {
             list($name, $label) = [$item->name(), 'Argument'];
             if ($item instanceof Option) {
                 list($name, $label) = [$item->long(), 'Option'];
             }
 
-            if (\in_array($this->_values[$item->attributeName()], [null, []])) {
-                throw new \RuntimeException(
-                    \sprintf('%s "%s" is required', $label, $name)
-                );
-            }
+            throw new \RuntimeException(
+                \sprintf('%s "%s" is required', $label, $name)
+            );
         }
     }
 
@@ -390,7 +361,7 @@ abstract class Parser
         $values['version'] = $this->_version;
 
         if (!$withDefaults) {
-            unset($values['help'], $values['version']);
+            unset($values['help'], $values['version'], $values['verbosity']);
         }
 
         return $values;

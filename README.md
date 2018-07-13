@@ -76,6 +76,9 @@ print_r($command->values());
     [depth] => 5
 )*/
 
+// To get values for options except the default ones (help, version, verbosity)
+print_r($command->values(false));
+
 // Pick a value by name
 $command->dir;   // dir
 $command->dirs;  // [dir1, dir2]
@@ -99,6 +102,8 @@ For above example, the output would be:
 ```
 
 ### As console app
+
+Definitely check [adhocore/phint](https://github.com/adhocore/phint) - a real world console application made using `adhocore/cli`.
 
 We simulate a `git` app with limited functionality of `add`, and `checkout`.
 You will see how intuitive, fluent and cheese building a console app is!
@@ -217,6 +222,8 @@ $color = new Ahc\Cli\Output\Color;
 echo $color->warn('This is warning');
 echo $color->info('This is info');
 echo $color->error('This is error');
+echo $color->comment('This is comment');
+echo $color->ok('This is ok msg');
 
 // Custom style:
 Ahc\Cli\Output\Color::style('mystyle', [
