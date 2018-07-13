@@ -282,4 +282,5 @@ $reader->read('abc', 'trim');
 
 ### Related
 
-- [adhocore/phalcon-ext](https://github.com/adhocore/phalcon-ext)
+- [adhocore/phalcon-ext](https://github.com/adhocore/phalcon-ext) Phalcon extension using `adhocore/cli`
+- [adhocore/phint](https://github.com/adhocore/phint) PHP project scaffolding app using `adhocore/cli`
