@@ -249,6 +249,10 @@ class Application
      */
     public function handle(array $argv)
     {
+        if (\count($argv) < 2) {
+            return $this->showHelp();
+        }
+
         try {
             $exitCode = 0;
             $command  = $this->parse($argv);
