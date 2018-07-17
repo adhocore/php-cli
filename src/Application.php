@@ -320,6 +320,10 @@ class Application
      */
     protected function doAction(Command $command)
     {
+        if ($command->name() === '__default__') {
+            return $this->notFound();
+        }
+
         if (null === $action = $command->action()) {
             return;
         }
@@ -335,6 +339,34 @@ class Application
         }
 
         return $action(...$params);
+    }
+
+    /**
+     * Command not found handler.
+     *
+     * @return mixed
+     */
+    protected function notFound()
+    {
+        $closest   = [];
+        $attempted = $this->argv[1];
+        $available = \array_keys($this->commands() + $this->aliases);
+
+        foreach ($available as $cmd) {
+            $lev = \levenshtein($attempted, $cmd);
+            if ($lev > 0 || $lev < 5) {
+                $closest[$cmd] = $lev;
+            }
+        }
+
+        $this->io()->error("Command $attempted not found", true);
+        if ($closest) {
+            \asort($closest);
+            $closest = \key($closest);
+            $this->io()->bgRed("Did you mean $closest?", true);
+        }
+
+        return ($this->onExit)(127);
     }
 
     protected function getActionParameters(callable $action): array
