@@ -112,7 +112,7 @@ class Color
             ':bold:' => (int) $style['bold'],
             ':fg:'   => (int) $style['fg'],
             ':bg:'   => (int) $style['bg'] + 10,
-            ':text:' => (string) $text,
+            ':text:' => $text,
         ]);
 
         return $line;
@@ -129,18 +129,21 @@ class Color
      */
     public function colors(string $text): string
     {
-        $text = \str_replace(['<eol>', '<eol/>'], '<eol></end>', $text);
+        $text = \str_replace(['<eol>', '<eol/>', '</eol>', "\r\n", "\n"], '__PHP_EOL__', $text);
 
         if (!\preg_match_all('/<(\w+)>(.*?)<\/end>/', $text, $matches)) {
-            return $text;
+            return \str_replace('__PHP_EOL__', \PHP_EOL, $text);
         }
 
-        $line = '';
+        $end  = "\033[0m";
+        $text = \str_replace(['<end>', '</end>'], $end, $text);
+
         foreach ($matches[1] as $i => $method) {
-            $line .= $method === 'eol' ? \PHP_EOL : $this->{$method}($matches[2][$i]);
+            $part = \str_replace($end, '', $this->{$method}(''));
+            $text = \str_replace("<$method>", $part, $text);
         }
 
-        return $line;
+        return \str_replace('__PHP_EOL__', \PHP_EOL, $text);
     }
 
     /**
