@@ -218,6 +218,30 @@ class ApplicationTest extends TestCase
         $this->assertNotSame($oio, $a->io());
     }
 
+    public function test_handle_empty()
+    {
+        $a = $this->newApp('test', '0.0.1-test');
+
+        $a->command('make', 'Make tests');
+        $a->handle(['test']);
+
+        $o = file_get_contents(static::$ou);
+
+        $this->assertContains('test, version 0.0.1-test', $o);
+        $this->assertContains('Commands:', $o);
+        $this->assertContains('make', $o);
+        $this->assertContains('Make tests', $o);
+    }
+
+    public function test_cmd_not_found()
+    {
+        $a = $this->newApp('test')->add(new Command('cmd'))->handle(['test', 'cm']);
+        $o = file_get_contents(static::$ou);
+
+        $this->assertContains('Command cm not found', $o);
+        $this->assertContains('Did you mean cmd?', $o);
+    }
+
     protected function newApp(string $name, string $version = '')
     {
         $app = new Application($name, $version ?: '0.0.1', function () {
