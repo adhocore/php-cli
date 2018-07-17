@@ -265,6 +265,10 @@ $writer->boldGreen('It is bold green'); // Same as above
 $writer->comment('This is grayish comment', true); // True indicates append EOL character.
 $writer->bgPurpleBold('This is white on purple background');
 
+// Many colors with one single call: wrap text with tags `<method>` and `</end>`
+// For NL/EOL just use `<eol>` or `</eol>` or `<eol/>`
+$writer->colors('<red>This is red</end><eol><bgGreen>This has bg Green</end>');
+
 // All writes are forwarded to STDOUT
 // But if you specify error, then to STDERR
 $writer->errorBold('This is error');
