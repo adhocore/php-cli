@@ -119,6 +119,31 @@ class Color
     }
 
     /**
+     * Prepare a multi colored string with html like tags.
+     *
+     * Example: "<errorBold>Text</end><eol/><bgGreenBold>Text</end><eol>"
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    public function colors(string $text): string
+    {
+        $text = \str_replace(['<eol>', '<eol/>'], '<eol></end>', $text);
+
+        if (!\preg_match_all('/<(\w+)>(.*?)<\/end>/', $text, $matches)) {
+            return $text;
+        }
+
+        $line = '';
+        foreach ($matches[1] as $i => $method) {
+            $line .= $method === 'eol' ? \PHP_EOL : $this->{$method}($matches[2][$i]);
+        }
+
+        return $line;
+    }
+
+    /**
      * Register a custom style.
      *
      * @param string $name  Example: 'alert'
