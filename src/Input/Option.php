@@ -62,6 +62,8 @@ class Option extends Parameter
     /**
      * Test if this option matches given arg.
      *
+     * @param string $arg
+     *
      * @return bool
      */
     public function is(string $arg): bool

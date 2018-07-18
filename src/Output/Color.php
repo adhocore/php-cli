@@ -24,7 +24,7 @@ class Color
     /** @var string Cli format */
     protected $format = "\033[:bold:;:fg:;:bg:m:text:\033[0m";
 
-    /** @vstatic ar array Custom styles */
+    /** @var array Custom styles */
     protected static $styles = [];
 
     /**
@@ -235,7 +235,7 @@ class Color
      * @param array  $style
      * @param array  $matches
      *
-     * @return arrsy
+     * @return array
      */
     protected function buildStyle(string $name, array $style, array $matches): array
     {

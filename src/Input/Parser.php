@@ -82,13 +82,13 @@ abstract class Parser
             return $this->set(null, $arg);
         }
 
-        $name   = $argument->attributeName();
-        $variad = $argument->variadic();
+        $name     = $argument->attributeName();
+        $variadic = $argument->variadic();
 
-        $this->set($name, $argument->filter($arg), $variad);
+        $this->set($name, $argument->filter($arg), $variadic);
 
         // Otherwise we will always collect same arguments again!
-        if (!$variad) {
+        if (!$variadic) {
             \array_shift($this->_arguments);
         }
     }
@@ -199,7 +199,9 @@ abstract class Parser
      */
     protected function validate()
     {
+        /** @var Parameter[] $missingItems */
         $missingItems = \array_filter($this->_options + $this->_arguments, function ($item) {
+            /* @var Parameter $item */
             return $item->required() && \in_array($this->_values[$item->attributeName()], [null, []]);
         });
 
@@ -238,6 +240,8 @@ abstract class Parser
 
     /**
      * What if the given name is already registered.
+     *
+     * @param Parameter $param
      *
      * @throws \InvalidArgumentException If given param name is already registered.
      */
@@ -315,7 +319,7 @@ abstract class Parser
     public function values(bool $withDefaults = true): array
     {
         $values            = $this->_values;
-        $values['version'] = $this->_version;
+        $values['version'] = $this->_version ?? null;
 
         if (!$withDefaults) {
             unset($values['help'], $values['version'], $values['verbosity']);
