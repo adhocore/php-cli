@@ -2,6 +2,7 @@
 
 namespace Ahc\Cli\Test\Output;
 
+use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
 use Ahc\Cli\Test\CliTestCase;
 
@@ -54,5 +55,10 @@ class WriterTest extends CliTestCase
         $this->assertSame("__toString\e[2J", $out);
 
         unlink($ou);
+    }
+
+    public function test_colorizer()
+    {
+        $this->assertInstanceOf(Color::class, (new Writer)->colorizer());
     }
 }

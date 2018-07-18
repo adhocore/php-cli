@@ -3,8 +3,9 @@
 namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Input\Argument;
+use Ahc\Cli\Input\Command;
 use Ahc\Cli\Input\Option;
-use Ahc\Cli\Input\Parser as Command;
+use Ahc\Cli\Input\Parameter;
 use Ahc\Cli\Output\Writer;
 
 /**
@@ -27,6 +28,8 @@ class OutputHelper
 
     /**
      * @param Argument[] $arguments
+     * @param string     $header
+     * @param string     $footer
      *
      * @return self
      */
@@ -39,6 +42,8 @@ class OutputHelper
 
     /**
      * @param Option[] $options
+     * @param string   $header
+     * @param string   $footer
      *
      * @return self
      */
@@ -50,7 +55,9 @@ class OutputHelper
     }
 
     /**
-     * @param Command[] $options
+     * @param Command[] $commands
+     * @param string    $header
+     * @param string    $footer
      *
      * @return self
      */
@@ -63,6 +70,14 @@ class OutputHelper
 
     /**
      * Show help with headers and footers.
+     *
+     * @param string $for
+     * @param array  $items
+     * @param int    $space
+     * @param string $header
+     * @param string $footer
+     *
+     * @return void
      */
     protected function showHelp(string $for, array $items, int $space, string $header = '', string $footer = '')
     {
@@ -80,7 +95,8 @@ class OutputHelper
 
         foreach ($this->sortItems($items, $padLen) as $item) {
             $name = $this->getName($item);
-            $this->writer->bold('  ' . \str_pad($name, $padLen + $space))->comment($item->desc(), true);
+            $this->writer->bold('  ' . \str_pad($name, $padLen + $space));
+            $this->writer->comment($item->desc(), true);
         }
 
         if ($footer) {
@@ -90,6 +106,11 @@ class OutputHelper
 
     /**
      * Sort items by name. As a side effect sets max length of all names.
+     *
+     * @param Parameter[]|Command[] $items
+     * @param int                   $max
+     *
+     * @return array
      */
     protected function sortItems(array $items, &$max = 0): array
     {
@@ -97,6 +118,8 @@ class OutputHelper
         $max   = \strlen($first->name());
 
         \uasort($items, function ($a, $b) use (&$max) {
+            /** @var Parameter $b */
+            /** @var Parameter $a */
             $max = \max(\strlen($a->name()), \strlen($b->name()), $max);
 
             return $a->name() <=> $b->name();

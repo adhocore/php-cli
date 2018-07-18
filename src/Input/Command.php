@@ -2,7 +2,7 @@
 
 namespace Ahc\Cli\Input;
 
-use Ahc\Cli\Application;
+use Ahc\Cli\Application as App;
 use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\IO\Interactor;
@@ -35,7 +35,7 @@ class Command extends Parser
     /** @var string */
     protected $_usage;
 
-    /** @var Application The cli app this command is bound to */
+    /** @var App The cli app this command is bound to */
     protected $_app;
 
     /** @var callable[] Events for options */
@@ -53,8 +53,9 @@ class Command extends Parser
      * @param string $name
      * @param string $desc
      * @param bool   $allowUnknown
+     * @param App    $app
      */
-    public function __construct(string $name, string $desc = '', bool $allowUnknown = false, Application $app = null)
+    public function __construct(string $name, string $desc = '', bool $allowUnknown = false, App $app = null)
     {
         $this->_name         = $name;
         $this->_desc         = $desc;
@@ -67,14 +68,14 @@ class Command extends Parser
     /**
      * Sets default options, actions and exit handler.
      *
-     * @return void
+     * @return self
      */
     protected function defaults(): self
     {
         $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
         $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
         $this->option('-v, --verbosity', 'Verbosity level', null, 0)->on(function () {
-            $this->set('verbosity', $this->verbosity + 1);
+            $this->set('verbosity', ($this->verbosity ?? 0) + 1);
 
             return false;
         });
@@ -125,7 +126,7 @@ class Command extends Parser
     /**
      * Get the app this command belongs to.
      *
-     * @return null|Application
+     * @return null|App
      */
     public function app()
     {
@@ -135,11 +136,11 @@ class Command extends Parser
     /**
      * Bind command to the app.
      *
-     * @param Application|null $app
+     * @param App|null $app
      *
      * @return self
      */
-    public function bind(Application $app = null): self
+    public function bind(App $app = null): self
     {
         $this->_app = $app;
 
@@ -212,7 +213,7 @@ class Command extends Parser
     /**
      * Gets user options (i.e without defaults).
      *
-     * @return string
+     * @return array
      */
     public function userOptions(): array
     {
@@ -301,20 +302,20 @@ class Command extends Parser
      */
     public function showHelp()
     {
-        $writer = $this->writer();
-        $helper = new OutputHelper($writer);
+        $io     = $this->io();
+        $helper = new OutputHelper($io->writer());
 
-        $writer
-            ->bold("Command {$this->_name}, version {$this->_version}", true)->eol()
-            ->comment($this->_desc, true)->eol()
-            ->bold('Usage: ')->yellow("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
+        $io->bold("Command {$this->_name}, version {$this->_version}", true)->eol();
+        $io->comment($this->_desc, true)->eol();
+        $io->bold('Usage: ')->yellow("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
 
         $helper
             ->showArgumentsHelp($this->allArguments())
             ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional]');
 
         if ($this->_usage) {
-            $writer->eol()->greenBold('Usage Examples:', true)->raw(\trim($this->_usage))->eol();
+            $io->eol();
+            $io->boldGreen('Usage Examples:', true)->raw(\trim($this->_usage))->eol();
         }
 
         return $this->emit('_exit', 0);
@@ -338,7 +339,7 @@ class Command extends Parser
     public function emit(string $event, $value = null)
     {
         if (empty($this->_events[$event])) {
-            return;
+            return null;
         }
 
         return ($this->_events[$event])($value);
@@ -394,5 +395,15 @@ class Command extends Parser
     protected function writer(): Writer
     {
         return $this->_app ? $this->_app->io()->writer() : new Writer;
+    }
+
+    /**
+     * Get IO instance.
+     *
+     * @return Interactor
+     */
+    protected function io(): Interactor
+    {
+        return $this->_app ? $this->_app->io() : new Interactor;
     }
 }

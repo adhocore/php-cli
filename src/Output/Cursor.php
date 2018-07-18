@@ -127,6 +127,9 @@ class Cursor
     /**
      * Returns signal to move cursor to given x, y position.
      *
+     * @param int $x
+     * @param int $y
+     *
      * @return string
      */
     public function moveTo(int $x, int $y): string
