@@ -2,10 +2,10 @@
 
 Framework agnostic Command Line Interface utilities and helpers for PHP. Build Console App with ease, fun and love.
 
-[![Latest Version](https://img.shields.io/github/release/adhocore/cli.svg?style=flat-square)](https://github.com/adhocore/cli/releases)
+[![Latest Version](https://img.shields.io/github/release/adhocore/php-cli.svg?style=flat-square)](https://github.com/adhocore/php-cli/releases)
 [![Travis Build](https://travis-ci.com/adhocore/php-cli.svg?branch=master)](https://travis-ci.com/adhocore/php-cli?branch=master)
-[![Scrutinizer CI](https://img.shields.io/scrutinizer/g/adhocore/cli.svg?style=flat-square)](https://scrutinizer-ci.com/g/adhocore/cli/?branch=master)
-[![Codecov branch](https://img.shields.io/codecov/c/github/adhocore/cli/master.svg?style=flat-square)](https://codecov.io/gh/adhocore/cli)
+[![Scrutinizer CI](https://img.shields.io/scrutinizer/g/adhocore/php-cli.svg?style=flat-square)](https://scrutinizer-ci.com/g/adhocore/php-cli/?branch=master)
+[![Codecov branch](https://img.shields.io/codecov/c/github/adhocore/php-cli/master.svg?style=flat-square)](https://codecov.io/gh/adhocore/php-cli)
 [![StyleCI](https://styleci.io/repos/139012552/shield)](https://styleci.io/repos/139012552)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 
