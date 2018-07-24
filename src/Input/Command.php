@@ -317,7 +317,7 @@ class Command extends Parser
 
         if ($this->_usage) {
             $io->eol();
-            $io->boldGreen('Usage Examples:', true)->raw(\trim($this->_usage))->eol();
+            $io->boldGreen('Usage Examples:', true)->colors($this->_usage)->eol();
         }
 
         return $this->emit('_exit', 0);
