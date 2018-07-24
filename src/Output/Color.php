@@ -2,6 +2,8 @@
 
 namespace Ahc\Cli\Output;
 
+use Ahc\Cli\Exception\InvalidArgumentException;
+
 /**
  * Cli Colorizer.
  *
@@ -160,11 +162,11 @@ class Color
         $style = \array_intersect_key($style, $allow);
 
         if (empty($style)) {
-            throw new \InvalidArgumentException('Trying to set empty or invalid style');
+            throw new InvalidArgumentException('Trying to set empty or invalid style');
         }
 
         if (isset(static::$styles[$name]) || \method_exists(static::class, $name)) {
-            throw new \InvalidArgumentException('Trying to define existing style');
+            throw new InvalidArgumentException('Trying to define existing style');
         }
 
         static::$styles[$name] = $style;
@@ -181,7 +183,7 @@ class Color
     public function __call(string $name, array $arguments): string
     {
         if (!isset($arguments[0])) {
-            throw new \InvalidArgumentException('Text required');
+            throw new InvalidArgumentException('Text required');
         }
 
         list($name, $text, $style) = $this->parseCall($name, $arguments);
@@ -196,7 +198,7 @@ class Color
         }
 
         if (!\method_exists($this, $name)) {
-            throw new \InvalidArgumentException(\sprintf('Style "%s" not defined', $name));
+            throw new InvalidArgumentException(\sprintf('Style "%s" not defined', $name));
         }
 
         return $this->{$name}($text, $style);

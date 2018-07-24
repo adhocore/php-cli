@@ -2,6 +2,7 @@
 
 namespace Ahc\Cli;
 
+use Ahc\Cli\Exception\InvalidArgumentException;
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\Input\Command;
 use Ahc\Cli\IO\Interactor;
@@ -154,7 +155,7 @@ class Application
         $name = $command->name();
 
         if ($this->commands[$name] ?? $this->aliases[$name] ?? $this->commands[$alias] ?? $this->aliases[$alias] ?? null) {
-            throw new \InvalidArgumentException(\sprintf('Command "%s" already added', $name));
+            throw new InvalidArgumentException(\sprintf('Command "%s" already added', $name));
         }
 
         if ($alias) {
@@ -253,16 +254,19 @@ class Application
             return $this->showHelp();
         }
 
+        $exitCode = 255;
+
         try {
-            $exitCode = 0;
-            $command  = $this->parse($argv);
-
+            $command = $this->parse($argv);
             $this->doAction($command);
+            $exitCode = 0;
         } catch (\Throwable $e) {
-            $exitCode = 255;
-            $location = 'Thrown in ' . $e->getFile() . ' on line ' . $e->getLine();
+            $this->io()->error($e->getMessage(), true);
 
-            $this->io()->error($e->getMessage(), true)->bgRed($location, true);
+            if (!$e instanceof Exception) {
+                $location = \get_class($e) . ' thrown in ' . $e->getFile() . ' on line ' . $e->getLine();
+                $this->io()->bgRed($location, true);
+            }
         }
 
         return ($this->onExit)($exitCode);

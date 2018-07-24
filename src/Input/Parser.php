@@ -2,6 +2,8 @@
 
 namespace Ahc\Cli\Input;
 
+use Ahc\Cli\Exception\InvalidParameterException;
+use Ahc\Cli\Exception\RuntimeException;
 use Ahc\Cli\Helper\Normalizer;
 
 /**
@@ -195,7 +197,7 @@ abstract class Parser
     /**
      * Validate if all required arguments/options have proper values.
      *
-     * @throw \RuntimeException If value missing for required ones.
+     * @throw RuntimeException If value missing for required ones.
      */
     protected function validate()
     {
@@ -211,7 +213,7 @@ abstract class Parser
                 list($name, $label) = [$item->long(), 'Option'];
             }
 
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 \sprintf('%s "%s" is required', $label, $name)
             );
         }
@@ -248,7 +250,7 @@ abstract class Parser
     protected function ifAlreadyRegistered(Parameter $param)
     {
         if ($this->registered($param->attributeName())) {
-            throw new \InvalidArgumentException(\sprintf(
+            throw new InvalidParameterException(\sprintf(
                 'The parameter "%s" is already registered',
                 $param instanceof Option ? $param->long() : $param->name()
             ));

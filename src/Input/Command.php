@@ -3,6 +3,8 @@
 namespace Ahc\Cli\Input;
 
 use Ahc\Cli\Application as App;
+use Ahc\Cli\Exception\InvalidParameterException;
+use Ahc\Cli\Exception\RuntimeException;
 use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\IO\Interactor;
@@ -179,7 +181,7 @@ class Command extends Parser
         $argument = new Argument($raw, $desc, $default);
 
         if ($this->_argVariadic) {
-            throw new \InvalidArgumentException('Only last argument can be variadic');
+            throw new InvalidParameterException('Only last argument can be variadic');
         }
 
         if ($argument->variadic()) {
@@ -286,7 +288,7 @@ class Command extends Parser
 
         // Has some value, error!
         if ($values) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 \sprintf('Option "%s" not registered', $arg)
             );
         }
