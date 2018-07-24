@@ -152,6 +152,76 @@ $app->handle(['git', 'co', '-b', 'master-2', '-f']);
 // Will produce: Checkout to new master-2 with force
 ```
 
+### Organized app
+
+Instead of inline commands/actions, we define and add our own commands (having `interact()` and `execute()`) to the app:
+
+```php
+
+class InitCommand extends Ahc\Cli\Input\Command
+{
+    public function __construct()
+    {
+        parent::__construct('init', 'Init something');
+
+        $this
+            ->argument('<arrg>', 'The Arrg')
+            ->argument('[arg2]', 'The Arg2')
+            ->option('-a --apple', 'The Apple')
+            ->option('-b --ball', 'The ball')
+            // Usage examples:
+            ->usage(
+                '<bold>  init</end> <comment>--apple applet --ball ballon <arggg></end><eol/>' .
+                '<bold>  init</end> <comment>-a applet -b ballon <arggg> [arg2]</end><eol/>'
+            );
+    }
+
+    // This method is auto called before `self::execute()` and receives `Interactor $io` instance
+    public function interact(Ahc\Cli\IO\Interactor $io)
+    {
+        // Collect missing opts/args
+        if (!$this->apple) {
+            $this->set('apple', $io->prompt('Enter apple'));
+        }
+
+        if (!$this->ball) {
+            $this->set('ball', $io->prompt('Enter ball'));
+        }
+
+        // ...
+    }
+
+    // When app->handle() locates `init` command it automatically calls `execute()`
+    // with correct $ball and $apple values
+    public function execute($ball, $apple)
+    {
+        $io = $this->app()->io();
+
+        $io->write('Apple ' . $apple, true);
+        $io->write('Ball ' . $ball, true);
+
+        // ...
+    }
+}
+
+class OtherCommand extends Ahc\Cli\Input\Command
+{
+    // ...
+}
+
+// Init App with name and version
+$app = new Ahc\Cli\Application('App', 'v0.0.1');
+
+// Add commands with optional aliases`
+$app->add(new InitCommand, 'i');
+$app->add(new OtherCommand, 'o');
+
+// Set logo
+$app->logo('Ascii art logo of your app');
+
+$app->handle($_SERVER['argv']); // if argv[1] is `i` or `init` it executes InitCommand
+```
+
 #### App help
 
 It can be triggered manually with `$app->showHelp()` or automatic when `-h` or `--help` option is passed to `$app->parse()`.
