@@ -324,15 +324,17 @@ class Application
             return $this->notFound();
         }
 
-        if (null === $action = $command->action()) {
+        // Let the command collect more data (if missing or needs confirmation)
+        $command->interact($this->io());
+
+        if (!$command->action() && !\method_exists($command, 'execute')) {
             return;
         }
 
-        // Let the command collect more data (if mising or needs confirmation)
-        $command->interact($this->io());
-
         $params = [];
         $values = $command->values();
+        // We prioritize action to be in line with commander.js!
+        $action = $command->action() ?? [$command, 'execute'];
 
         foreach ($this->getActionParameters($action) as $param) {
             $params[] = $values[$param->getName()] ?? null;
