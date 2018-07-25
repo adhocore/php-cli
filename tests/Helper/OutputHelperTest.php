@@ -27,7 +27,7 @@ class OutputHelperTest extends TestCase
     public function test_show_arguments()
     {
         $this->newHelper()->showArgumentsHelp([
-            new Argument('<path>'),
+            new Argument('<path>', 'The path'),
             new Argument('[config:defaultConfig]'),
         ], 'Arg Header', 'Arg Footer');
 
@@ -36,7 +36,7 @@ class OutputHelperTest extends TestCase
             '',
             'Arguments:',
             '  [config]    ',
-            '  <path>      ',
+            '  <path>      The path',
             '',
             'Arg Footer',
         ], $this->output());
@@ -53,8 +53,8 @@ class OutputHelperTest extends TestCase
             'Opt Header',
             '',
             'Options:',
-            '  <-n|--full-name>      Full name',
-            '  [-h|--help]           Show help',
+            '  <-n|--full-name>    Full name',
+            '  [-h|--help]         Show help',
             '',
             'Opt Footer',
         ], $this->output());

@@ -159,6 +159,7 @@ class Application
         }
 
         if ($alias) {
+            $command->alias($alias);
             $this->aliases[$alias] = $name;
         }
 

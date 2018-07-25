@@ -35,7 +35,7 @@ class OutputHelper
      */
     public function showArgumentsHelp(array $arguments, string $header = '', string $footer = ''): self
     {
-        $this->showHelp('Arguments', $arguments, 6, $header, $footer);
+        $this->showHelp('Arguments', $arguments, $header, $footer);
 
         return $this;
     }
@@ -49,7 +49,7 @@ class OutputHelper
      */
     public function showOptionsHelp(array $options, string $header = '', string $footer = ''): self
     {
-        $this->showHelp('Options', $options, 13, $header, $footer);
+        $this->showHelp('Options', $options, $header, $footer);
 
         return $this;
     }
@@ -63,7 +63,7 @@ class OutputHelper
      */
     public function showCommandsHelp(array $commands, string $header = '', string $footer = ''): self
     {
-        $this->showHelp('Commands', $commands, 4, $header, $footer);
+        $this->showHelp('Commands', $commands, $header, $footer);
 
         return $this;
     }
@@ -73,13 +73,12 @@ class OutputHelper
      *
      * @param string $for
      * @param array  $items
-     * @param int    $space
      * @param string $header
      * @param string $footer
      *
      * @return void
      */
-    protected function showHelp(string $for, array $items, int $space, string $header = '', string $footer = '')
+    protected function showHelp(string $for, array $items, string $header = '', string $footer = '')
     {
         if ($header) {
             $this->writer->bold($header, true);
@@ -93,6 +92,7 @@ class OutputHelper
             return;
         }
 
+        $space = 4;
         foreach ($this->sortItems($items, $padLen) as $item) {
             $name = $this->getName($item);
             $this->writer->bold('  ' . \str_pad($name, $padLen + $space));
@@ -120,7 +120,7 @@ class OutputHelper
         \uasort($items, function ($a, $b) use (&$max) {
             /** @var Parameter $b */
             /** @var Parameter $a */
-            $max = \max(\strlen($a->name()), \strlen($b->name()), $max);
+            $max = \max(\strlen($this->getName($a)), \strlen($this->getName($b)), $max);
 
             return $a->name() <=> $b->name();
         });
@@ -140,17 +140,33 @@ class OutputHelper
         $name = $item->name();
 
         if ($item instanceof Command) {
-            return $name;
+            return \trim($item->alias() . '|' . $name, '|');
         }
+
+        return $this->label($item);
+    }
+
+    /**
+     * Get parameter label for humans.
+     *
+     * @param Parameter $item
+     *
+     * @return string
+     */
+    protected function label(Parameter $item)
+    {
+        $name = $item->name();
 
         if ($item instanceof Option) {
             $name = $item->short() . '|' . $item->long();
         }
 
+        $variad = $item->variadic() ? '...' : '';
+
         if ($item->required()) {
-            return "<$name>";
+            return "<$name$variad>";
         }
 
-        return "[$name]";
+        return "[$name$variad]";
     }
 }

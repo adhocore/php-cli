@@ -34,8 +34,11 @@ class Command extends Parser
     /** @var string */
     protected $_desc;
 
-    /** @var string */
+    /** @var string Usage examples */
     protected $_usage;
+
+    /** @var string Command alias */
+    protected $_alias;
 
     /** @var App The cli app this command is bound to */
     protected $_app;
@@ -245,6 +248,24 @@ class Command extends Parser
     }
 
     /**
+     * Gets or sets alias.
+     *
+     * @param string|null $alias
+     *
+     * @return string|self
+     */
+    public function alias(string $alias = null)
+    {
+        if (\func_num_args() === 0) {
+            return $this->_alias;
+        }
+
+        $this->_alias = $alias;
+
+        return $this;
+    }
+
+    /**
      * Sets event handler for last (or given) option.
      *
      * @param callable $fn
@@ -313,7 +334,7 @@ class Command extends Parser
 
         $helper
             ->showArgumentsHelp($this->allArguments())
-            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional]');
+            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional] variadic...');
 
         if ($this->_usage) {
             $io->eol();
