@@ -21,6 +21,9 @@ class OutputHelper
     /** @var Writer */
     protected $writer;
 
+    /** @var int Max width of command name */
+    protected $maxCmdName;
+
     public function __construct(Writer $writer = null)
     {
         $this->writer = $writer ?? new Writer;
@@ -63,6 +66,10 @@ class OutputHelper
      */
     public function showCommandsHelp(array $commands, string $header = '', string $footer = ''): self
     {
+        $this->maxCmdName = \max(\array_map(function (Command $cmd) {
+            return \strlen($cmd->name());
+        }, $commands));
+
         $this->showHelp('Commands', $commands, $header, $footer);
 
         return $this;
@@ -114,14 +121,13 @@ class OutputHelper
      */
     protected function sortItems(array $items, &$max = 0): array
     {
-        $first = reset($items);
-        $max   = \strlen($first->name());
+        $max = \max(\array_map(function ($item) {
+            return \strlen($this->getName($item));
+        }, $items));
 
-        \uasort($items, function ($a, $b) use (&$max) {
+        \uasort($items, function ($a, $b) {
             /** @var Parameter $b */
             /** @var Parameter $a */
-            $max = \max(\strlen($this->getName($a)), \strlen($this->getName($b)), $max);
-
             return $a->name() <=> $b->name();
         });
 
@@ -140,7 +146,7 @@ class OutputHelper
         $name = $item->name();
 
         if ($item instanceof Command) {
-            return \trim($item->alias() . '|' . $name, '|');
+            return \str_pad($name, $this->maxCmdName) . ' ' . $item->alias();
         }
 
         return $this->label($item);
