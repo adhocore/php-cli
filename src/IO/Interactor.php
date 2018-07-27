@@ -334,6 +334,8 @@ class Interactor
             $options .= "/<$style>$choice</end>";
         }
 
+        $options = \ltrim($options, '/');
+
         $this->writer->colors(" ($options): ");
 
         return $this;
