@@ -27,4 +27,18 @@ trait InflectsString
 
         return \lcfirst($words);
     }
+
+    /**
+     * Convert a string to capitalized words.
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public function toWords(string $string): string
+    {
+        $words = \str_replace(['-', '_'], ' ', $string);
+
+        return \ucwords($words);
+    }
 }
