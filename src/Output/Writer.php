@@ -2,6 +2,7 @@
 
 namespace Ahc\Cli\Output;
 
+use Ahc\Cli\Exception\InvalidArgumentException;
 use Ahc\Cli\Helper\InflectsString;
 
 /**
@@ -293,7 +294,7 @@ class Writer
         list($start, $end) = $styles['head'];
         foreach ($head as $col => $size) {
             $dash[]  = \str_repeat('-', $size + 2);
-            $title[] = $start . \str_pad($this->toWords($col), $size, ' ') . $end;
+            $title[] = \str_pad($this->toWords($col), $size, ' ');
         }
 
         $title = "|$start " . \implode(" $end|$start ", $title) . " $end|" . \PHP_EOL;
