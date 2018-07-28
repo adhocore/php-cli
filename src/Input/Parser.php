@@ -84,13 +84,10 @@ abstract class Parser
             return $this->set(null, $arg);
         }
 
-        $name     = $argument->attributeName();
-        $variadic = $argument->variadic();
-
-        $this->set($name, $argument->filter($arg), $variadic);
+        $this->setValue($argument, $arg);
 
         // Otherwise we will always collect same arguments again!
-        if (!$variadic) {
+        if (!$argument->variadic()) {
             \array_shift($this->_arguments);
         }
     }
@@ -169,7 +166,7 @@ abstract class Parser
         $name  = $parameter->attributeName();
         $value = $this->_normalizer->normalizeValue($parameter, $value);
 
-        return $this->set($name, $value);
+        return $this->set($name, $value, $parameter->variadic());
     }
 
     /**
@@ -186,7 +183,7 @@ abstract class Parser
         if (null === $key) {
             $this->_values[] = $value;
         } elseif ($variadic) {
-            $this->_values[$key][] = $value;
+            $this->_values[$key] = \array_merge($this->_values[$key], (array) $value);
         } else {
             $this->_values[$key] = $value;
         }
