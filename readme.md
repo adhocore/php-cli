@@ -345,6 +345,36 @@ $writer->errorBold('This is error');
 
 // Write a normal raw text.
 $writer->raw('Enter name: ');
+
+// Creating tables: just pass array of assoc arrays.
+// The keys of first array will be taken as heading.
+// Heading is auto inflected to human readable capitalized words (ucwords).
+$writer->table([
+    ['a' => 'apple', 'b-c' => 'ball', 'c_d' => 'cat'],
+    ['a' => 'applet', 'b-c' => 'bee', 'c_d' => 'cute'],
+]);
+
+// Gives something like:
+//
+// +--------+------+------+
+// | A      | B C  | C D  |
+// +--------+------+------+
+// | apple  | ball | cat  |
+// | applet | bee  | cute |
+// +--------+------+------+
+
+// Designing table look and feel: just pass 2nd param $styles.
+$writer->table([
+    ['a' => 'apple', 'b-c' => 'ball', 'c_d' => 'cat'],
+    ['a' => 'applet', 'b-c' => 'bee', 'c_d' => 'cute'],
+], [
+    // for => styleName (anything that you would call in $writer instance)
+    'head' => 'boldGreen', // For the table heading
+    'odd'  => 'bold',      // For the odd rows (1st row is odd, then 3, 5 etc)
+    'even' => 'comment',   // For the even rows (2nd row is even, then 4, 6 etc)
+]);
+// 'head', 'odd', 'even' are all the styles for now
+// In futrue we may support styling all columns by its name!
 ```
 
 #### Reader
