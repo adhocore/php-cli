@@ -374,7 +374,7 @@ $writer->table([
     'even' => 'comment',   // For the even rows (2nd row is even, then 4, 6 etc)
 ]);
 // 'head', 'odd', 'even' are all the styles for now
-// In futrue we may support styling all columns by its name!
+// In future we may support styling a column by its name!
 ```
 
 #### Reader
