@@ -66,9 +66,9 @@ class OutputHelper
      */
     public function showCommandsHelp(array $commands, string $header = '', string $footer = ''): self
     {
-        $this->maxCmdName = \max(\array_map(function (Command $cmd) {
+        $this->maxCmdName = $commands ? \max(\array_map(function (Command $cmd) {
             return \strlen($cmd->name());
-        }, $commands));
+        }, $commands)) : 0;
 
         $this->showHelp('Commands', $commands, $header, $footer);
 
@@ -146,7 +146,7 @@ class OutputHelper
         $name = $item->name();
 
         if ($item instanceof Command) {
-            return \str_pad($name, $this->maxCmdName) . ' ' . $item->alias();
+            return \trim(\str_pad($name, $this->maxCmdName) . ' ' . $item->alias());
         }
 
         return $this->label($item);
