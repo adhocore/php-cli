@@ -17,26 +17,21 @@ class Argument extends Parameter
      */
     protected function parse(string $arg)
     {
-        $this->required = $arg[0] === '<';
-        $this->variadic = \strpos($arg, '...') !== false;
-        $this->name     = $name = \str_replace(['<', '>', '[', ']', '.'], '', $arg);
+        $this->name = $name = \str_replace(['<', '>', '[', ']', '.'], '', $arg);
 
-        // Format is "name:default+value1,default+value2" ('+'' => ' ')!
+        // Format is "name:default+value1,default+value2" ('+' => ' ')!
         if (\strpos($name, ':') !== false) {
             $name                             = \str_replace('+', ' ', $name);
             list($this->name, $this->default) = \explode(':', $name, 2);
         }
+
+        $this->prepDefault();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function default()
+    protected function prepDefault()
     {
-        if (!$this->variadic) {
-            return $this->default;
+        if ($this->variadic && $this->default && !\is_array($this->default)) {
+            $this->default = \explode(',', $this->default, 2);
         }
-
-        return null === $this->default ? [] : \explode(',', $this->default);
     }
 }
