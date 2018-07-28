@@ -139,6 +139,10 @@ abstract class Parameter
      */
     public function default()
     {
+        if ($this->variadic()) {
+            return (array) $this->default;
+        }
+
         return $this->default;
     }
 

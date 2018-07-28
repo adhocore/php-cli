@@ -169,7 +169,7 @@ abstract class Parser
         $name  = $parameter->attributeName();
         $value = $this->_normalizer->normalizeValue($parameter, $value);
 
-        return $this->set($name, $value);
+        return $this->set($name, $value, $parameter->variadic());
     }
 
     /**
@@ -186,7 +186,7 @@ abstract class Parser
         if (null === $key) {
             $this->_values[] = $value;
         } elseif ($variadic) {
-            $this->_values[$key][] = $value;
+            $this->_values[$key] = \array_merge($this->_values[$key], $value);
         } else {
             $this->_values[$key] = $value;
         }
