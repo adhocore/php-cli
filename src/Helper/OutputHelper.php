@@ -126,8 +126,8 @@ class OutputHelper
         }, $items));
 
         \uasort($items, function ($a, $b) {
-            /** @var Parameter $b */
-            /** @var Parameter $a */
+            /* @var Parameter $b */
+            /* @var Parameter $a */
             return $a->name() <=> $b->name();
         });
 

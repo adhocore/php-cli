@@ -309,7 +309,7 @@ class Writer
             }
 
             $odd    = !$odd;
-            $body[] = "|$start ". \implode(" $end|$start ", $parts) . " $end|";
+            $body[] = "|$start " . \implode(" $end|$start ", $parts) . " $end|";
         }
 
         $dash  = '+' . \implode('+', $dash) . '+' . \PHP_EOL;
