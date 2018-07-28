@@ -15,4 +15,11 @@ class InflectsStringTest extends TestCase
         $this->assertSame('theLongName', $this->toCamelCase('--the_long-name'));
         $this->assertSame('aBC', $this->toCamelCase('a_bC'));
     }
+
+    public function test_to_words()
+    {
+        $this->assertSame('A B', $this->toWords('a-b'));
+        $this->assertSame('The Long Name', $this->toWords('--the_long-name'));
+        $this->assertSame('A BC', $this->toWords('a_bC'));
+    }
 }

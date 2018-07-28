@@ -140,6 +140,7 @@ use Ahc\Cli\Output\Writer;
  * @method Writer redBgPurple($text, $eol = false)
  * @method Writer redBgWhite($text, $eol = false)
  * @method Writer redBgYellow($text, $eol = false)
+ * @method Writer table(array $rows, array $styles = [])
  * @method Writer warn($text, $eol = false)
  * @method Writer white($text, $eol = false)
  * @method Writer yellow($text, $eol = false)
@@ -333,6 +334,8 @@ class Interactor
             $style    = \in_array($choice, (array) $default) ? 'boldCyan' : 'cyan';
             $options .= "/<$style>$choice</end>";
         }
+
+        $options = \ltrim($options, '/');
 
         $this->writer->colors(" ($options): ");
 

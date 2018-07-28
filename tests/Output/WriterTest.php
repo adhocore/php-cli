@@ -42,7 +42,7 @@ class WriterTest extends CliTestCase
 
     public function test_raw()
     {
-        $w = new Writer($ou = __DIR__ . '/output');
+        $w = new Writer(static::$ou);
 
         $w->raw(new class {
             public function __toString()
@@ -51,10 +51,45 @@ class WriterTest extends CliTestCase
             }
         })->clear();
 
-        $out = file_get_contents($ou);
-        $this->assertSame("__toString\e[2J", $out);
+        $this->assertSame("__toString\e[2J", $this->buffer());
+    }
 
-        unlink($ou);
+    public function test_empty_table()
+    {
+        $w = new Writer(static::$ou);
+
+        $w->table([]);
+
+        $this->assertSame('', $this->buffer(), 'empty');
+    }
+
+    public function test_table()
+    {
+        $w = new Writer(static::$ou);
+
+        $w->table([
+            ['a' => 'apple', 'b-c' => 'ball', 'c_d' => 'cat'],
+            ['a' => 'applet', 'b-c' => 'bee', 'c_d' => 'cute'],
+        ], [
+            'head' => 'boldBgGreen',
+            'odd'  => 'purple',
+            'even' => 'cyan',
+        ]);
+
+        $this->assertSame(3, \substr_count($this->buffer(), '+--------+------+------+'), '3 dashes');
+        $this->assertBufferContains("|\33[1;37;42m A      \33[0m|\33[1;37;42m B C  \33[0m|\33[1;37;42m C D  \33[0m|", 'Head');
+        $this->assertBufferContains("|\33[0;35m apple  \33[0m|\33[0;35m ball \33[0m|\33[0;35m cat  \33[0m|", 'Odd');
+        $this->assertBufferContains("|\33[0;36m applet \33[0m|\33[0;36m bee  \33[0m|\33[0;36m cute \33[0m|", 'Even');
+    }
+
+    public function test_table_throws()
+    {
+        $w = new Writer(static::$ou);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Rows must be array of assoc arrays');
+
+        $w->table([1, 2]);
     }
 
     public function test_colorizer()
