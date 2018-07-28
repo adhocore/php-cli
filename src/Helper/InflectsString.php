@@ -37,7 +37,7 @@ trait InflectsString
      */
     public function toWords(string $string): string
     {
-        $words = \str_replace(['-', '_'], ' ', $string);
+        $words = \trim(\str_replace(['-', '_'], ' ', $string));
 
         return \ucwords($words);
     }
