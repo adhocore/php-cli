@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
  */
 class CliTestCase extends TestCase
 {
+    protected static $ou = __DIR__ . '/output';
+
     public static function setUpBeforeClass()
     {
         // Thanks: https://stackoverflow.com/a/39785995
@@ -21,6 +23,7 @@ class CliTestCase extends TestCase
     {
         ob_start();
         StreamInterceptor::$buffer = '';
+        file_put_contents(static::$ou, '');
     }
 
     public function tearDown()
@@ -28,9 +31,19 @@ class CliTestCase extends TestCase
         ob_end_clean();
     }
 
+    public static function tearDownAfterClass()
+    {
+        unlink(static::$ou);
+    }
+
     public function buffer()
     {
-        return StreamInterceptor::$buffer;
+        return StreamInterceptor::$buffer ?: file_get_contents(static::$ou);
+    }
+
+    public function assertBufferContains($expect)
+    {
+        $this->assertContains($expect, $this->buffer());
     }
 }
 
