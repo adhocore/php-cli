@@ -389,9 +389,14 @@ $reader->read(null, 'ucwords');
 
 // Default 'abc', callback `trim()`
 $reader->read('abc', 'trim');
+
+// Read at most first 5 chars
+// (if ENTER is pressed before 5 chars then further read is aborted)
+$reader->read('', 'trim', 5);
 ```
 
 ### Related
 
 - [adhocore/phalcon-ext](https://github.com/adhocore/phalcon-ext) Phalcon extension using `adhocore/cli`
 - [adhocore/phint](https://github.com/adhocore/phint) PHP project scaffolding app using `adhocore/cli`
+- [adhocore/type-hinter](https://github.com/adhocore/php-type-hinter) Auto PHP7 typehinter tool using `adhocore/cli`
