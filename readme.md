@@ -395,6 +395,12 @@ $reader->read('abc', 'trim');
 $reader->read('', 'trim', 5);
 ```
 
+#### Exceptions
+
+Whenever an exception is caught by `Application::handle()`, it will show a beautiful stack trace and exit with non 0 status code.
+
+![Exception Preview](https://user-images.githubusercontent.com/2908547/44401057-8b350880-a577-11e8-8ca6-20508d593d98.png "Exception trace")
+
 ### Related
 
 - [adhocore/phalcon-ext](https://github.com/adhocore/phalcon-ext) Phalcon extension using `adhocore/cli`
