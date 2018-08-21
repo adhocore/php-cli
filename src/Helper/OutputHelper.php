@@ -55,10 +55,12 @@ class OutputHelper
             "(thrown in <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end>"
         );
 
-        // Internal exception traces are not printed.
+        // @codeCoverageIgnoreStart
         if ($e instanceof Exception) {
+            // Internal exception traces are not printed.
             return;
         }
+        // @codeCoverageIgnoreEnd
 
         $traceStr = '<eol/><eol/><bold>Stack Trace:</end><eol/><eol/>';
 
