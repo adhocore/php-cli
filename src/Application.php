@@ -271,12 +271,7 @@ class Application
             $this->doAction($command);
             $exitCode = 0;
         } catch (\Throwable $e) {
-            $this->io()->error($e->getMessage(), true);
-
-            if (!$e instanceof Exception) {
-                $location = \get_class($e) . ' thrown in ' . $e->getFile() . ' on line ' . $e->getLine();
-                $this->io()->bgRed($location, true);
-            }
+            $this->outputHelper()->printTrace($e);
         }
 
         return ($this->onExit)($exitCode);
@@ -311,8 +306,6 @@ class Application
     public function showHelp()
     {
         $writer = $this->io()->writer();
-        $helper = new OutputHelper($writer);
-
         $header = "{$this->name}, version {$this->version}";
         $footer = 'Run `<command> --help` for specific help';
 
@@ -320,9 +313,16 @@ class Application
             $writer->write($this->logo, true);
         }
 
-        $helper->showCommandsHelp($this->commands(), $header, $footer);
+        $this->outputHelper()->showCommandsHelp($this->commands(), $header, $footer);
 
         return ($this->onExit)();
+    }
+
+    protected function outputHelper(): OutputHelper
+    {
+        $writer = $this->io()->writer();
+
+        return new OutputHelper($writer);
     }
 
     /**
