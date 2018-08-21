@@ -11,6 +11,7 @@
 
 namespace Ahc\Cli\Helper;
 
+use Ahc\Cli\Exception;
 use Ahc\Cli\Input\Argument;
 use Ahc\Cli\Input\Command;
 use Ahc\Cli\Input\Option;
@@ -36,6 +37,74 @@ class OutputHelper
     public function __construct(Writer $writer = null)
     {
         $this->writer = $writer ?? new Writer;
+    }
+
+    /**
+     * Print stack trace and error msg of an exception.
+     *
+     * @param \Throwable $e
+     *
+     * @return void
+     */
+    public function printTrace(\Throwable $e)
+    {
+        $eClass = \get_class($e);
+
+        $this->writer->colors(
+            "{$eClass} <red>{$e->getMessage()}</end><eol/>" .
+            "(thrown in <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end>"
+        );
+
+        // @codeCoverageIgnoreStart
+        if ($e instanceof Exception) {
+            // Internal exception traces are not printed.
+            return;
+        }
+        // @codeCoverageIgnoreEnd
+
+        $traceStr = '<eol/><eol/><bold>Stack Trace:</end><eol/><eol/>';
+
+        foreach ($e->getTrace() as $i => $trace) {
+            $trace += ['class' => '', 'type' => '', 'function' => '', 'file' => '', 'line' => '', 'args' => []];
+            $symbol = $trace['class'] . $trace['type'] . $trace['function'];
+            $args   = $this->stringifyArgs($trace['args']);
+
+            $traceStr .= "  <comment>$i)</end> <red>$symbol</end><comment>($args)</end>";
+            if ('' !== $trace['file']) {
+                $file      = \realpath($trace['file']);
+                $traceStr .= "<eol/>     <yellow>at $file</end><white>:{$trace['line']}</end><eol/>";
+            }
+        }
+
+        $this->writer->colors($traceStr);
+    }
+
+    protected function stringifyArgs(array $args)
+    {
+        $holder = [];
+
+        foreach ($args as $arg) {
+            $holder[] = $this->stringifyArg($arg);
+        }
+
+        return \implode(', ', $holder);
+    }
+
+    protected function stringifyArg($arg)
+    {
+        if (\is_scalar($arg)) {
+            return \var_export($arg, true);
+        }
+
+        if (\is_object($arg)) {
+            return \method_exists($arg, '__toString') ? (string) $arg : \get_class($arg);
+        }
+
+        if (\is_array($arg)) {
+            return '[' . $this->stringifyArgs($arg) . ']';
+        }
+
+        return \gettype($arg);
     }
 
     /**
