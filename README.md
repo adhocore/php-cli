@@ -17,17 +17,9 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 
 #### What's included
 
-**Core**
+**Core:** [Argv parser](#as-argv-parser) &middot; [Cli application](#as-console-app)
 
-- [Argv parser](#as-argv-parser)
-- [Cli application](#as-console-app)
-
-**IO**
-
-- [Colorizer](#color)
-- [Cursor manipulator](#cursor)
-- [Stream writer](#writer)
-- [Stream reader](#reader)
+**IO:** [Colorizer](#color) &middot; [Cursor manipulator](#cursor) &middot; [Stream writer](#writer) &middot; [Stream reader](#reader)
 
 ## Installation
 ```bash
@@ -105,7 +97,7 @@ For above example, the output would be:
 
 Definitely check [adhocore/phint](https://github.com/adhocore/phint) - a real world console application made using `adhocore/cli`.
 
-We simulate a `git` app with limited functionality of `add`, and `checkout`.
+Here we simulate a `git` app with limited functionality of `add`, and `checkout`.
 You will see how intuitive, fluent and cheese building a console app is!
 
 #### Git app
@@ -157,7 +149,6 @@ $app->handle(['git', 'co', '-b', 'master-2', '-f']);
 Instead of inline commands/actions, we define and add our own commands (having `interact()` and `execute()`) to the app:
 
 ```php
-
 class InitCommand extends Ahc\Cli\Input\Command
 {
     public function __construct()
@@ -240,29 +231,42 @@ You can perform user interaction like printing colored output, reading user inpu
 
 ```php
 $interactor = new Ahc\Cli\IO\Interactor;
-// For mocking io: `$interactor = new Ahc\Cli\IO\Interactor($inputPath, $outputPath)`
 
+// For mocking io:
+$interactor = new Ahc\Cli\IO\Interactor($inputPath, $outputPath);
+```
+
+#### Confirm
+```php
 $confirm = $interactor->confirm('Are you happy?', 'n'); // Default: n (no)
 $confirm // is a boolean
     ? $interactor->greenBold('You are happy :)', true)  // Output green bold text
     : $interactor->redBold('You are sad :(', true);     // Output red bold text
+```
 
-// Single choice
+#### Single choice
+```php
 $fruits = ['a' => 'apple', 'b' => 'banana'];
 $choice = $interactor->choice('Select a fruit', $fruits, 'b');
 $interactor->greenBold("You selected: {$fruits[$choice]}", true);
+```
 
-// Multiple choices
+#### Multiple choices
+```php
 $fruits  = ['a' => 'apple', 'b' => 'banana', 'c' => 'cherry'];
 $choices = $interactor->choices('Select fruit(s)', $fruits, ['b', 'c']);
 $choices = \array_map(function ($c) use ($fruits) { return $fruits[$c]; }, $choices);
 $interactor->greenBold('You selected: ' . implode(', ', $choices), true);
+```
 
-// Promt free input
+#### Prompt free input
+```php
 $any = $interactor->prompt('Anything', rand(1, 100)); // Random default
 $interactor->greenBold("Anything is: $any", true);
+```
 
-// Prompting with validation
+#### Prompt with validation
+```php
 $nameValidator = function ($value) {
     if (\strlen($value) < 5) {
         throw new \Exception('Name should be atleast 5 chars');
@@ -278,24 +282,30 @@ $interactor->greenBold("The name is: $name", true);
 
 ![Interactive Preview](https://i.imgur.com/qYBNd29.gif "Interactive Preview")
 
-### IO Components
+## IO Components
 
 The interactor is composed of `Ahc\Cli\Input\Reader` and `Ahc\Cli\Output\Writer` while the `Writer` itself is composed of `Ahc\Cli\Output\Color`. All these components can be used standalone.
 
-#### Color
+### Color
 
 Color looks cool!
 
 ```php
 $color = new Ahc\Cli\Output\Color;
+```
 
+#### Simple usage
+
+```php
 echo $color->warn('This is warning');
 echo $color->info('This is info');
 echo $color->error('This is error');
 echo $color->comment('This is comment');
 echo $color->ok('This is ok msg');
+```
 
-// Custom style:
+#### Custom style
+```php
 Ahc\Cli\Output\Color::style('mystyle', [
     'bg' => Ahc\Cli\Output\Color::CYAN,
     'fg' => Ahc\Cli\Output\Color::WHITE,
@@ -305,65 +315,96 @@ Ahc\Cli\Output\Color::style('mystyle', [
 echo $color->mystyle('My text');
 ```
 
-#### Cursor
+### Cursor
 
 Move cursor around, erase line up or down, clear screen.
 
 ```php
 $cursor = new Ahc\Cli\Output\Cursor;
 
-echo  $cursor->up(1) . $cursor->down(2)
-    . $cursor->right(3) . $cursor->left(4)
-    . $cursor->next(0) . $cursor->prev(2);
-    . $cursor->eraseLine() . $cursor->clear()
-    . $cursor->clearUp() . $cursor->clearDown()
+echo  $cursor->up(1)
+    . $cursor->down(2)
+    . $cursor->right(3)
+    . $cursor->left(4)
+    . $cursor->next(0)
+    . $cursor->prev(2);
+    . $cursor->eraseLine()
+    . $cursor->clear()
+    . $cursor->clearUp()
+    . $cursor->clearDown()
     . $cursor->moveTo(5, 8); // x, y
 ```
 
-#### Writer
+### Writer
 
 Write anything in style.
 
 ```php
 $writer = new Ahc\Cli\Output\Writer;
 
-// Output formatting: You can call methods composed of:
-//  ('<colorName>', 'bold', 'bg', 'fg', 'warn', 'info', 'error', 'ok', 'comment')
-// ... in any order (eg: bgRedFgBlaock, boldRed, greenBold, commentBgPurple and so on ...)
+// All writes are forwarded to STDOUT
+// But if you specify error, then to STDERR
+$writer->errorBold('This is error');
+```
+
+#### Output formatting
+
+You can call methods composed of any combinations:
+`'<colorName>', 'bold', 'bg', 'fg', 'warn', 'info', 'error', 'ok', 'comment'`
+... in any order (eg: `bgRedFgBlaock`, `boldRed`, `greenBold`, `commentBgPurple` and so on ...)
+
+```php
 $writer->bold->green->write('It is bold green');
 $writer->boldGreen('It is bold green'); // Same as above
 $writer->comment('This is grayish comment', true); // True indicates append EOL character.
 $writer->bgPurpleBold('This is white on purple background');
+```
 
-// Many colors with one single call: wrap text with tags `<method>` and `</end>`
-// For NL/EOL just use `<eol>` or `</eol>` or `<eol/>`
+#### Free style
+
+Many colors with one single call: wrap text with tags `<method>` and `</end>`
+For NL/EOL just use `<eol>` or `</eol>` or `<eol/>`.
+
+Great for writing long colorful texts for example command usage info.
+
+```php
 $writer->colors('<red>This is red</end><eol><bgGreen>This has bg Green</end>');
+```
 
-// All writes are forwarded to STDOUT
-// But if you specify error, then to STDERR
-$writer->errorBold('This is error');
+#### Raw output
 
-// Write a normal raw text.
+```php
 $writer->raw('Enter name: ');
+```
 
-// Creating tables: just pass array of assoc arrays.
-// The keys of first array will be taken as heading.
-// Heading is auto inflected to human readable capitalized words (ucwords).
+#### Tables
+
+Just pass array of assoc arrays. The keys of first array will be taken as heading.
+Heading is auto inflected to human readable capitalized words (ucwords).
+
+```php
 $writer->table([
     ['a' => 'apple', 'b-c' => 'ball', 'c_d' => 'cat'],
     ['a' => 'applet', 'b-c' => 'bee', 'c_d' => 'cute'],
 ]);
+```
 
-// Gives something like:
-//
-// +--------+------+------+
-// | A      | B C  | C D  |
-// +--------+------+------+
-// | apple  | ball | cat  |
-// | applet | bee  | cute |
-// +--------+------+------+
+Gives something like:
 
-// Designing table look and feel: just pass 2nd param $styles.
+```
++--------+------+------+
+| A      | B C  | C D  |
++--------+------+------+
+| apple  | ball | cat  |
+| applet | bee  | cute |
++--------+------+------+
+```
+
+> Designing table look and feel
+
+Just pass 2nd param `$styles`:
+
+```php
 $writer->table([
     ['a' => 'apple', 'b-c' => 'ball', 'c_d' => 'cat'],
     ['a' => 'applet', 'b-c' => 'bee', 'c_d' => 'cute'],
@@ -373,6 +414,7 @@ $writer->table([
     'odd'  => 'bold',      // For the odd rows (1st row is odd, then 3, 5 etc)
     'even' => 'comment',   // For the even rows (2nd row is even, then 4, 6 etc)
 ]);
+
 // 'head', 'odd', 'even' are all the styles for now
 // In future we may support styling a column by its name!
 ```
@@ -406,3 +448,7 @@ Whenever an exception is caught by `Application::handle()`, it will show a beaut
 - [adhocore/phalcon-ext](https://github.com/adhocore/phalcon-ext) Phalcon extension using `adhocore/cli`
 - [adhocore/phint](https://github.com/adhocore/phint) PHP project scaffolding app using `adhocore/cli`
 - [adhocore/type-hinter](https://github.com/adhocore/php-type-hinter) Auto PHP7 typehinter tool using `adhocore/cli`
+
+## LICENSE
+
+> &copy; [MIT](./LICENSE) | 2018, Jitendra Adhikari
