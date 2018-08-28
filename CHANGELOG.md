@@ -1,3 +1,7 @@
+## [0.2.1] 2018-08-28 14:08:59 UTC
+
+- [25c3f1a](https://github.com/adhocore/php-cli/commit/25c3f1a) docs: improve readability and organize (Jitendra Adhikari)
+
 ## [0.2.0] 2018-08-21 14:08:52 UTC
 
 - [a75c76e](https://github.com/adhocore/php-cli/commit/a75c76e) feat(cmd.option): support multiline desc and indent them properly on help (Jitendra Adhikari)
@@ -6,4 +10,3 @@
 - [c5ffb12](https://github.com/adhocore/php-cli/commit/c5ffb12) test: 100% cov ftw (Jitendra Adhikari)
 - [92f41ba](https://github.com/adhocore/php-cli/commit/92f41ba) feat(output.helper): add print trace (Jitendra Adhikari)
 - [7b5080e](https://github.com/adhocore/php-cli/commit/7b5080e) refactor(app): output helper instantiation and print trace (Jitendra Adhikari)
-
