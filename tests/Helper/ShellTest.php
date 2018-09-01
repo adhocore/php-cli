@@ -13,7 +13,6 @@ use PHPUnit\Framework\TestCase;
 
 class ShellTest extends TestCase
 {
-
     public function test_get_output()
     {
         $shell = new Shell('echo hello');

@@ -12,7 +12,6 @@ use Ahc\Cli\Exception\RuntimeException;
 
 class Shell
 {
-
     const STDIN_DESCRIPTOR_KEY  = 0;
     const STDOUT_DESCRIPTOR_KEY = 1;
     const STDERR_DESCRIPTOR_KEY = 2;
