@@ -100,18 +100,12 @@ class Shell
 
     public function getExitCode()
     {
-        return $this->status['exitcode'];
+        return $this->status ? $this->status['exitcode'] : -1;
     }
 
     public function isRunning()
     {
-        if (!$this->status) {
-            return false;
-        }
-
-        $this->updateStatus();
-
-        return $this->status['running'];
+        return $this->status ? $this->status['running'] : false;
     }
 
     public function getProcessId()
