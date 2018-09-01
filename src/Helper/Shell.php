@@ -76,9 +76,8 @@ class Shell
 
     protected function updateStatus()
     {
-        $this->status = \proc_get_status($this->process);
-
-        return $this->status;
+        $this->status   = \proc_get_status($this->process);
+        $this->exitCode = $this->status['exitcode'];
     }
 
     protected function closePipes()
@@ -125,11 +124,15 @@ class Shell
 
     public function getExitCode()
     {
+        $this->updateStatus();
+
         return $this->exitCode;
     }
 
     public function isRunning()
     {
+        $this->updateStatus();
+
         return $this->status['running'];
     }
 
