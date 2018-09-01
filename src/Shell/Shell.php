@@ -19,16 +19,14 @@
         protected $cwd;
         protected $descriptors;
         protected $env;
-        protected $error;
         protected $input;
-        protected $output;
         protected $pipes;
         protected $process;
         protected $startTime;
         protected $status;
         protected $timeout;
 
-        public function __construct($command, $cwd = null, $input = null, $env = null, $timeout = 60)
+        public function __construct(string $command, string $cwd = null, string $input = null, string $env = null, float $timeout = 60)
         {
             if (!\function_exists('proc_open')) {
                 throw new RuntimeException('Required proc_open could not be found in your PHP setup');
@@ -39,6 +37,7 @@
             $this->env = $env;
             $this->input = $input;
             $this->timeout = $timeout;
+            $this->status = null;
         }
 
         private function getDescriptors()
@@ -84,9 +83,9 @@
             }
 
             $this->setInput();
+            $this->updateStatus();
 
             $this->startTime = microtime(true);
-            $this->status = $this->updateStatus();
 
             if ($blocking) {
                 $this->wait();
@@ -95,16 +94,12 @@
 
         public function getOutput()
         {
-            $this->output = stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
-
-            return $this->output;
+            return stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
         }
 
         public function getErrorOutput()
         {
-            $this->error = stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
-
-            return $this->error;
+            return stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
         }
 
         public function getExitCode()
@@ -134,7 +129,7 @@
 
         public function isRunning()
         {
-            return $this->status['running'];
+            return $this->status && $this->status['running'];
         }
 
         public function stop()
@@ -144,8 +139,10 @@
             }
 
             $this->closePipes();
-            proc_close($this->process);
-            $this->updateStatus();
+
+            if (\is_resource($this->process)) {
+                proc_close($this->process);
+            }
 
             return $this->getExitCode();
         }
