@@ -11,16 +11,17 @@
 
     class Shell {
 
-        private $command;
-        private $cwd;
-        private $descriptors;
-        private $env;
-        private $pipes;
-        private $process;
-        private $stdin;
-        private $stdout;
-        private $stderr;
-        private $timeout;
+        protected $command;
+        protected $cwd;
+        protected $descriptors;
+        protected $env;
+        protected $pipes;
+        protected $process;
+        protected $status;
+        protected $stdin;
+        protected $stdout;
+        protected $stderr;
+        protected $timeout;
 
         public function __construct(string $command, string $cwd = null, $stdin = null, $env = null, $timeout = 60)
         {
@@ -47,11 +48,6 @@
             }
         }
 
-        public function stop()
-        {
-            return proc_close($this->process);
-        }
-
         public function getDescriptors()
         {
             return array(
@@ -61,31 +57,43 @@
             );
         }
 
-        public function kill()
-        {
-            return proc_terminate($this->process);
-        }
-
         public function setInput()
         {
             fwrite($this->pipes[0], $this->stdin);
-            fclose($this->pipes[0]);
         }
 
         public function getOutput()
         {
             $this->stdout = stream_get_contents($this->pipes[1]);
-            fclose($this->pipes[1]);
+
 
             return $this->stdout;
+        }
+
+        public function getStatus()
+        {
+            $this->status = proc_get_status($this->process);
+            return $this->status;
         }
 
         public function getErrorOutput()
         {
             $this->stderr = stream_get_contents($this->pipes[2]);
-            fclose($this->pipes[2]);
-
             return $this->stderr;
+        }
+
+        public function stop()
+        {
+            fclose($this->pipes[0]);
+            fclose($this->pipes[1]);
+            fclose($this->pipes[2]);
+            return proc_close($this->process);
+        }
+
+
+        public function kill()
+        {
+            return proc_terminate($this->process);
         }
 
         public function __destruct()
