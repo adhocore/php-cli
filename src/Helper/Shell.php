@@ -10,7 +10,8 @@ namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Exception\RuntimeException;
 
-class Shell {
+class Shell
+{
 
     const STDIN_DESCRIPTOR_KEY = 0;
     const STDOUT_DESCRIPTOR_KEY = 1;
@@ -40,17 +41,17 @@ class Shell {
     private function getDescriptors()
     {
         if ('\\' === \DIRECTORY_SEPARATOR) {
-            return array(
-                self::STDIN_DESCRIPTOR_KEY => array('pipe', 'r'),
-                self::STDOUT_DESCRIPTOR_KEY => array('file', 'NUL', 'w'),
-                self::STDERR_DESCRIPTOR_KEY => array('file', 'NUL', 'w'),
-            );
+            return [
+                self::STDIN_DESCRIPTOR_KEY => ['pipe', 'r'],
+                self::STDOUT_DESCRIPTOR_KEY => ['file', 'NUL', 'w'],
+                self::STDERR_DESCRIPTOR_KEY => ['file', 'NUL', 'w'],
+            ];
         } else {
-            return array(
-                self::STDIN_DESCRIPTOR_KEY => array('pipe', 'r'),
-                self::STDOUT_DESCRIPTOR_KEY => array('pipe', 'w'),
-                self::STDERR_DESCRIPTOR_KEY => array('pipe', 'w'),
-            );
+            return [
+                self::STDIN_DESCRIPTOR_KEY => ['pipe', 'r'],
+                self::STDOUT_DESCRIPTOR_KEY => ['pipe', 'w'],
+                self::STDERR_DESCRIPTOR_KEY => ['pipe', 'w'],
+            ];
         }
     }
 
