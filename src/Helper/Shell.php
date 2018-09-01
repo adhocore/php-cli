@@ -21,11 +21,9 @@ class Shell
     protected $input;
     protected $pipes;
     protected $process;
-    protected $startTime;
     protected $status;
-    protected $timeout;
 
-    public function __construct(string $command, string $input = null, float $timeout = 10)
+    public function __construct(string $command, string $input = null)
     {
         if (!\function_exists('proc_open')) {
             throw new RuntimeException('Required proc_open could not be found in your PHP setup');
@@ -33,7 +31,6 @@ class Shell
 
         $this->command = $command;
         $this->input   = $input;
-        $this->timeout = $timeout;
         $this->status  = null;
     }
 
@@ -89,8 +86,6 @@ class Shell
 
         $this->setInput();
         $this->updateStatus();
-
-        $this->startTime = microtime(true);
     }
 
     public function getOutput()
