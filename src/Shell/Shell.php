@@ -28,7 +28,7 @@
         protected $status;
         protected $timeout;
 
-        public function __construct(string $command, string $cwd = null, $input = null, $env = null, $timeout = 60)
+        public function __construct($command, $cwd = null, $input = null, $env = null, $timeout = 60)
         {
             if (!\function_exists('proc_open')) {
                 throw new RuntimeException('Required proc_open could not be found in your PHP setup');
@@ -47,7 +47,7 @@
             $this->wait();
         }
 
-        public function start()
+        private function start()
         {
             if ($this->isRunning()) {
                 throw new RuntimeException('Process is already running');
@@ -67,7 +67,7 @@
             $this->status = $this->updateStatus();
         }
 
-        public function getDescriptors()
+        private function getDescriptors()
         {
             return array(
                 self::STDIN_DESCRIPTOR_KEY => array("pipe", "r"),
@@ -76,23 +76,28 @@
             );
         }
 
-        public function setInput()
+        private function setInput()
         {
-            fwrite($this->pipes[0], $this->input);
+            fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input);
         }
 
         public function getOutput()
         {
-            $this->output = stream_get_contents($this->pipes[1]);
+            $this->output = stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
 
             return $this->output;
         }
 
         public function getErrorOutput()
         {
-            $this->error = stream_get_contents($this->pipes[2]);
+            $this->error = stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
 
             return $this->error;
+        }
+
+        public function getExitCode()
+        {
+            return $this->status['exitcode'];
         }
 
         public function checkTimeout()
@@ -104,13 +109,9 @@
             return $this->status;
         }
 
-        public function updateStatus()
+        private function updateStatus()
         {
             $this->status = proc_get_status($this->process);
-
-            if (!$this->isRunning()) {
-                $this->stop();
-            }
 
             return $this->status;
         }
@@ -133,12 +134,22 @@
 
         public function stop()
         {
-            fclose($this->pipes[0]);
-            fclose($this->pipes[1]);
-            fclose($this->pipes[2]);
-            proc_close($this->process);
+            if (!$this->isRunning()) {
+                throw new RuntimeException("No process to stop");
+            }
 
-            return $this->status;
+            $this->closePipes();
+            proc_close($this->process);
+            $this->updateStatus();
+
+            return $this->getExitCode();
+        }
+
+        private function closePipes()
+        {
+            fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
+            fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
+            fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
         }
 
         public function kill()
