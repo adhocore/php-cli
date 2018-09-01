@@ -24,9 +24,6 @@
         {
             $shell = new Shell("echo hello");
             $shell->execute();
-            echo '<pre>';
-            print_r($shell->getProcessId());
-            exit;
             $this->assertInternalType("int", $shell->getProcessId());
         }
     }
