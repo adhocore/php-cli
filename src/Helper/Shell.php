@@ -24,6 +24,10 @@ class Shell
     const STDOUT_DESCRIPTOR_KEY = 1;
     const STDERR_DESCRIPTOR_KEY = 2;
 
+    const STATE_READY      = 'ready';
+    const STATE_STARTED    = 'started';
+    const STATE_TERMINATED = 'terminated';
+
     /** @var string Command to be executed */
     protected $command;
 
@@ -42,8 +46,11 @@ class Shell
     /** @var resource The actual process resource returned from proc_open */
     protected $process = null;
 
+    /** @var string Current state of the shell execution */
+    protected $state = self::STATE_READY;
+
     /** @var string Status of the process as returned from proc_get_status */
-    protected $status = null;
+    protected $processStatus = null;
 
     public function __construct(string $command, string $input = null)
     {
@@ -71,12 +78,16 @@ class Shell
         \fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input);
     }
 
-    protected function updateStatus()
+    protected function updateProcessStatus()
     {
-        $this->status = \proc_get_status($this->process);
+        if (self::STATE_STARTED !== $this->state) {
+            return;
+        }
 
-        if ($this->status['running'] === false && $this->exitCode === null) {
-            $this->exitCode = $this->status['exitcode'];
+        $this->processStatus = \proc_get_status($this->process);
+
+        if ($this->processStatus['running'] === false && $this->exitCode === null) {
+            $this->exitCode = $this->processStatus['exitcode'];
         }
     }
 
@@ -101,15 +112,17 @@ class Shell
             throw new RuntimeException('Bad program could not be started.');
         }
 
+        $this->state = self::STATE_STARTED;
+
         $this->setInput();
-        $this->updateStatus();
+        $this->updateProcessStatus();
     }
 
-    public function getStatus()
+    public function getState()
     {
-        $this->updateStatus();
+        $this->updateProcessStatus();
 
-        return $this->status;
+        return $this->state;
     }
 
     public function getOutput()
@@ -124,21 +137,25 @@ class Shell
 
     public function getExitCode()
     {
-        $this->updateStatus();
+        $this->updateProcessStatus();
 
         return $this->exitCode;
     }
 
     public function isRunning()
     {
-        $this->updateStatus();
+        if (self::STATE_STARTED !== $this->state) {
+            return false;
+        }
 
-        return $this->status['running'];
+        $this->updateProcessStatus();
+
+        return $this->processStatus['running'];
     }
 
     public function getProcessId()
     {
-        return $this->isRunning() ? $this->status['pid'] : null;
+        return $this->isRunning() ? $this->processStatus['pid'] : null;
     }
 
     public function stop()
@@ -149,7 +166,8 @@ class Shell
             \proc_close($this->process);
         }
 
-        $this->exitCode = $this->status['exitcode'];
+        $this->state    = self::STATE_TERMINATED;
+        $this->exitCode = $this->processStatus['exitcode'];
 
         return $this->exitCode;
     }
