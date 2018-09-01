@@ -5,7 +5,7 @@
      * @license MIT
      */
 
-    namespace Ahc\Cli\Shell;
+    namespace Ahc\Cli\Helper;
 
     use Ahc\Cli\Exception\RuntimeException;
 
