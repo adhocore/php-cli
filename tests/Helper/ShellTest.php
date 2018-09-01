@@ -1,9 +1,12 @@
 <?php
 
 /*
- * Test for shell wrapper for package adhocore/php-cli.
- * @author Sushil Gupta <desushil@gmail.com>
- * @license MIT
+ * This file is part of the PHP-CLI package.
+ *
+ * (c) Jitendra Adhikari <jiten.adhikary@gmail.com>
+ *     <https://github.com/adhocore>
+ *
+ * Licensed under MIT license.
  */
 
 namespace Ahc\Cli\Test\Helper;

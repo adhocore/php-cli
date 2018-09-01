@@ -2,10 +2,9 @@
 
 /*
  * This file is part of the PHP-CLI package.
- * <https://github.com/adhocore/php-cli>
  *
- * (c) Sushil Gupta <desushil@gmail.com>
- * <https://github.com/sushilgupta>
+ * (c) Jitendra Adhikari <jiten.adhikary@gmail.com>
+ *     <https://github.com/adhocore>
  *
  * Licensed under MIT license.
  */
@@ -76,7 +75,7 @@ class Shell
     {
         $this->status = \proc_get_status($this->process);
 
-        if ($this->status['running'] === FALSE && $this->exitCode === NULL) {
+        if ($this->status['running'] === false && $this->exitCode === null) {
             $this->exitCode = $this->status['exitcode'];
         }
     }
