@@ -41,13 +41,35 @@
             $this->timeout = $timeout;
         }
 
-        public function execute()
+        private function getDescriptors()
         {
-            $this->start();
-            $this->wait();
+            return array(
+                self::STDIN_DESCRIPTOR_KEY => array("pipe", "r"),
+                self::STDOUT_DESCRIPTOR_KEY => array("pipe", "w"),
+                self::STDERR_DESCRIPTOR_KEY => array("pipe", "r")
+            );
         }
 
-        private function start()
+        private function setInput()
+        {
+            fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input);
+        }
+
+        private function updateStatus()
+        {
+            $this->status = proc_get_status($this->process);
+
+            return $this->status;
+        }
+
+        private function closePipes()
+        {
+            fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
+            fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
+            fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
+        }
+
+        public function execute(bool $blocking = false)
         {
             if ($this->isRunning()) {
                 throw new RuntimeException('Process is already running');
@@ -65,20 +87,10 @@
 
             $this->startTime = microtime(true);
             $this->status = $this->updateStatus();
-        }
 
-        private function getDescriptors()
-        {
-            return array(
-                self::STDIN_DESCRIPTOR_KEY => array("pipe", "r"),
-                self::STDOUT_DESCRIPTOR_KEY => array("pipe", "w"),
-                self::STDERR_DESCRIPTOR_KEY => array("pipe", "r")
-            );
-        }
-
-        private function setInput()
-        {
-            fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input);
+            if ($blocking) {
+                $this->wait();
+            }
         }
 
         public function getOutput()
@@ -109,13 +121,6 @@
             return $this->status;
         }
 
-        private function updateStatus()
-        {
-            $this->status = proc_get_status($this->process);
-
-            return $this->status;
-        }
-
         public function wait()
         {
             while ($this->isRunning()) {
@@ -135,7 +140,7 @@
         public function stop()
         {
             if (!$this->isRunning()) {
-                throw new RuntimeException("No process to stop");
+                return $this->getExitCode();
             }
 
             $this->closePipes();
@@ -143,13 +148,6 @@
             $this->updateStatus();
 
             return $this->getExitCode();
-        }
-
-        private function closePipes()
-        {
-            fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
-            fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
-            fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
         }
 
         public function kill()
