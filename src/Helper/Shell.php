@@ -32,19 +32,19 @@ class Shell
     protected $descriptors;
 
     /** @var int Exit code of the process once it has been terminated */
-    protected $exitCode;
+    protected $exitCode = null;
 
     /** @var string Input for stdin */
     protected $input;
 
     /** @var array Pointers to stdin, stdout & stderr */
-    protected $pipes;
+    protected $pipes = null;
 
     /** @var resource The actual process resource returned from proc_open */
-    protected $process;
+    protected $process = null;
 
     /** @var string Status of the process as returned from proc_get_status */
-    protected $status;
+    protected $status = null;
 
     public function __construct(string $command, string $input = null)
     {
@@ -52,10 +52,8 @@ class Shell
             throw new RuntimeException('Required proc_open could not be found in your PHP setup');
         }
 
-        $this->command  = $command;
-        $this->input    = $input;
-        $this->status   = null;
-        $this->exitCode = null;
+        $this->command = $command;
+        $this->input   = $input;
     }
 
     protected function getDescriptors()
@@ -76,8 +74,11 @@ class Shell
 
     protected function updateStatus()
     {
-        $this->status   = \proc_get_status($this->process);
-        $this->exitCode = $this->status['exitcode'];
+        $this->status = \proc_get_status($this->process);
+
+        if ($this->status['running'] === FALSE && $this->exitCode === NULL) {
+            $this->exitCode = $this->status['exitcode'];
+        }
     }
 
     protected function closePipes()
