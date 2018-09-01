@@ -13,7 +13,7 @@ use Ahc\Cli\Exception\RuntimeException;
 class Shell
 {
 
-    const STDIN_DESCRIPTOR_KEY = 0;
+    const STDIN_DESCRIPTOR_KEY  = 0;
     const STDOUT_DESCRIPTOR_KEY = 1;
     const STDERR_DESCRIPTOR_KEY = 2;
 
@@ -42,13 +42,13 @@ class Shell
     {
         if ('\\' === \DIRECTORY_SEPARATOR) {
             return [
-                self::STDIN_DESCRIPTOR_KEY => ['pipe', 'r'],
+                self::STDIN_DESCRIPTOR_KEY  => ['pipe', 'r'],
                 self::STDOUT_DESCRIPTOR_KEY => ['file', 'NUL', 'w'],
                 self::STDERR_DESCRIPTOR_KEY => ['file', 'NUL', 'w'],
             ];
         } else {
             return [
-                self::STDIN_DESCRIPTOR_KEY => ['pipe', 'r'],
+                self::STDIN_DESCRIPTOR_KEY  => ['pipe', 'r'],
                 self::STDOUT_DESCRIPTOR_KEY => ['pipe', 'w'],
                 self::STDERR_DESCRIPTOR_KEY => ['pipe', 'w'],
             ];

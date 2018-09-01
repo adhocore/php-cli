@@ -25,6 +25,6 @@ class ShellTest extends TestCase
     {
         $shell = new Shell('echo hello');
         $shell->execute();
-        $this->assertInternalType("int", $shell->getProcessId());
+        $this->assertInternalType('int', $shell->getProcessId());
     }
 }
