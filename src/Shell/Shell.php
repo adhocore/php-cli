@@ -42,11 +42,19 @@
 
         private function getDescriptors()
         {
-            return array(
-                self::STDIN_DESCRIPTOR_KEY => array("pipe", "r"),
-                self::STDOUT_DESCRIPTOR_KEY => array("pipe", "w"),
-                self::STDERR_DESCRIPTOR_KEY => array("pipe", "r")
-            );
+            if ('\\' === \DIRECTORY_SEPARATOR) {
+                return array(
+                    self::STDIN_DESCRIPTOR_KEY => array('pipe', 'r'),
+                    self::STDOUT_DESCRIPTOR_KEY => array('file', 'NUL', 'w'),
+                    self::STDERR_DESCRIPTOR_KEY => array('file', 'NUL', 'w'),
+                );
+            } else {
+                return array(
+                    self::STDIN_DESCRIPTOR_KEY => array('pipe', 'r'),
+                    self::STDOUT_DESCRIPTOR_KEY => array('pipe', 'w'),
+                    self::STDERR_DESCRIPTOR_KEY => array('pipe', 'w'),
+                );
+            }
         }
 
         private function setInput()
@@ -130,6 +138,11 @@
         public function isRunning()
         {
             return $this->status && $this->status['running'];
+        }
+
+        public function getProcessId()
+        {
+            return $this->isRunning() ? $this->status['pid'] : null;
         }
 
         public function stop()
