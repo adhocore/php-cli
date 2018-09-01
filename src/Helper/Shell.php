@@ -58,7 +58,7 @@ class Shell
         $this->exitCode = null;
     }
 
-    private function getDescriptors()
+    protected function getDescriptors()
     {
         $out = '\\' === \DIRECTORY_SEPARATOR ? ['file', 'NUL', 'w'] : ['pipe', 'w'];
 
@@ -69,19 +69,19 @@ class Shell
         ];
     }
 
-    private function setInput()
+    protected function setInput()
     {
         \fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input);
     }
 
-    public function updateStatus()
+    protected function updateStatus()
     {
         $this->status = \proc_get_status($this->process);
 
         return $this->status;
     }
 
-    private function closePipes()
+    protected function closePipes()
     {
         \fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
         \fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
@@ -104,6 +104,13 @@ class Shell
 
         $this->setInput();
         $this->updateStatus();
+    }
+
+    public function getStatus()
+    {
+        $this->updateStatus();
+
+        return $this->status;
     }
 
     public function getOutput()
