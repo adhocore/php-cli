@@ -80,7 +80,7 @@ class Shell
 
     protected function updateProcessStatus()
     {
-        if (self::STATE_STARTED !== $this->state) {
+        if ($this->state !== self::STATE_STARTED) {
             return;
         }
 
@@ -120,8 +120,6 @@ class Shell
 
     public function getState()
     {
-        $this->updateProcessStatus();
-
         return $this->state;
     }
 
@@ -166,7 +164,8 @@ class Shell
             \proc_close($this->process);
         }
 
-        $this->state    = self::STATE_TERMINATED;
+        $this->state = self::STATE_TERMINATED;
+
         $this->exitCode = $this->processStatus['exitcode'];
 
         return $this->exitCode;
