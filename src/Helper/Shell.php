@@ -73,7 +73,7 @@
             fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
         }
 
-        public function execute(bool $blocking = false)
+        public function execute()
         {
             if ($this->isRunning()) {
                 throw new RuntimeException('Process is already running');
@@ -91,10 +91,6 @@
             $this->updateStatus();
 
             $this->startTime = microtime(true);
-
-            if ($blocking) {
-                $this->wait();
-            }
         }
 
         public function getOutput()
@@ -112,29 +108,15 @@
             return $this->status['exitcode'];
         }
 
-        public function checkTimeout()
-        {
-            if ($this->timeout && $this->timeout < microtime(true) - $this->startTime) {
-                $this->stop();
-            }
-
-            return $this->status;
-        }
-
-        public function wait()
-        {
-            while ($this->isRunning()) {
-                usleep(1000);
-                $this->checkTimeout();
-                $this->updateStatus();
-            }
-
-            return $this->status;
-        }
-
         public function isRunning()
         {
-            return $this->status && $this->status['running'];
+            if(!$this->status) {
+                return false;
+            }
+
+            $this->updateStatus();
+
+            return $this->status['running'];
         }
 
         public function getProcessId()

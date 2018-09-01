@@ -19,4 +19,14 @@
             $shell->execute();
             $this->assertSame("hello\n", $shell->getOutput());
         }
+
+        public function test_get_process_id()
+        {
+            $shell = new Shell("echo hello");
+            $shell->execute();
+            echo '<pre>';
+            print_r($shell->getProcessId());
+            exit;
+            $this->assertInternalType("int", $shell->getProcessId());
+        }
     }
