@@ -1,26 +1,46 @@
 <?php
 
 /*
- * Shell wrapper for package adhocore/php-cli.
- * @author Sushil Gupta <desushil@gmail.com>
- * @license MIT
+ * This file is part of the PHP-CLI package.
+ * <https://github.com/adhocore/php-cli>
+ *
+ * (c) Sushil Gupta <desushil@gmail.com>
+ * <https://github.com/sushilgupta>
+ *
+ * Licensed under MIT license.
  */
 
 namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Exception\RuntimeException;
 
+/*
+ * A thin proc_open wrapper to execute shell commands.
+ * @author Sushil Gupta <desushil@gmail.com>
+ * @license MIT
+ */
 class Shell
 {
     const STDIN_DESCRIPTOR_KEY  = 0;
     const STDOUT_DESCRIPTOR_KEY = 1;
     const STDERR_DESCRIPTOR_KEY = 2;
 
+    /** @var string Command to be executed */
     protected $command;
+
+    /** @var array Descriptor to be passed for proc_open */
     protected $descriptors;
+
+    /** @var string Input for stdin */
     protected $input;
+
+    /** @var array Pointers to stdin, stdout & stderr */
     protected $pipes;
+
+    /** @var resource The actual process resource returned from proc_open */
     protected $process;
+
+    /** @var string Status of the process as returned from proc_get_status */
     protected $status;
 
     public function __construct(string $command, string $input = null)
@@ -36,38 +56,32 @@ class Shell
 
     private function getDescriptors()
     {
-        if ('\\' === \DIRECTORY_SEPARATOR) {
-            return [
-                self::STDIN_DESCRIPTOR_KEY  => ['pipe', 'r'],
-                self::STDOUT_DESCRIPTOR_KEY => ['file', 'NUL', 'w'],
-                self::STDERR_DESCRIPTOR_KEY => ['file', 'NUL', 'w'],
-            ];
-        } else {
-            return [
-                self::STDIN_DESCRIPTOR_KEY  => ['pipe', 'r'],
-                self::STDOUT_DESCRIPTOR_KEY => ['pipe', 'w'],
-                self::STDERR_DESCRIPTOR_KEY => ['pipe', 'w'],
-            ];
-        }
+        $out = '\\' === \DIRECTORY_SEPARATOR ? ['file', 'NUL', 'w'] : ['pipe', 'w'];
+
+        return [
+            self::STDIN_DESCRIPTOR_KEY  => ['pipe', 'r'],
+            self::STDOUT_DESCRIPTOR_KEY => $out,
+            self::STDERR_DESCRIPTOR_KEY => $out,
+        ];
     }
 
     private function setInput()
     {
-        fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input);
+        \fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input);
     }
 
-    private function updateStatus()
+    public function updateStatus()
     {
-        $this->status = proc_get_status($this->process);
+        $this->status = \proc_get_status($this->process);
 
         return $this->status;
     }
 
     private function closePipes()
     {
-        fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
-        fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
-        fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
+        \fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
+        \fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
+        \fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 
     public function execute()
@@ -90,17 +104,17 @@ class Shell
 
     public function getOutput()
     {
-        return stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
+        return \stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
     }
 
     public function getErrorOutput()
     {
-        return stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
+        return \stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 
     public function getExitCode()
     {
-        return $this->status ? $this->status['exitcode'] : -1;
+        return $this->status['exitcode'] ?? -1;
     }
 
     public function isRunning()
@@ -122,7 +136,7 @@ class Shell
         $this->closePipes();
 
         if (\is_resource($this->process)) {
-            proc_close($this->process);
+            \proc_close($this->process);
         }
 
         return $this->getExitCode();
@@ -130,7 +144,7 @@ class Shell
 
     public function kill()
     {
-        return proc_terminate($this->process);
+        return \proc_terminate($this->process);
     }
 
     public function __destruct()
