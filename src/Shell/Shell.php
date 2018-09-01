@@ -11,19 +11,23 @@
 
     class Shell {
 
+        const STDIN = 0;
+        const STDOUT = 1;
+        const STDERR = 2;
+
         protected $command;
         protected $cwd;
         protected $descriptors;
         protected $env;
+        protected $input;
+        protected $output;
         protected $pipes;
         protected $process;
         protected $status;
-        protected $stdin;
-        protected $stdout;
-        protected $stderr;
+        protected $error;
         protected $timeout;
 
-        public function __construct(string $command, string $cwd = null, $stdin = null, $env = null, $timeout = 60)
+        public function __construct(string $command, string $cwd = null, $input = null, $env = null, $timeout = 60)
         {
             if (!\function_exists('proc_open')) {
                 throw new RuntimeException('Required proc_open could not be found in your PHP setup');
@@ -33,7 +37,7 @@
             $this->cwd = $cwd;
             $this->descriptors = $this->getDescriptors();
             $this->env = $env;
-            $this->stdin = $stdin;
+            $this->input = $input;
             $this->timeout = $timeout;
         }
 
@@ -51,23 +55,23 @@
         public function getDescriptors()
         {
             return array(
-                0 => array("pipe", "r"),
-                1 => array("pipe", "w"),
-                2 => array("file", "/tmp/error-output.txt", "a")
+                self::STDIN => array("pipe", "r"),
+                self::STDOUT => array("pipe", "w"),
+                self::STDERR => array("pipe", "r")
             );
         }
 
         public function setInput()
         {
-            fwrite($this->pipes[0], $this->stdin);
+            fwrite($this->pipes[0], $this->input);
         }
 
         public function getOutput()
         {
-            $this->stdout = stream_get_contents($this->pipes[1]);
+            $this->output = stream_get_contents($this->pipes[1]);
 
 
-            return $this->stdout;
+            return $this->output;
         }
 
         public function getStatus()
@@ -78,8 +82,8 @@
 
         public function getErrorOutput()
         {
-            $this->stderr = stream_get_contents($this->pipes[2]);
-            return $this->stderr;
+            $this->error = stream_get_contents($this->pipes[2]);
+            return $this->error;
         }
 
         public function stop()
@@ -89,7 +93,6 @@
             fclose($this->pipes[2]);
             return proc_close($this->process);
         }
-
 
         public function kill()
         {
