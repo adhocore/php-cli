@@ -32,9 +32,9 @@ class Shell
         }
 
         $this->command = $command;
-        $this->input = $input;
+        $this->input   = $input;
         $this->timeout = $timeout;
-        $this->status = null;
+        $this->status  = null;
     }
 
     private function getDescriptors()
