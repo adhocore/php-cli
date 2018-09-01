@@ -31,6 +31,9 @@ class Shell
     /** @var array Descriptor to be passed for proc_open */
     protected $descriptors;
 
+    /** @var int Exit code of the process once it has been terminated */
+    protected $exitCode;
+
     /** @var string Input for stdin */
     protected $input;
 
@@ -49,9 +52,10 @@ class Shell
             throw new RuntimeException('Required proc_open could not be found in your PHP setup');
         }
 
-        $this->command = $command;
-        $this->input   = $input;
-        $this->status  = null;
+        $this->command  = $command;
+        $this->input    = $input;
+        $this->status   = null;
+        $this->exitCode = null;
     }
 
     private function getDescriptors()
@@ -114,12 +118,12 @@ class Shell
 
     public function getExitCode()
     {
-        return $this->status['exitcode'] ?? -1;
+        return $this->exitCode;
     }
 
     public function isRunning()
     {
-        return $this->status ? $this->status['running'] : false;
+        return $this->status['running'];
     }
 
     public function getProcessId()
@@ -129,17 +133,15 @@ class Shell
 
     public function stop()
     {
-        if (!$this->isRunning()) {
-            return $this->getExitCode();
-        }
-
         $this->closePipes();
 
         if (\is_resource($this->process)) {
             \proc_close($this->process);
         }
 
-        return $this->getExitCode();
+        $this->exitCode = $this->status['exitcode'];
+
+        return $this->exitCode;
     }
 
     public function kill()
