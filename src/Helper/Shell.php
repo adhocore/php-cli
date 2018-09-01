@@ -17,9 +17,7 @@
         const STDERR_DESCRIPTOR_KEY = 2;
 
         protected $command;
-        protected $cwd;
         protected $descriptors;
-        protected $env;
         protected $input;
         protected $pipes;
         protected $process;
@@ -27,15 +25,13 @@
         protected $status;
         protected $timeout;
 
-        public function __construct(string $command, string $cwd = null, string $input = null, string $env = null, float $timeout = 60)
+        public function __construct(string $command, string $input = null, float $timeout = 10)
         {
             if (!\function_exists('proc_open')) {
                 throw new RuntimeException('Required proc_open could not be found in your PHP setup');
             }
 
             $this->command = $command;
-            $this->cwd = $cwd;
-            $this->env = $env;
             $this->input = $input;
             $this->timeout = $timeout;
             $this->status = null;
@@ -85,7 +81,7 @@
 
             $this->descriptors = $this->getDescriptors();
 
-            $this->process = proc_open($this->command, $this->descriptors, $this->pipes, $this->cwd, $this->env);
+            $this->process = proc_open($this->command, $this->descriptors, $this->pipes);
 
             if (!\is_resource($this->process)) {
                 throw new RuntimeException('Bad program could not be started.');
