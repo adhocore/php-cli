@@ -11,20 +11,21 @@
 
     class Shell {
 
-        const STDIN = 0;
-        const STDOUT = 1;
-        const STDERR = 2;
+        const STDIN_DESCRIPTOR_KEY = 0;
+        const STDOUT_DESCRIPTOR_KEY = 1;
+        const STDERR_DESCRIPTOR_KEY = 2;
 
         protected $command;
         protected $cwd;
         protected $descriptors;
         protected $env;
+        protected $error;
         protected $input;
         protected $output;
         protected $pipes;
         protected $process;
+        protected $startTime;
         protected $status;
-        protected $error;
         protected $timeout;
 
         public function __construct(string $command, string $cwd = null, $input = null, $env = null, $timeout = 60)
@@ -35,7 +36,6 @@
 
             $this->command = $command;
             $this->cwd = $cwd;
-            $this->descriptors = $this->getDescriptors();
             $this->env = $env;
             $this->input = $input;
             $this->timeout = $timeout;
@@ -43,21 +43,36 @@
 
         public function execute()
         {
-            $descriptors = $this->getDescriptors();
+            $this->start();
+            $this->wait();
+        }
 
-            $this->process = proc_open($this->command, $descriptors, $this->pipes, $this->cwd, $this->env);
+        public function start()
+        {
+            if ($this->isRunning()) {
+                throw new RuntimeException('Process is already running');
+            }
+
+            $this->descriptors = $this->getDescriptors();
+
+            $this->process = proc_open($this->command, $this->descriptors, $this->pipes, $this->cwd, $this->env);
 
             if (!\is_resource($this->process)) {
                 throw new RuntimeException('Bad program could not be started.');
             }
+
+            $this->setInput();
+
+            $this->startTime = microtime(true);
+            $this->status = $this->updateStatus();
         }
 
         public function getDescriptors()
         {
             return array(
-                self::STDIN => array("pipe", "r"),
-                self::STDOUT => array("pipe", "w"),
-                self::STDERR => array("pipe", "r")
+                self::STDIN_DESCRIPTOR_KEY => array("pipe", "r"),
+                self::STDOUT_DESCRIPTOR_KEY => array("pipe", "w"),
+                self::STDERR_DESCRIPTOR_KEY => array("pipe", "r")
             );
         }
 
@@ -70,20 +85,50 @@
         {
             $this->output = stream_get_contents($this->pipes[1]);
 
-
             return $this->output;
-        }
-
-        public function getStatus()
-        {
-            $this->status = proc_get_status($this->process);
-            return $this->status;
         }
 
         public function getErrorOutput()
         {
             $this->error = stream_get_contents($this->pipes[2]);
+
             return $this->error;
+        }
+
+        public function checkTimeout()
+        {
+            if ($this->timeout && $this->timeout < microtime(true) - $this->startTime) {
+                $this->stop();
+            }
+
+            return $this->status;
+        }
+
+        public function updateStatus()
+        {
+            $this->status = proc_get_status($this->process);
+
+            if (!$this->isRunning()) {
+                $this->stop();
+            }
+
+            return $this->status;
+        }
+
+        public function wait()
+        {
+            while ($this->isRunning()) {
+                usleep(1000);
+                $this->checkTimeout();
+                $this->updateStatus();
+            }
+
+            return $this->status;
+        }
+
+        public function isRunning()
+        {
+            return $this->status['running'];
         }
 
         public function stop()
@@ -91,7 +136,9 @@
             fclose($this->pipes[0]);
             fclose($this->pipes[1]);
             fclose($this->pipes[2]);
-            return proc_close($this->process);
+            proc_close($this->process);
+
+            return $this->status;
         }
 
         public function kill()
