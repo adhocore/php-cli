@@ -132,14 +132,14 @@ class Shell
             return;
         }
 
-        if($this->processTimeoutPeriod === null) {
+        if ($this->processTimeoutPeriod === null) {
             return;
         }
 
         $execution_duration = \microtime(true) - $this->processStartTime;
 
         if ($execution_duration > $this->processTimeoutPeriod) {
-            $this->stop();
+            $this->kill();
             throw new RuntimeException("Process timeout occurred");
         }
 
@@ -148,10 +148,10 @@ class Shell
 
     public function setOptions(string $cwd = null, array $env = null, float $timeout = null, $otherOptions = [])
     {
-        $this->cwd = $cwd;
-        $this->env = $env;
+        $this->cwd                  = $cwd;
+        $this->env                  = $env;
         $this->processTimeoutPeriod = $timeout;
-        $this->otherOptions = $otherOptions;
+        $this->otherOptions         = $otherOptions;
 
         return $this;
     }
@@ -185,7 +185,7 @@ class Shell
 
     private function setOutputStreamNonBlocking()
     {
-        return \stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], 0);
+        return \stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], false);
     }
 
     public function getState()
