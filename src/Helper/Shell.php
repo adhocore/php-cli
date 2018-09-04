@@ -59,22 +59,22 @@ class Shell
     /** @var resource The actual process resource returned from proc_open */
     protected $process = null;
 
-    /** @var array Status of the process as returned from proc_get_status */
-    protected $processStatus = null;
-
     /** @var int Process starting time in unix timestamp */
     protected $processStartTime;
 
-    /** @var string Current state of the shell execution */
-    protected $state = self::STATE_READY;
+    /** @var array Array of status of process as returned from proc_get_status */
+    protected $processStatus = null;
 
     /** @var float Default timeout for the process in seconds with microseconds */
     protected $processTimeoutPeriod = null;
 
+    /** @var string Current state of the shell execution, value from us, NOT proc_get_status */
+    protected $state = self::STATE_READY;
+
     public function __construct(string $command, string $input = null)
     {
         if (!\function_exists('proc_open')) {
-            throw new RuntimeException('Required proc_open could not be found in your PHP setup');
+            throw new RuntimeException('Required proc_open could not be found in your PHP setup.');
         }
 
         $this->command = $command;
@@ -83,13 +83,18 @@ class Shell
 
     protected function getDescriptors()
     {
-        $out = '\\' === \DIRECTORY_SEPARATOR ? ['file', 'NUL', 'w'] : ['pipe', 'w'];
+        $out = $this->isWindows() ? ['file', 'NUL', 'w'] : ['pipe', 'w'];
 
         return [
             self::STDIN_DESCRIPTOR_KEY  => ['pipe', 'r'],
             self::STDOUT_DESCRIPTOR_KEY => $out,
             self::STDERR_DESCRIPTOR_KEY => $out,
         ];
+    }
+
+    protected function isWindows()
+    {
+        return '\\' === \DIRECTORY_SEPARATOR;
     }
 
     protected function setInput()
@@ -142,7 +147,7 @@ class Shell
         if ($executionDuration > $this->processTimeoutPeriod) {
             $this->kill();
 
-            throw new RuntimeException('Process timeout occurred, terminated');
+            throw new RuntimeException('Timeout occurred, process terminated.');
         }
     }
 
@@ -159,7 +164,7 @@ class Shell
     public function execute(bool $async = false)
     {
         if ($this->isRunning()) {
-            throw new RuntimeException('Process is already running');
+            throw new RuntimeException('Process is already running.');
         }
 
         $this->descriptors = $this->getDescriptors();
