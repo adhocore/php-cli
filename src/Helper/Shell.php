@@ -26,6 +26,7 @@ class Shell
 
     const STATE_READY      = 'ready';
     const STATE_STARTED    = 'started';
+    const STATE_CLOSED     = 'closed';
     const STATE_TERMINATED = 'terminated';
 
     /** @var bool Whether to wait for the process to finish or return instantly */
@@ -139,8 +140,8 @@ class Shell
         $execution_duration = \microtime(true) - $this->processStartTime;
 
         if ($execution_duration > $this->processTimeoutPeriod) {
-            $this->stop();
-            throw new RuntimeException("Process timeout occurred");
+            $this->kill();
+            throw new RuntimeException("Process timeout occurred, terminated");
         }
 
         return;
@@ -234,7 +235,7 @@ class Shell
             \proc_close($this->process);
         }
 
-        $this->state = self::STATE_TERMINATED;
+        $this->state = self::STATE_CLOSED;
 
         $this->exitCode = $this->processStatus['exitcode'];
 
@@ -243,15 +244,16 @@ class Shell
 
     public function kill()
     {
-        return \proc_terminate($this->process);
+        if (\is_resource($this->process)) {
+            \proc_terminate($this->process);
+        }
+
+        $this->state = self::STATE_TERMINATED;
     }
 
     public function __destruct()
     {
-        //if async (run in background) => then we don't care when it closes, if at all
-        if (!$this->async) {
-            //if not async, wait & see if still running, check for timeout & attempt to stop
-            $this->wait();
-        }
+        //if async (run in background) => we don't care if it ever closes
+        //if not async, waited already till it runs or timeout occurs, in which case kill it
     }
 }
