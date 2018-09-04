@@ -34,14 +34,23 @@ class Shell
     /** @var string Command to be executed */
     protected $command;
 
+    /** @var string Current working directory */
+    protected $cwd = null;
+
     /** @var array Descriptor to be passed for proc_open */
     protected $descriptors;
+
+    /** @var array An array of environment variables */
+    protected $env = null;
 
     /** @var int Exit code of the process once it has been terminated */
     protected $exitCode = null;
 
     /** @var string Input for stdin */
     protected $input;
+
+    /** @var array Other options to be passed for proc_open */
+    protected $otherOptions = [];
 
     /** @var array Pointers to stdin, stdout & stderr */
     protected $pipes = null;
@@ -59,7 +68,7 @@ class Shell
     protected $state = self::STATE_READY;
 
     /** @var float Default timeout for the process in seconds with microseconds */
-    protected $processTimeoutPeriod = 10;
+    protected $processTimeoutPeriod = null;
 
     public function __construct(string $command, string $input = null)
     {
@@ -110,7 +119,7 @@ class Shell
     public function wait()
     {
         while ($this->isRunning()) {
-            usleep(500);
+            usleep(5000);
             $this->checkTimeout();
         }
 
@@ -123,12 +132,28 @@ class Shell
             return;
         }
 
+        if($this->processTimeoutPeriod === null) {
+            return;
+        }
+
         $execution_duration = \microtime(true) - $this->processStartTime;
 
         if ($execution_duration > $this->processTimeoutPeriod) {
             $this->stop();
             throw new RuntimeException("Process timeout occurred");
         }
+
+        return;
+    }
+
+    public function setOptions(string $cwd = null, array $env = null, float $timeout = null, $otherOptions = [])
+    {
+        $this->cwd = $cwd;
+        $this->env = $env;
+        $this->processTimeoutPeriod = $timeout;
+        $this->otherOptions = $otherOptions;
+
+        return $this;
     }
 
     public function execute($async = false)
@@ -139,7 +164,7 @@ class Shell
 
         $this->descriptors = $this->getDescriptors();
 
-        $this->process = \proc_open($this->command, $this->descriptors, $this->pipes);
+        $this->process = \proc_open($this->command, $this->descriptors, $this->pipes, $this->cwd, $this->env, $this->otherOptions);
 
         if (!\is_resource($this->process)) {
             throw new RuntimeException('Bad program could not be started.');
