@@ -137,9 +137,9 @@ class Shell
             return;
         }
 
-        $execution_duration = \microtime(true) - $this->processStartTime;
+        $executionDuration = \microtime(true) - $this->processStartTime;
 
-        if ($execution_duration > $this->processTimeoutPeriod) {
+        if ($executionDuration > $this->processTimeoutPeriod) {
             $this->kill();
 
             throw new RuntimeException('Process timeout occurred, terminated');
@@ -156,7 +156,7 @@ class Shell
         return $this;
     }
 
-    public function execute($async = false)
+    public function execute(bool $async = false)
     {
         if ($this->isRunning()) {
             throw new RuntimeException('Process is already running');
