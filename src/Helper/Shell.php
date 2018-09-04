@@ -149,7 +149,7 @@ class Shell
         }
 
         // @codeCoverageIgnoreStart
-        return;
+
         // @codeCoverageIgnoreEnd
     }
 
