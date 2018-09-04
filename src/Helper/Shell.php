@@ -122,7 +122,7 @@ class Shell
             return;
         }
 
-        $execution_duration = microtime(true) - $this->processStartTime;
+        $execution_duration = \microtime(true) - $this->processStartTime;
 
         if ($execution_duration > $this->processTimeoutPeriod) {
             $this->stop();
@@ -149,7 +149,7 @@ class Shell
 
         $this->setInput();
         $this->updateProcessStatus();
-        $this->processStartTime = microtime(true);
+        $this->processStartTime = \microtime(true);
 
         if ($this->async = $async) {
             $this->setOutputStreamNonBlocking();
