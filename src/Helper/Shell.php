@@ -110,6 +110,7 @@ class Shell
     public function wait()
     {
         while ($this->isRunning()) {
+            usleep(500);
             $this->checkTimeout();
         }
 
@@ -126,7 +127,6 @@ class Shell
 
         if ($execution_duration > $this->processTimeoutPeriod) {
             $this->stop();
-
             throw new RuntimeException("Process timeout occurred");
         }
     }
@@ -223,6 +223,6 @@ class Shell
 
     public function __destruct()
     {
-        $this->stop();
+        $this->wait();
     }
 }
