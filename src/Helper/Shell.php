@@ -78,9 +78,11 @@ class Shell
 
     public function __construct(string $command, string $input = null)
     {
+        // @codeCoverageIgnoreStart
         if (!\function_exists('proc_open')) {
             throw new RuntimeException('Required proc_open could not be found in your PHP setup');
         }
+        // @codeCoverageIgnoreEnd
 
         $this->command = $command;
         $this->input   = $input;
@@ -122,7 +124,7 @@ class Shell
         \fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 
-    public function wait()
+    protected function wait()
     {
         while ($this->isRunning()) {
             usleep(5000);
@@ -132,12 +134,8 @@ class Shell
         return $this->exitCode;
     }
 
-    public function checkTimeout()
+    protected function checkTimeout()
     {
-        if ($this->state !== self::STATE_STARTED) {
-            return;
-        }
-
         if ($this->processTimeout === null) {
             return;
         }
@@ -149,9 +147,13 @@ class Shell
 
             throw new RuntimeException('Process timeout occurred, terminated');
         }
+
+        // @codeCoverageIgnoreStart
+        return;
+        // @codeCoverageIgnoreEnd
     }
 
-    public function setOptions(string $cwd = null, array $env = null, float $timeout = null, array $otherOptions = [])
+    public function setOptions(string $cwd = null, array $env = null, float $timeout = null, array $otherOptions = []): self
     {
         $this->cwd            = $cwd;
         $this->env            = $env;
@@ -173,9 +175,11 @@ class Shell
         $this->process = \proc_open($this->command, $this->descriptors, $this->pipes, $this->cwd, $this->env, $this->otherOptions);
         $this->setInput();
 
+        // @codeCoverageIgnoreStart
         if (!\is_resource($this->process)) {
             throw new RuntimeException('Bad program could not be started.');
         }
+        // @codeCoverageIgnoreEnd
 
         $this->state = self::STATE_STARTED;
 
