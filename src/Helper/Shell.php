@@ -253,6 +253,6 @@ class Shell
     public function __destruct()
     {
         //if async (run in background) => we don't care if it ever closes
-        //if not async, waited already till it runs or timeout occurs, in which case kill it
+        //if not async, waited already till it ends itself - or - timeout occurs, in which case, kill it
     }
 }
