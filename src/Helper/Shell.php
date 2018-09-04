@@ -26,13 +26,23 @@ class Shell
 
     const STATE_READY      = 'ready';
     const STATE_STARTED    = 'started';
+    const STATE_CLOSED     = 'closed';
     const STATE_TERMINATED = 'terminated';
+
+    /** @var bool Whether to wait for the process to finish or return instantly */
+    protected $async = false;
 
     /** @var string Command to be executed */
     protected $command;
 
+    /** @var string Current working directory */
+    protected $cwd = null;
+
     /** @var array Descriptor to be passed for proc_open */
     protected $descriptors;
+
+    /** @var array An array of environment variables */
+    protected $env = null;
 
     /** @var int Exit code of the process once it has been terminated */
     protected $exitCode = null;
@@ -40,17 +50,26 @@ class Shell
     /** @var string Input for stdin */
     protected $input;
 
+    /** @var array Other options to be passed for proc_open */
+    protected $otherOptions = [];
+
     /** @var array Pointers to stdin, stdout & stderr */
     protected $pipes = null;
 
     /** @var resource The actual process resource returned from proc_open */
     protected $process = null;
 
+    /** @var array Status of the process as returned from proc_get_status */
+    protected $processStatus = null;
+
+    /** @var int Process starting time in unix timestamp */
+    protected $processStartTime;
+
     /** @var string Current state of the shell execution */
     protected $state = self::STATE_READY;
 
-    /** @var string Status of the process as returned from proc_get_status */
-    protected $processStatus = null;
+    /** @var float Default timeout for the process in seconds with microseconds */
+    protected $processTimeoutPeriod = null;
 
     public function __construct(string $command, string $input = null)
     {
@@ -98,7 +117,46 @@ class Shell
         \fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 
-    public function execute()
+    public function wait()
+    {
+        while ($this->isRunning()) {
+            usleep(5000);
+            $this->checkTimeout();
+        }
+
+        return $this->exitCode;
+    }
+
+    public function checkTimeout()
+    {
+        if ($this->state !== self::STATE_STARTED) {
+            return;
+        }
+
+        if ($this->processTimeoutPeriod === null) {
+            return;
+        }
+
+        $execution_duration = \microtime(true) - $this->processStartTime;
+
+        if ($execution_duration > $this->processTimeoutPeriod) {
+            $this->kill();
+
+            throw new RuntimeException('Process timeout occurred, terminated');
+        }
+    }
+
+    public function setOptions(string $cwd = null, array $env = null, float $timeout = null, $otherOptions = [])
+    {
+        $this->cwd                  = $cwd;
+        $this->env                  = $env;
+        $this->processTimeoutPeriod = $timeout;
+        $this->otherOptions         = $otherOptions;
+
+        return $this;
+    }
+
+    public function execute($async = false)
     {
         if ($this->isRunning()) {
             throw new RuntimeException('Process is already running');
@@ -106,7 +164,7 @@ class Shell
 
         $this->descriptors = $this->getDescriptors();
 
-        $this->process = proc_open($this->command, $this->descriptors, $this->pipes);
+        $this->process = \proc_open($this->command, $this->descriptors, $this->pipes, $this->cwd, $this->env, $this->otherOptions);
 
         if (!\is_resource($this->process)) {
             throw new RuntimeException('Bad program could not be started.');
@@ -116,6 +174,18 @@ class Shell
 
         $this->setInput();
         $this->updateProcessStatus();
+        $this->processStartTime = \microtime(true);
+
+        if ($this->async = $async) {
+            $this->setOutputStreamNonBlocking();
+        } else {
+            $this->wait();
+        }
+    }
+
+    private function setOutputStreamNonBlocking()
+    {
+        return \stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], false);
     }
 
     public function getState()
@@ -164,7 +234,7 @@ class Shell
             \proc_close($this->process);
         }
 
-        $this->state = self::STATE_TERMINATED;
+        $this->state = self::STATE_CLOSED;
 
         $this->exitCode = $this->processStatus['exitcode'];
 
@@ -173,11 +243,16 @@ class Shell
 
     public function kill()
     {
-        return \proc_terminate($this->process);
+        if (\is_resource($this->process)) {
+            \proc_terminate($this->process);
+        }
+
+        $this->state = self::STATE_TERMINATED;
     }
 
     public function __destruct()
     {
-        $this->stop();
+        //if async (run in background) => we don't care if it ever closes
+        //if not async, waited already till it runs or timeout occurs, in which case kill it
     }
 }
