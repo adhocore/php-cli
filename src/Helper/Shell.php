@@ -139,7 +139,7 @@ class Shell
         $execution_duration = \microtime(true) - $this->processStartTime;
 
         if ($execution_duration > $this->processTimeoutPeriod) {
-            $this->kill();
+            $this->stop();
             throw new RuntimeException("Process timeout occurred");
         }
 
