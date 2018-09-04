@@ -13,10 +13,15 @@ namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Exception\RuntimeException;
 
-/*
+/**
  * A thin proc_open wrapper to execute shell commands.
- * @author Sushil Gupta <desushil@gmail.com>
+ *
+ * With some inspirations from symfony/process.
+ *
+ * @author  Sushil Gupta <desushil@gmail.com>
  * @license MIT
+ *
+ * @link    https://github.com/adhocore/cli
  */
 class Shell
 {
@@ -69,7 +74,7 @@ class Shell
     protected $state = self::STATE_READY;
 
     /** @var float Default timeout for the process in seconds with microseconds */
-    protected $processTimeoutPeriod = null;
+    protected $processTimeout = null;
 
     public function __construct(string $command, string $input = null)
     {
@@ -81,7 +86,7 @@ class Shell
         $this->input   = $input;
     }
 
-    protected function getDescriptors()
+    protected function getDescriptors(): array
     {
         $out = '\\' === \DIRECTORY_SEPARATOR ? ['file', 'NUL', 'w'] : ['pipe', 'w'];
 
@@ -133,38 +138,40 @@ class Shell
             return;
         }
 
-        if ($this->processTimeoutPeriod === null) {
+        if ($this->processTimeout === null) {
             return;
         }
 
-        $execution_duration = \microtime(true) - $this->processStartTime;
+        $executionDuration = \microtime(true) - $this->processStartTime;
 
-        if ($execution_duration > $this->processTimeoutPeriod) {
+        if ($executionDuration > $this->processTimeout) {
             $this->kill();
 
             throw new RuntimeException('Process timeout occurred, terminated');
         }
     }
 
-    public function setOptions(string $cwd = null, array $env = null, float $timeout = null, $otherOptions = [])
+    public function setOptions(string $cwd = null, array $env = null, float $timeout = null, array $otherOptions = [])
     {
-        $this->cwd                  = $cwd;
-        $this->env                  = $env;
-        $this->processTimeoutPeriod = $timeout;
-        $this->otherOptions         = $otherOptions;
+        $this->cwd            = $cwd;
+        $this->env            = $env;
+        $this->processTimeout = $timeout;
+        $this->otherOptions   = $otherOptions;
 
         return $this;
     }
 
-    public function execute($async = false)
+    public function execute(bool $async = false): self
     {
         if ($this->isRunning()) {
             throw new RuntimeException('Process is already running');
         }
 
-        $this->descriptors = $this->getDescriptors();
+        $this->descriptors      = $this->getDescriptors();
+        $this->processStartTime = \microtime(true);
 
         $this->process = \proc_open($this->command, $this->descriptors, $this->pipes, $this->cwd, $this->env, $this->otherOptions);
+        $this->setInput();
 
         if (!\is_resource($this->process)) {
             throw new RuntimeException('Bad program could not be started.');
@@ -172,33 +179,33 @@ class Shell
 
         $this->state = self::STATE_STARTED;
 
-        $this->setInput();
         $this->updateProcessStatus();
-        $this->processStartTime = \microtime(true);
 
         if ($this->async = $async) {
             $this->setOutputStreamNonBlocking();
         } else {
             $this->wait();
         }
+
+        return $this;
     }
 
-    private function setOutputStreamNonBlocking()
+    private function setOutputStreamNonBlocking(): bool
     {
         return \stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], false);
     }
 
-    public function getState()
+    public function getState(): string
     {
         return $this->state;
     }
 
-    public function getOutput()
+    public function getOutput(): string
     {
         return \stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
     }
 
-    public function getErrorOutput()
+    public function getErrorOutput(): string
     {
         return \stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
@@ -210,7 +217,7 @@ class Shell
         return $this->exitCode;
     }
 
-    public function isRunning()
+    public function isRunning(): bool
     {
         if (self::STATE_STARTED !== $this->state) {
             return false;
@@ -252,7 +259,7 @@ class Shell
 
     public function __destruct()
     {
-        //if async (run in background) => we don't care if it ever closes
-        //if not async, waited already till it runs or timeout occurs, in which case kill it
+        // If async (run in background) => we don't care if it ever closes
+        // Otherwise, waited already till it runs or timeout occurs, in which case kill it
     }
 }
