@@ -248,6 +248,10 @@ class Shell
 
     public function __destruct()
     {
-        $this->wait();
+        //if async (run in background) => then we don't care when it closes, if at all
+        if (!$this->async) {
+            //if not async, wait & see if still running, check for timeout & attempt to stop
+            $this->wait();
+        }
     }
 }
