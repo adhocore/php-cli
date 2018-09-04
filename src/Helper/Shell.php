@@ -49,7 +49,7 @@ class Shell
     /** @var resource The actual process resource returned from proc_open */
     protected $process = null;
 
-    /** @var string Status of the process as returned from proc_get_status */
+    /** @var array Status of the process as returned from proc_get_status */
     protected $processStatus = null;
 
     /** @var int Process starting time in unix timestamp */
