@@ -141,10 +141,8 @@ class Shell
 
         if ($execution_duration > $this->processTimeoutPeriod) {
             $this->kill();
-            throw new RuntimeException("Process timeout occurred, terminated");
+            throw new RuntimeException('Process timeout occurred, terminated');
         }
-
-        return;
     }
 
     public function setOptions(string $cwd = null, array $env = null, float $timeout = null, $otherOptions = [])
