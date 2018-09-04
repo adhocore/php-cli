@@ -170,7 +170,6 @@ class Shell
 
     public function getOutput()
     {
-        \stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], 0);
         return \stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
     }
 
