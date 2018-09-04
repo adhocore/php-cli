@@ -17,7 +17,7 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 
 #### What's included
 
-**Core:** [Argv parser](#as-argv-parser) &middot; [Cli application](#as-console-app)
+**Core:** [Argv parser](#argv-parser) &middot; [Cli application](#console-app) &middot; [Shell](#shell)
 
 **IO:** [Colorizer](#color) &middot; [Cursor manipulator](#cursor) &middot; [Stream writer](#writer) &middot; [Stream reader](#reader)
 
@@ -28,7 +28,7 @@ composer require adhocore/cli
 
 ## Usage
 
-### As argv parser
+### Argv parser
 
 ```php
 $command = new Ahc\Cli\Input\Command('rmdir', 'Remove dirs');
@@ -93,7 +93,7 @@ For above example, the output would be:
 0.0.1-dev
 ```
 
-### As console app
+### Console app
 
 Definitely check [adhocore/phint](https://github.com/adhocore/phint) - a real world console application made using `adhocore/cli`.
 
@@ -224,6 +224,52 @@ For above example, the output would be:
 #### App version
 
 Same version number is passed to all attached Commands. So you can trigger version on any of the commands.
+
+### Shell
+
+Very thing shell wrapper that provides convenience methods around `proc_open()`.
+
+#### Basic usage
+
+```php
+$shell = new Ahc\Cli\Helper\Shell($command = 'php -v', $rawInput = null);
+
+// Waits until proc finishes
+$shell->execute($async = false); // default false
+
+echo $shell->getOutput(); // PHP version string (often with zend/opcache info)
+```
+
+#### Advanced usage
+
+```php
+$shell = new Ahc\Cli\Helper\Shell('php /some/long/running/scipt.php');
+
+// With async flag, doesnt wait for proc to finish!
+$shell->setOptions($workDir = '/home', $envVars = [])
+    ->execute($async = true)
+    ->isRunning(); // true
+
+// Force stop anytime (please check php.net/proc_close)
+$shell->stop(); // also closes pipes
+
+// Force kill anytime (please check php.net/proc_terminate)
+$shell->kill();
+```
+
+#### Timeout
+
+```php
+$shell = new Ahc\Cli\Helper\Shell('php /some/long/running/scipt.php');
+
+// Wait for at most 10.5 seconds for proc to finish!
+// If it doesnt complete by then, throws exception
+$shell->setOptions($workDir, $envVars, $timeout = 10.5)->execute();
+
+// And if it completes within timeout, you can access the stdout/stderr
+echo $shell->getOutput();
+echo $shell->getErrorOutput();
+```
 
 ### Cli Interaction
 
@@ -449,6 +495,11 @@ Whenever an exception is caught by `Application::handle()`, it will show a beaut
 - [adhocore/phint](https://github.com/adhocore/phint) PHP project scaffolding app using `adhocore/cli`
 - [adhocore/type-hinter](https://github.com/adhocore/php-type-hinter) Auto PHP7 typehinter tool using `adhocore/cli`
 
-## LICENSE
+### Contributors
 
-> &copy; [MIT](./LICENSE) | 2018, Jitendra Adhikari
+- [adhocore](https://github.com/adhocore)
+- [sushilgupta](https://github.com/sushilgupta)
+
+## License
+
+> &copy; 2018, [Jitendra Adhikari](https://github.com/adhocore) | [MIT](./LICENSE)
