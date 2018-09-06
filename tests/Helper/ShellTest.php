@@ -53,7 +53,7 @@ class ShellTest extends TestCase
 
     /**
      * @expectedException \RuntimeException
-     * @expectedExceptionMessage Process timeout occurred
+     * @expectedExceptionMessage Timeout occurred, process terminated.
      */
     public function test_timeout()
     {
