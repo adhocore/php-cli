@@ -1,3 +1,8 @@
+## [0.3.1] 2018-09-06 00:09:23 UTC
+
+- [f390b6b](https://github.com/adhocore/php-cli/commit/f390b6b) refactor: remove redundant codeCoverageIgnore (Sushil Gupta)
+- [cd8d109](https://github.com/adhocore/php-cli/commit/cd8d109) refactor: minor refactor on messages + add isWindows() method using DIRECTORY_SEPARATOR check to set pipes (Sushil Gupta)
+
 ## [0.3.0] 2018-09-04 15:09:50 UTC
 
 - [a1c2c30](https://github.com/adhocore/php-cli/commit/a1c2c30) docs: add shell section and contributors (Jitendra Adhikari)
