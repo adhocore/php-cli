@@ -21,6 +21,8 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 
 **IO:** [Colorizer](#color) &middot; [Cursor manipulator](#cursor) &middot; [Stream writer](#writer) &middot; [Stream reader](#reader)
 
+**Other:** [Autocompletion](#autocompletion)
+
 ## Installation
 ```bash
 composer require adhocore/cli
@@ -488,6 +490,48 @@ $reader->read('', 'trim', 5);
 Whenever an exception is caught by `Application::handle()`, it will show a beautiful stack trace and exit with non 0 status code.
 
 ![Exception Preview](https://user-images.githubusercontent.com/2908547/44401057-8b350880-a577-11e8-8ca6-20508d593d98.png "Exception trace")
+
+### Autocompletion
+
+Any console line apps that are built on top of **adhocore/cli** can entertain autocomplete of commands and options in zsh shell with oh-my-zsh.
+
+All you have to do is add one line to the end of `~/.oh-my-zsh/custom/plugins/phpcli/phpcli.plugin.zsh`:
+
+> `compdef _phpcli <appname>`
+
+Example: `compdef _phpcli phint` for [phint](https://github.com/adhocore/phint).
+
+That is cumbersome to perform manually, here's a complete command you can copy/paste/run:
+
+#### One time setup
+
+```sh
+mkdir -p ~/.oh-my-zsh/custom/plugins/phpcli && cd ~/.oh-my-zsh/custom/plugins/phpcli
+[ -f ./phpcli.plugin.zsh ] || curl -sSLo ./phpcli.plugin.zsh https://raw.githubusercontent.com/adhocore/php-cli/master/phpcli.plugin.zsh
+chmod +x ./phpcli.plugin.zsh && cd -
+```
+
+#### Registering app
+
+```sh
+# replace appname with real name eg: phint
+echo compdef _phpcli appname >> ~/.oh-my-zsh/custom/plugins/phpcli/phpcli.plugin.zsh
+```
+
+> Of course you can add multiple apps, just change appname in above command
+
+Then either restart the shell or source the plugin like so:
+
+```sh
+source ~/.oh-my-zsh/custom/plugins/phpcli/phpcli.plugin.zsh
+```
+
+#### Trigger autocomplete
+
+```sh
+appname <tab>            # autocompletes commands               (phint <tab>)
+appname subcommand <tab> # autocompletes options for subcommand (phint init <tab>)
+```
 
 ### Related
 
