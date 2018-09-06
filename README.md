@@ -227,7 +227,7 @@ Same version number is passed to all attached Commands. So you can trigger versi
 
 ### Shell
 
-Very thing shell wrapper that provides convenience methods around `proc_open()`.
+Very thin shell wrapper that provides convenience methods around `proc_open()`.
 
 #### Basic usage
 
