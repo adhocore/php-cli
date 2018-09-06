@@ -1,3 +1,8 @@
+## [0.3.2] 2018-09-06 15:09:22 UTC
+
+- [6e8755f](https://github.com/adhocore/php-cli/commit/6e8755f) docs: autocompletion (Jitendra Adhikari)
+- [1152671](https://github.com/adhocore/php-cli/commit/1152671) chore(zsh.plugin): auto complete provider for zsh with oh-my-zsh (Jitendra Adhikari)
+
 ## [0.3.1] 2018-09-06 00:09:23 UTC
 
 - [f390b6b](https://github.com/adhocore/php-cli/commit/f390b6b) refactor: remove redundant codeCoverageIgnore (Sushil Gupta)
