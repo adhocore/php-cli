@@ -11,7 +11,7 @@
 
 # AhcCli command completion
 _ahccli_command_list () {
-  command $1 --help 2>/dev/null | sed "1,/Commands/d" | grep -v Run | awk '/  [a-z]+ / { print $2 }'
+  command $1 --help 2>/dev/null | sed "1,/Commands/d" | gawk 'match($0, /  ([a-z]+) [a-z]*  /, c) { print c[1] }'
 }
 
 # AhcCli option completion
@@ -23,9 +23,7 @@ _ahccli_option_list () {
 _ahccli () {
   local curcontext="$curcontext" state line cmd subcmd
   typeset -A opt_args
-  _arguments \
-    '1: :->cmd'\
-    '*: :->opts'
+  _arguments '1: :->cmd' '*: :->opts'
 
   cmd=`echo $curcontext | gawk 'match($0, /\:([_a-z-]+)\:$/, c) { print c[1] }'`
   subcmd=`echo $line | awk '{print $1}'`
