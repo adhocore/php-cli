@@ -510,10 +510,12 @@ mkdir -p ~/.oh-my-zsh/custom/plugins/ahccli && cd ~/.oh-my-zsh/custom/plugins/ah
 
 [ -f ./ahccli.plugin.zsh ] || curl -sSLo ./ahccli.plugin.zsh https://raw.githubusercontent.com/adhocore/php-cli/master/ahccli.plugin.zsh
 
-chmod +x ./ahccli.plugin.zsh && cd -
+chmod 760 ./ahccli.plugin.zsh && cd -
 ```
 
 ##### Load ahccli plugin
+
+> This is also one time setup.
 
 ```sh
 # Open .zshrc
