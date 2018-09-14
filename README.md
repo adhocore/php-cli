@@ -82,7 +82,7 @@ $command->depth; // 5
 It can be triggered manually with `$command->showHelp()` or automatic when `-h` or `--help` option is passed to `$command->parse()`.
 
 For above example, the output would be:
-![Command Help](./sc/command-help.png "Command Help")
+![Command Help](https://i.imgur.com/TDAQrN3.png "Command Help")
 
 #### Command version
 
@@ -219,7 +219,7 @@ It can be triggered manually with `$app->showHelp()` or automatic when `-h` or `
 **Note** If you pass something like `['app', cmd', '-h']` to `$app->parse()` it will automatically and instantly show you help of that `cmd` and not the `$app`.
 
 For above example, the output would be:
-![App Help](./sc/app-help.png "App Help")
+![App Help](https://i.imgur.com/NpzpsS0.png "App Help")
 
 #### App version
 
