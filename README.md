@@ -21,6 +21,8 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 
 **IO:** [Colorizer](#color) &middot; [Cursor manipulator](#cursor) &middot; [Stream writer](#writer) &middot; [Stream reader](#reader)
 
+**Other:** [Autocompletion](#autocompletion)
+
 ## Installation
 ```bash
 composer require adhocore/cli
@@ -227,7 +229,7 @@ Same version number is passed to all attached Commands. So you can trigger versi
 
 ### Shell
 
-Very thing shell wrapper that provides convenience methods around `proc_open()`.
+Very thin shell wrapper that provides convenience methods around `proc_open()`.
 
 #### Basic usage
 
@@ -489,11 +491,69 @@ Whenever an exception is caught by `Application::handle()`, it will show a beaut
 
 ![Exception Preview](https://user-images.githubusercontent.com/2908547/44401057-8b350880-a577-11e8-8ca6-20508d593d98.png "Exception trace")
 
+### Autocompletion
+
+Any console applications that are built on top of **adhocore/cli** can entertain autocomplete of commands and options in zsh shell with oh-my-zsh.
+
+All you have to do is add one line to the end of `~/.oh-my-zsh/custom/plugins/ahccli/ahccli.plugin.zsh`:
+
+> `compdef _ahccli <appname>`
+
+Example: `compdef _ahccli phint` for [phint](https://github.com/adhocore/phint).
+
+That is cumbersome to perform manually, here's a complete command you can copy/paste/run:
+
+#### One time setup
+
+```sh
+mkdir -p ~/.oh-my-zsh/custom/plugins/ahccli && cd ~/.oh-my-zsh/custom/plugins/ahccli
+
+[ -f ./ahccli.plugin.zsh ] || curl -sSLo ./ahccli.plugin.zsh https://raw.githubusercontent.com/adhocore/php-cli/master/ahccli.plugin.zsh
+
+chmod 760 ./ahccli.plugin.zsh && cd -
+```
+
+##### Load ahccli plugin
+
+> This is also one time setup.
+
+```sh
+# Open .zshrc
+nano ~/.zshrc
+
+# locate plugins=(... ...) and add ahccli
+plugins=(git ... ... ahccli)
+
+# ... then save it (Ctrl + O)
+```
+
+#### Registering app
+
+```sh
+# replace appname with real name eg: phint
+echo compdef _ahccli appname >> ~/.oh-my-zsh/custom/plugins/ahccli/ahccli.plugin.zsh
+```
+
+> Of course you can add multiple apps, just change appname in above command
+
+Then either restart the shell or source the plugin like so:
+
+```sh
+source ~/.oh-my-zsh/custom/plugins/ahccli/ahccli.plugin.zsh
+```
+
+#### Trigger autocomplete
+
+```sh
+appname <tab>            # autocompletes commands               (phint <tab>)
+appname subcommand <tab> # autocompletes options for subcommand (phint init <tab>)
+```
+
 ### Related
 
-- [adhocore/phalcon-ext](https://github.com/adhocore/phalcon-ext) Phalcon extension using `adhocore/cli`
-- [adhocore/phint](https://github.com/adhocore/phint) PHP project scaffolding app using `adhocore/cli`
-- [adhocore/type-hinter](https://github.com/adhocore/php-type-hinter) Auto PHP7 typehinter tool using `adhocore/cli`
+- [adhocore/phalcon-ext](https://github.com/adhocore/phalcon-ext) &middot; Phalcon extension using `adhocore/cli`
+- [adhocore/phint](https://github.com/adhocore/phint) &middot; PHP project scaffolding app using `adhocore/cli`
+- [adhocore/type-hinter](https://github.com/adhocore/php-type-hinter) &middot; Auto PHP7 typehinter tool using `adhocore/cli`
 
 ### Contributors
 
