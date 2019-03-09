@@ -1,3 +1,11 @@
+## [0.3.3] 2019-03-09 06:03:34 UTC
+
+- [573d3c1](https://github.com/adhocore/php-cli/commit/573d3c1) refactor: remove sc folder and update readme with imgur link (Sushil Gupta)
+- [121ab6c](https://github.com/adhocore/php-cli/commit/121ab6c) refactor(plugin): use gawk, cleanup (Jitendra Adhikari)
+- [aeaf5f4](https://github.com/adhocore/php-cli/commit/aeaf5f4) refactor(plugin): phpcli => ahccli (Jitendra Adhikari)
+- [e625fd0](https://github.com/adhocore/php-cli/commit/e625fd0) chore: phpcli => ahccli (Jitendra Adhikari)
+- [9e31caf](https://github.com/adhocore/php-cli/commit/9e31caf) docs: improve auto completion docs, rename phpcli to ahccli (Jitendra Adhikari)
+
 ## [0.3.2] 2018-09-06 15:09:22 UTC
 
 - [6e8755f](https://github.com/adhocore/php-cli/commit/6e8755f) docs: autocompletion (Jitendra Adhikari)
