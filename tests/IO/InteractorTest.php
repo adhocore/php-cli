@@ -139,7 +139,6 @@ class InteractorTest extends TestCase
         $this->assertNotContains('abcde', file_get_contents(static::$ou));
     }
 
-
     public function test_call()
     {
         $i = $this->newInteractor('');
