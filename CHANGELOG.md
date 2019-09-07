@@ -1,3 +1,13 @@
+## [0.4.0](https://github.com/adhocore/php-cli/releases/tag/0.4.0) (2019-09-07)
+
+### Features
+- **Interactor**: Add promptHidden (unix only) (Jitendra Adhikari) [_1eb06c6_](https://github.com/adhocore/php-cli/commit/1eb06c6)
+- **Reader**: Add readHidden (Jitendra Adhikari) [_3628331_](https://github.com/adhocore/php-cli/commit/3628331)
+
+### Documentations
+- About hidden prompt (Jitendra Adhikari) [_af086f9_](https://github.com/adhocore/php-cli/commit/af086f9)
+
+
 ## [0.3.3] 2019-03-09 06:03:34 UTC
 
 - [573d3c1](https://github.com/adhocore/php-cli/commit/573d3c1) refactor: remove sc folder and update readme with imgur link (Sushil Gupta)
