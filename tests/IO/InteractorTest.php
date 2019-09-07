@@ -130,6 +130,15 @@ class InteractorTest extends TestCase
         $this->assertContains('gte 5', file_get_contents(static::$ou));
     }
 
+    public function test_prompt_hidden()
+    {
+        $i = $this->newInteractor('abcde');
+
+        $this->assertSame('abcde', $i->promptHidden('pass'));
+
+        $this->assertNotContains('abcde', file_get_contents(static::$ou));
+    }
+
     public function test_call()
     {
         $i = $this->newInteractor('');

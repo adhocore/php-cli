@@ -317,7 +317,7 @@ $interactor->greenBold("Anything is: $any", true);
 ```php
 $nameValidator = function ($value) {
     if (\strlen($value) < 5) {
-        throw new \Exception('Name should be atleast 5 chars');
+        throw new \InvalidArgumentException('Name should be atleast 5 chars');
     }
 
     return $value;
@@ -326,6 +326,22 @@ $nameValidator = function ($value) {
 // No default, Retry 5 more times
 $name = $interactor->prompt('Name', null, $nameValidator, 5);
 $interactor->greenBold("The name is: $name", true);
+```
+
+#### Prompt hidden
+
+> Currently not supported in windows platform, but maybe supported in future.
+
+```php
+$passValidator = function ($pass) {
+    if (\strlen($pass) < 6) {
+        throw new \InvalidArgumentException('Password too short');
+    }
+
+    return $pass;
+};
+
+$pass = $interactor->promptHidden('Password', $passValidator, 2);
 ```
 
 ![Interactive Preview](https://i.imgur.com/qYBNd29.gif "Interactive Preview")

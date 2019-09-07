@@ -52,4 +52,22 @@ class Reader
 
         return $fn ? $fn($in) : $in;
     }
+
+    /**
+     * Read a line from configured stream (or terminal) but don't echo it back.
+     *
+     * @param callable|null $fn The validator/sanitizer callback.
+     *
+     * @return mixed
+     */
+    public function readHidden($default = null, callable $fn = null)
+    {
+        \shell_exec('stty -echo');
+        $in = $this->read($default, $fn);
+        \shell_exec('stty echo');
+
+        echo \PHP_EOL;
+
+        return $in;
+    }
 }

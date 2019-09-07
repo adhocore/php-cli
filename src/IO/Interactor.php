@@ -280,12 +280,14 @@ class Interactor
      */
     public function prompt(string $text, $default = null, callable $fn = null, int $retry = 3)
     {
-        $error = 'Invalid value. Please try again!';
+        $error  = 'Invalid value. Please try again!';
+        $hidden = \func_get_args()[4] ?? false;
+        $readFn = $hidden ? 'readHidden' : 'read';
 
         $this->writer->yellow($text)->comment(null !== $default ? " [$default]: " : ': ');
 
         try {
-            $input = $this->reader->read($default, $fn);
+            $input = $this->reader->{$readFn}($default, $fn);
         } catch (\Exception $e) {
             $error = $e->getMessage();
         }
@@ -293,10 +295,33 @@ class Interactor
         if ($retry > 0 && (isset($e) || \strlen($input ?? '') === 0)) {
             $this->writer->bgRed($error, true);
 
-            return $this->prompt($text, $default, $fn, $retry - 1);
+            return $this->prompt($text, $default, $fn, $retry - 1, $hidden);
         }
 
         return $input ?? $default;
+    }
+
+    /**
+     * Prompt user for secret input like password. Currently for unix only.
+     *
+     * @param string        $text  Prompt text.
+     * @param callable|null $fn    The sanitizer/validator for user input
+     *                             Any exception message is printed as error.
+     * @param int           $retry How many more times to retry on failure.
+     *
+     * @return mixed
+     */
+    public function promptHidden(string $text, callable $fn = null, int $retry = 3)
+    {
+        $winOS = '\\' === \DIRECTORY_SEPARATOR;
+
+        // @codeCoverageIgnoreStart
+        if ($winOS) {
+            $this->writer->error('Hidden input not supported, Press Ctrl+C if you would like to abort', true);
+        }
+        // @codeCoverageIgnoreEnd
+
+        return $this->prompt($text, null, $fn, $retry, !$winOS);
     }
 
     /**
