@@ -313,15 +313,7 @@ class Interactor
      */
     public function promptHidden(string $text, callable $fn = null, int $retry = 3)
     {
-        $winOS = '\\' === \DIRECTORY_SEPARATOR;
-
-        // @codeCoverageIgnoreStart
-        if ($winOS) {
-            $this->writer->error('Hidden input not supported, Press Ctrl+C if you would like to abort', true);
-        }
-        // @codeCoverageIgnoreEnd
-
-        return $this->prompt($text, null, $fn, $retry, !$winOS);
+        return $this->prompt($text, null, $fn, $retry, true);
     }
 
     /**

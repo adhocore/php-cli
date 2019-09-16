@@ -330,7 +330,7 @@ $interactor->greenBold("The name is: $name", true);
 
 #### Prompt hidden
 
-> Currently not supported in windows platform, but maybe supported in future.
+> On windows platform, it may change the fontface which can be [fixed](https://superuser.com/a/757591).
 
 ```php
 $passValidator = function ($pass) {
