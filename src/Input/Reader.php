@@ -62,6 +62,12 @@ class Reader
      */
     public function readHidden($default = null, callable $fn = null)
     {
+        // @codeCoverageIgnoreStart
+        if ('\\' === \DIRECTORY_SEPARATOR) {
+            return $this->readHiddenWinOS($default, $fn);
+        }
+        // @codeCoverageIgnoreEnd
+
         \shell_exec('stty -echo');
         $in = $this->read($default, $fn);
         \shell_exec('stty echo');
@@ -69,5 +75,32 @@ class Reader
         echo \PHP_EOL;
 
         return $in;
+    }
+
+    /**
+     * Read a line from configured stream (or terminal) but don't echo it back.
+     *
+     * @codeCoverageIgnore
+     *
+     * @param callable|null $fn The validator/sanitizer callback.
+     *
+     * @return mixed
+     */
+    private function readHiddenWinOS($default = null, callable $fn = null)
+    {
+        $cmd = 'powershell -Command ' . \implode('; ', \array_filter([
+            '$pword = Read-Host -AsSecureString',
+            '$pword = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($pword)',
+            '$pword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($pword)',
+            'echo $pword',
+        ]));
+
+        $in = \rtrim(\shell_exec($cmd), "\r\n");
+
+        if ('' === $in && null !== $default) {
+            return $default;
+        }
+
+        return $fn ? $fn($in) : $in;
     }
 }
