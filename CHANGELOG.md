@@ -1,3 +1,15 @@
+## [0.5.0](https://github.com/adhocore/php-cli/releases/tag/0.5.0) (2019-09-16)
+
+### Features
+- **Reader**: Add read hidden for win os (Jitendra Adhikari) [_742c622_](https://github.com/adhocore/php-cli/commit/742c622)
+
+### Internal Refactors
+- **Interactor**: Prompt hidden now supported in win os (Jitendra Adhikari) [_491d162_](https://github.com/adhocore/php-cli/commit/491d162)
+
+### Documentations
+- Add a note about hidden prompt on win os (Jitendra Adhikari) [_43fe762_](https://github.com/adhocore/php-cli/commit/43fe762)
+
+
 ## [0.4.0](https://github.com/adhocore/php-cli/releases/tag/0.4.0) (2019-09-07)
 
 ### Features
