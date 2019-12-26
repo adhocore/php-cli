@@ -131,7 +131,7 @@ class Reader
      *
      * @return mixed
      */
-    private function readHiddenWinOS($default = null, callable $fn = null)
+    protected function readHiddenWinOS($default = null, callable $fn = null)
     {
         $cmd = 'powershell -Command ' . \implode('; ', \array_filter([
             '$pword = Read-Host -AsSecureString',
