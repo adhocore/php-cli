@@ -510,8 +510,11 @@ $reader->readPiped();
 // Pass in a callback for if STDIN is empty
 // The callback recieves $reader instance and MUST return string
 $reader->readPiped(function ($reader) {
-    // Wait to read!
+    // Wait to read a line!
     return $reader->read();
+
+    // Wait to read multi lines (until Ctrl+D pressed)
+    return $reader->readAll();
 });
 ```
 
