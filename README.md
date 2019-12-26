@@ -11,6 +11,7 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 
 - Command line application made easy
 - Inspired by nodejs [commander](https://github.com/tj/commander.js) (thanks tj)
+- Zero dependency.
 - For PHP7 and for good
 
 [![Screen Preview](https://i.imgur.com/qIYg9Zn.gif "Preview from adhocore/phalcon-ext which uses this cli package")](https://github.com/adhocore/phalcon-ext/tree/master/example/cli)
@@ -499,6 +500,22 @@ $reader->read('abc', 'trim');
 // Read at most first 5 chars
 // (if ENTER is pressed before 5 chars then further read is aborted)
 $reader->read('', 'trim', 5);
+
+// Read but dont echo back the input
+$reader->readHidden($default, $callback);
+
+// Read from piped stream (or STDIN) if available without waiting
+$reader->readPiped();
+
+// Pass in a callback for if STDIN is empty
+// The callback recieves $reader instance and MUST return string
+$reader->readPiped(function ($reader) {
+    // Wait to read a line!
+    return $reader->read();
+
+    // Wait to read multi lines (until Ctrl+D pressed)
+    return $reader->readAll();
+});
 ```
 
 #### Exceptions
@@ -579,3 +596,7 @@ appname subcommand <tab> # autocompletes options for subcommand (phint init <tab
 ## License
 
 > &copy; 2018, [Jitendra Adhikari](https://github.com/adhocore) | [MIT](./LICENSE)
+
+### Credits
+
+This project is release managed by [please](https://github.com/adhocore/please).

@@ -24,7 +24,7 @@ class ColorTest extends TestCase
 
     public function test_comment()
     {
-        $this->assertSame("\033[1;30mcomment\033[0m", (new Color)->comment('comment'));
+        $this->assertSame("\033[0;100mcomment\033[0m", (new Color)->comment('comment'));
     }
 
     public function test_custom_style()

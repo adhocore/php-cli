@@ -192,6 +192,40 @@ class OutputHelper
     }
 
     /**
+     * Show usage examples of a Command.
+     *
+     * It replaces $0 with actual command name and properly pads ` ## ` segments.
+     *
+     * @param string|null $usage Usage description.
+     *
+     * @return self
+     */
+    public function showUsage(string $usage = null): self
+    {
+        $usage = \str_replace('$0', $_SERVER['argv'][0] ?? '[cmd]', $usage);
+
+        if (\strpos($usage, ' ## ') === false) {
+            $this->writer->eol()->boldGreen('Usage Examples:', true)->colors($usage)->eol();
+
+            return $this;
+        }
+
+        $lines = \explode("\n", \str_replace(['<eol>', '<eol/>', '</eol>', "\r\n"], "\n", $usage));
+        foreach ($lines as &$pos) {
+            $pos = \strpos(\preg_replace('~<.*?>~', '', $pos), ' ##');
+        }
+
+        $maxlen = \max($lines) + 4;
+        $usage  = \preg_replace_callback('~ ## ~', function () use (&$lines, $maxlen) {
+            return \str_pad('# ', $maxlen - \array_shift($lines), ' ', \STR_PAD_LEFT);
+        }, $usage);
+
+        $this->writer->eol()->boldGreen('Usage Examples:', true)->colors($usage)->eol();
+
+        return $this;
+    }
+
+    /**
      * Sort items by name. As a side effect sets max length of all names.
      *
      * @param Parameter[]|Command[] $items

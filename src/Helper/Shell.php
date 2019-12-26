@@ -152,7 +152,10 @@ class Shell
 
             throw new RuntimeException('Timeout occurred, process terminated.');
         }
+        // @codeCoverageIgnoreStart
     }
+
+    // @codeCoverageIgnoreEnd
 
     public function setOptions(string $cwd = null, array $env = null, float $timeout = null, array $otherOptions = []): self
     {

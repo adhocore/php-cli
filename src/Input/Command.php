@@ -343,12 +343,8 @@ class Command extends Parser
 
         $helper
             ->showArgumentsHelp($this->allArguments())
-            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional] variadic...');
-
-        if ($this->_usage) {
-            $io->eol();
-            $io->boldGreen('Usage Examples:', true)->colors($this->_usage)->eol();
-        }
+            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional] variadic...')
+            ->showUsage($this->_usage);
 
         return $this->emit('_exit', 0);
     }

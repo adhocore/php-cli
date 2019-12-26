@@ -99,6 +99,32 @@ class OutputHelperTest extends TestCase
         ], $this->output());
     }
 
+    public function test_show_usage()
+    {
+        $argv0 = $_SERVER['argv'][0];
+
+        $_SERVER['argv'][0] = 'test';
+
+        $this->newHelper()->showUsage(\implode('', [
+            '<bold>  $0</end> <comment>-a apple</end> ## apple only<eol>',
+            '<bold>  $0</end> <comment>-a apple -b ball</end> ## apple ball<eol>',
+            'loooooooooooong text ## something<eol>',
+            'short text ## something else<eol>',
+        ]));
+
+        $this->assertEquals([
+            '',
+            'Usage Examples:',
+            '  test -a apple          # apple only',
+            '  test -a apple -b ball  # apple ball',
+            'loooooooooooong text     # something',
+            'short text               # something else',
+            '',
+        ], $this->output());
+
+        $_SERVER['argv'][0] = $argv0;
+    }
+
     public function newHelper()
     {
         return new OutputHelper(new Writer(static::$ou, new class extends Color {
@@ -108,6 +134,6 @@ class OutputHelperTest extends TestCase
 
     protected function output(): array
     {
-        return file(static::$ou, FILE_IGNORE_NEW_LINES);
+        return \str_replace("\033[0m", '', \file(static::$ou, \FILE_IGNORE_NEW_LINES));
     }
 }

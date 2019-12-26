@@ -54,6 +54,51 @@ class Reader
     }
 
     /**
+     * Same like read but it reads all the lines.
+     *
+     * @codeCoverageIgnore
+     *
+     * @param callable|null $fn The validator/sanitizer callback.
+     *
+     * @return string
+     */
+    public function readAll(callable $fn = null): string
+    {
+        $in = \stream_get_contents($this->stream);
+
+        return $fn ? $fn($in) : $in;
+    }
+
+    /**
+     * Read content piped to the stream without waiting.
+     *
+     * @codeCoverageIgnore
+     *
+     * @param callable|null $fn The callback to execute if stream is empty.
+     *
+     * @return string
+     */
+    public function readPiped(callable $fn = null): string
+    {
+        $stdin = '';
+        $read  = [$this->stream];
+        $write = [];
+        $exept = [];
+
+        if (\stream_select($read, $write, $exept, 0) === 1) {
+            while ($line = \fgets($this->stream)) {
+                $stdin .= $line;
+            }
+        }
+
+        if ('' === $stdin) {
+            return $fn ? $fn($this) : '';
+        }
+
+        return $stdin;
+    }
+
+    /**
      * Read a line from configured stream (or terminal) but don't echo it back.
      *
      * @param callable|null $fn The validator/sanitizer callback.
@@ -86,7 +131,7 @@ class Reader
      *
      * @return mixed
      */
-    private function readHiddenWinOS($default = null, callable $fn = null)
+    protected function readHiddenWinOS($default = null, callable $fn = null)
     {
         $cmd = 'powershell -Command ' . \implode('; ', \array_filter([
             '$pword = Read-Host -AsSecureString',
