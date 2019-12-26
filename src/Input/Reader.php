@@ -53,6 +53,26 @@ class Reader
         return $fn ? $fn($in) : $in;
     }
 
+    public function readPiped(callable $fn = null): string
+    {
+        $stdin = '';
+        $read  = [$this->stream];
+        $write = [];
+        $exept = [];
+
+        if (\stream_select($read, $write, $exept, 0) === 1) {
+            while ($line = \fgets($this->stream)) {
+                $stdin .= $line;
+            }
+        }
+
+        if ('' === $stdin) {
+            return $fn ? $fn($this) : '';
+        }
+
+        return $stdin;
+    }
+
     /**
      * Read a line from configured stream (or terminal) but don't echo it back.
      *
