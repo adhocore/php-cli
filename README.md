@@ -11,6 +11,7 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 
 - Command line application made easy
 - Inspired by nodejs [commander](https://github.com/tj/commander.js) (thanks tj)
+- Zero dependency.
 - For PHP7 and for good
 
 [![Screen Preview](https://i.imgur.com/qIYg9Zn.gif "Preview from adhocore/phalcon-ext which uses this cli package")](https://github.com/adhocore/phalcon-ext/tree/master/example/cli)
@@ -592,3 +593,7 @@ appname subcommand <tab> # autocompletes options for subcommand (phint init <tab
 ## License
 
 > &copy; 2018, [Jitendra Adhikari](https://github.com/adhocore) | [MIT](./LICENSE)
+
+### Credits
+
+This project is release managed by [please](https://github.com/adhocore/please).
