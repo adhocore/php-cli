@@ -1,3 +1,26 @@
+## [0.6.0](https://github.com/adhocore/php-cli/releases/tag/0.6.0) (2019-12-26)
+
+### Features
+- **Table**: Add table renderer class (Jitendra Adhikari) [_808e80e_](https://github.com/adhocore/php-cli/commit/808e80e)
+- **Reader**: Add readAll() (Jitendra Adhikari) [_9264082_](https://github.com/adhocore/php-cli/commit/9264082)
+- **Output**: Add show usage (Jitendra Adhikari) [_1356515_](https://github.com/adhocore/php-cli/commit/1356515)
+- **Reader**: Add read piped (Jitendra Adhikari) [_790f2a1_](https://github.com/adhocore/php-cli/commit/790f2a1)
+
+### Internal Refactors
+- **Reader**: Visibility (Jitendra Adhikari) [_bcea11b_](https://github.com/adhocore/php-cli/commit/bcea11b)
+- **Writer**: Use Table::render instead (Jitendra Adhikari) [_f0f33ee_](https://github.com/adhocore/php-cli/commit/f0f33ee)
+- **Command**: Use helper showUsage() instead (Jitendra Adhikari) [_ef5ea2b_](https://github.com/adhocore/php-cli/commit/ef5ea2b)
+
+### Miscellaneous
+- **Composer**: Add test scripts (Jitendra Adhikari) [_4d292ca_](https://github.com/adhocore/php-cli/commit/4d292ca)
+- **Color**: Add dark and light gray colors (Jitendra Adhikari) [_2d4051d_](https://github.com/adhocore/php-cli/commit/2d4051d)
+
+### Documentations
+- Add readAll() usage (Jitendra Adhikari) [_62cbfd0_](https://github.com/adhocore/php-cli/commit/62cbfd0)
+- Update intro and credits (Jitendra Adhikari) [_7cbaae6_](https://github.com/adhocore/php-cli/commit/7cbaae6)
+- Add readHidden, readPiped usage (Jitendra Adhikari) [_57dae5e_](https://github.com/adhocore/php-cli/commit/57dae5e)
+
+
 ## [0.5.0](https://github.com/adhocore/php-cli/releases/tag/0.5.0) (2019-09-16)
 
 ### Features
