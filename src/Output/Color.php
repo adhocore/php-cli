@@ -23,14 +23,16 @@ use Ahc\Cli\Exception\InvalidArgumentException;
  */
 class Color
 {
-    const BLACK  = 30;
-    const RED    = 31;
-    const GREEN  = 32;
-    const YELLOW = 33;
-    const BLUE   = 34;
-    const PURPLE = 35;
-    const CYAN   = 36;
-    const WHITE  = 37;
+    const BLACK    = 30;
+    const RED      = 31;
+    const GREEN    = 32;
+    const YELLOW   = 33;
+    const BLUE     = 34;
+    const PURPLE   = 35;
+    const CYAN     = 36;
+    const WHITE    = 37;
+    const GRAY     = 47;
+    const DARKGRAY = 100;
 
     /** @var string Cli format */
     protected $format = "\033[:bold:;:fg:;:bg:m:text:\033[0m";
@@ -48,7 +50,7 @@ class Color
      */
     public function comment(string $text, array $style = []): string
     {
-        return $this->line($text, ['fg' => static::BLACK, 'bold' => 1] + $style);
+        return $this->line($text, ['fg' => static::DARKGRAY, 'bold' => 0] + $style);
     }
 
     /**
