@@ -196,7 +196,7 @@ class OutputHelper
      *
      * It replaces $0 with actual command name and properly pads ` ## ` segments.
      *
-     * @param  string|null $usage Usage description.
+     * @param string|null $usage Usage description.
      *
      * @return self
      */
