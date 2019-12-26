@@ -499,6 +499,19 @@ $reader->read('abc', 'trim');
 // Read at most first 5 chars
 // (if ENTER is pressed before 5 chars then further read is aborted)
 $reader->read('', 'trim', 5);
+
+// Read but dont echo back the input
+$reader->readHidden($default, $callback);
+
+// Read from piped stream (or STDIN) if available without waiting
+$reader->readPiped();
+
+// Pass in a callback for if STDIN is empty
+// The callback recieves $reader instance and MUST return string
+$reader->readPiped(function ($reader) {
+    // Wait to read!
+    return $reader->read();
+});
 ```
 
 #### Exceptions
