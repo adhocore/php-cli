@@ -11,7 +11,7 @@
 
 namespace Ahc\Cli;
 
-interface Exception
+interface Exception extends \Throwable
 {
     // ;)
 }
