@@ -1,3 +1,9 @@
+## [0.6.1](https://github.com/adhocore/php-cli/releases/tag/0.6.1) (2019-12-29)
+
+### Miscellaneous
+- Extend exception from throwable (Jitendra Adhikari) [_ab6b351_](https://github.com/adhocore/php-cli/commit/ab6b351)
+
+
 ## [0.6.0](https://github.com/adhocore/php-cli/releases/tag/0.6.0) (2019-12-26)
 
 ### Features
