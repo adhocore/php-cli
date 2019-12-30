@@ -11,6 +11,7 @@
 
 namespace Ahc\Cli\Helper;
 
+use Ahc\Cli\Input\Option;
 use Ahc\Cli\Input\Parameter;
 
 /**
@@ -58,8 +59,8 @@ class Normalizer
      */
     public function normalizeValue(Parameter $parameter, string $value = null)
     {
-        if (\is_bool($default = $parameter->default())) {
-            return !$default;
+        if ($parameter instanceof Option && $parameter->bool()) {
+            return !$parameter->default();
         }
 
         if ($parameter->variadic()) {
