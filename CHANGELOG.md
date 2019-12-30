@@ -1,3 +1,13 @@
+## [0.7.0](https://github.com/adhocore/php-cli/releases/tag/0.7.0) (2019-12-30)
+
+### Bug Fixes
+- **Output.helper**: Pad ## (Jitendra Adhikari) [_73a4a4e_](https://github.com/adhocore/php-cli/commit/73a4a4e)
+- **Normalizer**: Invert bool iff type is bool not value (Jitendra Adhikari) [_6ff4acd_](https://github.com/adhocore/php-cli/commit/6ff4acd)
+
+### Internal Refactors
+- **Option**: Improve bool() check (Jitendra Adhikari) [_e7e95e3_](https://github.com/adhocore/php-cli/commit/e7e95e3)
+
+
 ## [0.6.2](https://github.com/adhocore/php-cli/releases/tag/0.6.2) (2019-12-30)
 
 ### Bug Fixes
