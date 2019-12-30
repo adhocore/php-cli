@@ -1,3 +1,9 @@
+## [0.6.2](https://github.com/adhocore/php-cli/releases/tag/0.6.2) (2019-12-30)
+
+### Bug Fixes
+- **Color**: Comment line shows white trailing bar (daemonu) [_b578d9a_](https://github.com/adhocore/php-cli/commit/b578d9a)
+
+
 ## [0.6.1](https://github.com/adhocore/php-cli/releases/tag/0.6.1) (2019-12-29)
 
 ### Miscellaneous
