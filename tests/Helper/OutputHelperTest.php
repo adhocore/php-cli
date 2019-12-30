@@ -109,6 +109,7 @@ class OutputHelperTest extends TestCase
             '<bold>  $0</end> <comment>-a apple</end> ## apple only<eol>',
             '<bold>  $0</end> <comment>-a apple -b ball</end> ## apple ball<eol>',
             'loooooooooooong text ## something<eol>',
+            'no shell comments<eol>',
             'short text ## something else<eol>',
         ]));
 
@@ -118,6 +119,7 @@ class OutputHelperTest extends TestCase
             '  test -a apple          # apple only',
             '  test -a apple -b ball  # apple ball',
             'loooooooooooong text     # something',
+            'no shell comments',
             'short text               # something else',
             '',
         ], $this->output());
@@ -128,7 +130,7 @@ class OutputHelperTest extends TestCase
     public function newHelper()
     {
         return new OutputHelper(new Writer(static::$ou, new class extends Color {
-            protected $format = ':text:';
+            protected $format = ':txt:';
         }));
     }
 
