@@ -211,8 +211,10 @@ class OutputHelper
         }
 
         $lines = \explode("\n", \str_replace(['<eol>', '<eol/>', '</eol>', "\r\n"], "\n", $usage));
-        foreach ($lines as &$pos) {
-            $pos = \strpos(\preg_replace('~<.*?>~', '', $pos), ' ##');
+        foreach ($lines as $i => &$pos) {
+            if (false === $pos = \strrpos(\preg_replace('~</?\w+/?>~', '', $pos), ' ##')) {
+                unset($lines[$i]);
+            }
         }
 
         $maxlen = \max($lines) + 4;

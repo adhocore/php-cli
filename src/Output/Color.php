@@ -35,7 +35,7 @@ class Color
     const DARKGRAY = 100;
 
     /** @var string Cli format */
-    protected $format = "\033[:bold:;:fg:;:bg:m:text:\033[0m";
+    protected $format = "\033[:mod:;:fg:;:bg:m:txt:\033[0m";
 
     /** @var array Custom styles */
     protected static $styles = [];
@@ -50,7 +50,7 @@ class Color
      */
     public function comment(string $text, array $style = []): string
     {
-        return $this->line($text, ['bold' => 2] + $style);
+        return $this->line($text, ['mod' => 2] + $style);
     }
 
     /**
@@ -115,17 +115,17 @@ class Color
      */
     public function line(string $text, array $style = []): string
     {
-        $style += ['bg' => null, 'fg' => static::WHITE, 'bold' => 0];
+        $style += ['bg' => null, 'fg' => static::WHITE, 'bold' => 0, 'mod' => null];
 
         $format = $style['bg'] === null
             ? \str_replace(';:bg:', '', $this->format)
             : $this->format;
 
         $line = \strtr($format, [
-            ':bold:' => (int) $style['bold'],
-            ':fg:'   => (int) $style['fg'],
-            ':bg:'   => (int) $style['bg'] + 10,
-            ':text:' => $text,
+            ':mod:' => (int) ($style['mod'] ?? $style['bold']),
+            ':fg:'  => (int) $style['fg'],
+            ':bg:'  => (int) $style['bg'] + 10,
+            ':txt:' => $text,
         ]);
 
         return $line;
@@ -227,9 +227,13 @@ class Color
     {
         list($text, $style) = $arguments + ['', []];
 
-        if (\stripos($name, 'bold') !== false) {
-            $name   = \str_ireplace('bold', '', $name);
-            $style += ['bold' => 1];
+        $mods = ['bold' => 1, 'dim' => 2, 'italic' => 3, 'underline' => 4, 'flash' => 5];
+
+        foreach ($mods as $mod => $value) {
+            if (\stripos($name, $mod) !== false) {
+                $name   = \str_ireplace($mod, '', $name);
+                $style += ['bold' => $value];
+            }
         }
 
         if (!\preg_match_all('/([b|B|f|F]g)?([A-Z][a-z]+)([^A-Z])?/', $name, $matches)) {

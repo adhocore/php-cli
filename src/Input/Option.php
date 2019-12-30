@@ -87,6 +87,6 @@ class Option extends Parameter
      */
     public function bool(): bool
     {
-        return \preg_match('/\-no|\-with/', $this->long) > 0;
+        return \preg_match('/\-no-|\-with-/', $this->long) > 0;
     }
 }
