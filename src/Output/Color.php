@@ -50,7 +50,7 @@ class Color
      */
     public function comment(string $text, array $style = []): string
     {
-        return $this->line($text, ['fg' => static::DARKGRAY, 'bold' => 0] + $style);
+        return $this->line($text, ['bold' => 2] + $style);
     }
 
     /**
