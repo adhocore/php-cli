@@ -12,7 +12,7 @@ before_script:
   - for P in src tests; do find $P -type f -name '*.php' -exec php -l {} \;; done
 
 script:
-  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+  - composer test:cov
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
