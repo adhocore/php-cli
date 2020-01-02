@@ -1,3 +1,16 @@
+## [0.7.1](https://github.com/adhocore/php-cli/releases/tag/0.7.1) (2020-01-02)
+
+### Bug Fixes
+- **Phpunit**: Rm xml.syntaxCheck (Jitendra Adhikari) [_6ae66b0_](https://github.com/adhocore/php-cli/commit/6ae66b0)
+
+### Internal Refactors
+- **Interactor**: Reduce complexity in prompt (Jitendra Adhikari) [_dd008af_](https://github.com/adhocore/php-cli/commit/dd008af)
+
+### Miscellaneous
+- **Composer**: Tweak script.test (Jitendra Adhikari) [_9b8ee5d_](https://github.com/adhocore/php-cli/commit/9b8ee5d)
+- **Travis**: Script (Jitendra Adhikari) [_c41e256_](https://github.com/adhocore/php-cli/commit/c41e256)
+
+
 ## [0.7.0](https://github.com/adhocore/php-cli/releases/tag/0.7.0) (2019-12-30)
 
 ### Bug Fixes
