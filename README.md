@@ -165,8 +165,10 @@ class InitCommand extends Ahc\Cli\Input\Command
             ->option('-b --ball', 'The ball')
             // Usage examples:
             ->usage(
-                '<bold>  init</end> <comment>--apple applet --ball ballon <arggg></end><eol/>' .
-                '<bold>  init</end> <comment>-a applet -b ballon <arggg> [arg2]</end><eol/>'
+                // append details or explanation of given example with ` ## ` so they will be uniformly aligned when shown
+                '<bold>  init</end> <comment>--apple applet --ball ballon <arggg></end> ## details 1<eol/>' .
+                // $0 will be interpolated to actual command name
+                '<bold>  $0</end> <comment>-a applet -b ballon <arggg> [arg2]</end> ## details 2<eol/>'
             );
     }
 
