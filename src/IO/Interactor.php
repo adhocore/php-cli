@@ -282,17 +282,18 @@ class Interactor
     {
         $error  = 'Invalid value. Please try again!';
         $hidden = \func_get_args()[4] ?? false;
-        $readFn = $hidden ? 'readHidden' : 'read';
+        $readFn = ['read', 'readHidden'][(int) $hidden];
 
         $this->writer->yellow($text)->comment(null !== $default ? " [$default]: " : ': ');
 
         try {
             $input = $this->reader->{$readFn}($default, $fn);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            $input = '';
             $error = $e->getMessage();
         }
 
-        if ($retry > 0 && (isset($e) || \strlen($input ?? '') === 0)) {
+        if ($retry > 0 && $input === '') {
             $this->writer->bgRed($error, true);
 
             return $this->prompt($text, $default, $fn, $retry - 1, $hidden);
