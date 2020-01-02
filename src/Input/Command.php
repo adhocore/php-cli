@@ -343,8 +343,11 @@ class Command extends Parser
 
         $helper
             ->showArgumentsHelp($this->allArguments())
-            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional] variadic...')
-            ->showUsage($this->_usage);
+            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional] variadic...');
+
+        if ($this->_usage) {
+            $helper->showUsage($this->_usage);
+        }
 
         return $this->emit('_exit', 0);
     }

@@ -196,11 +196,11 @@ class OutputHelper
      *
      * It replaces $0 with actual command name and properly pads ` ## ` segments.
      *
-     * @param string|null $usage Usage description.
+     * @param string $usage Usage description.
      *
      * @return self
      */
-    public function showUsage(string $usage = null): self
+    public function showUsage(string $usage): self
     {
         $usage = \str_replace('$0', $_SERVER['argv'][0] ?? '[cmd]', $usage);
 
