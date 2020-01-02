@@ -1,3 +1,9 @@
+## [0.7.2](https://github.com/adhocore/php-cli/releases/tag/0.7.2) (2020-01-02)
+
+### Bug Fixes
+- **Cmd.help**: Usage label was printed even if no text (Jitendra Adhikari) [_4639624_](https://github.com/adhocore/php-cli/commit/4639624)
+
+
 ## [0.7.1](https://github.com/adhocore/php-cli/releases/tag/0.7.1) (2020-01-02)
 
 ### Bug Fixes
