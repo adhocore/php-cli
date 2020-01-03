@@ -1,3 +1,12 @@
+## [0.8.0](https://github.com/adhocore/php-cli/releases/tag/0.8.0) (2020-01-03)
+
+### Features
+- **Cmd.action**: Bind to $this (Jitendra Adhikari) [_c479995_](https://github.com/adhocore/php-cli/commit/c479995)
+
+### Documentations
+- Add credits, update license year (Jitendra Adhikari) [_2bf08c5_](https://github.com/adhocore/php-cli/commit/2bf08c5)
+
+
 ## [0.7.3](https://github.com/adhocore/php-cli/releases/tag/0.7.3) (2020-01-03)
 
 ### Internal Refactors
