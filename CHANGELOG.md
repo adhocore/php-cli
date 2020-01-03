@@ -1,3 +1,9 @@
+## [0.8.2](https://github.com/adhocore/php-cli/releases/tag/0.8.2) (2020-01-03)
+
+### Bug Fixes
+- **Normalizer**: Complex option containing value delimited by = (Jitendra Adhikari) [_5d5394a_](https://github.com/adhocore/php-cli/commit/5d5394a)
+
+
 ## [0.8.1](https://github.com/adhocore/php-cli/releases/tag/0.8.1) (2020-01-03)
 
 ### Bug Fixes
