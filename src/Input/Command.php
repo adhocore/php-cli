@@ -413,7 +413,7 @@ class Command extends Parser
             return $this->_action;
         }
 
-        $this->_action = $action ? \Closure::bind($action, $this) : null;
+        $this->_action = $action instanceof \Closure ? \Closure::bind($action, $this) : $action;
 
         return $this;
     }
