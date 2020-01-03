@@ -1,3 +1,13 @@
+## [0.7.3](https://github.com/adhocore/php-cli/releases/tag/0.7.3) (2020-01-03)
+
+### Internal Refactors
+- **App**: Add onExit prop, execute or action can return exit code (Jitendra Adhikari) [_1e754a8_](https://github.com/adhocore/php-cli/commit/1e754a8)
+
+### Documentations
+- About cmd exit code (Jitendra Adhikari) [_32d45c2_](https://github.com/adhocore/php-cli/commit/32d45c2)
+- About cmd usage ($0 and ##) (Jitendra Adhikari) [_2319370_](https://github.com/adhocore/php-cli/commit/2319370)
+
+
 ## [0.7.2](https://github.com/adhocore/php-cli/releases/tag/0.7.2) (2020-01-02)
 
 ### Bug Fixes
