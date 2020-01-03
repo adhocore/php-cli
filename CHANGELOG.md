@@ -1,3 +1,9 @@
+## [0.8.1](https://github.com/adhocore/php-cli/releases/tag/0.8.1) (2020-01-03)
+
+### Bug Fixes
+- **Cmd.action**: Can be array too (besides closure/null) (Jitendra Adhikari) [_238c8b1_](https://github.com/adhocore/php-cli/commit/238c8b1)
+
+
 ## [0.8.0](https://github.com/adhocore/php-cli/releases/tag/0.8.0) (2020-01-03)
 
 ### Features
