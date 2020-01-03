@@ -36,10 +36,12 @@ class Normalizer
         $normalized = [];
 
         foreach ($args as $arg) {
-            if (\preg_match('/^\-\w{2,}/', $arg)) {
+            if (\preg_match('/^\-\w=/', $arg)) {
+                $normalized = \array_merge($normalized, explode('=', $arg));
+            } elseif (\preg_match('/^\-\w{2,}/', $arg)) {
                 $splitArg   = \implode(' -', \str_split(\ltrim($arg, '-')));
                 $normalized = \array_merge($normalized, \explode(' ', '-' . $splitArg));
-            } elseif (\preg_match('/^\-\-\w{2,}\=/', $arg)) {
+            } elseif (\preg_match('/^\-\-([^\s\=]+)\=/', $arg)) {
                 $normalized = \array_merge($normalized, explode('=', $arg));
             } else {
                 $normalized[] = $arg;
