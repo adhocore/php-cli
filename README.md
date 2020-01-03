@@ -122,6 +122,8 @@ $app
             echo ($intentToAdd ? 'Intent to add ' : 'Add ')
                 . implode(', ', $paths)
                 . ($force ? ' with force' : '');
+
+            // If you return integer from here, that will be taken as exit error code
         })
         // Done setting up this command for now, tap() to retreat back so we can add another command
         ->tap()
@@ -196,7 +198,9 @@ class InitCommand extends Ahc\Cli\Input\Command
         $io->write('Apple ' . $apple, true);
         $io->write('Ball ' . $ball, true);
 
-        // ...
+        // more codes ...
+
+        // If you return integer from here, that will be taken as exit error code
     }
 }
 
