@@ -39,7 +39,7 @@ class Application
     protected $name;
 
     /** @var string App version */
-    protected $version = '0.0.1';
+    protected $version = '';
 
     /** @var string Ascii art logo */
     protected $logo = '';
@@ -49,7 +49,10 @@ class Application
     /** @var Interactor */
     protected $io;
 
-    public function __construct(string $name, string $version = '', callable $onExit = null)
+    /** @var callable The callable to perform exit */
+    protected $onExit;
+
+    public function __construct(string $name, string $version = '0.0.1', callable $onExit = null)
     {
         $this->name    = $name;
         $this->version = $version;
@@ -267,9 +270,9 @@ class Application
         $exitCode = 255;
 
         try {
-            $command = $this->parse($argv);
-            $this->doAction($command);
-            $exitCode = 0;
+            $command  = $this->parse($argv);
+            $result   = $this->doAction($command);
+            $exitCode = \is_int($result) ? $result : 0;
         } catch (\Throwable $e) {
             $this->outputHelper()->printTrace($e);
         }
