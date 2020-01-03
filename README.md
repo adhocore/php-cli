@@ -601,7 +601,7 @@ appname subcommand <tab> # autocompletes options for subcommand (phint init <tab
 
 ## License
 
-> &copy; 2018, [Jitendra Adhikari](https://github.com/adhocore) | [MIT](./LICENSE)
+> &copy; 2017-2020, [Jitendra Adhikari](https://github.com/adhocore) | [MIT](./LICENSE)
 
 ### Credits
 
