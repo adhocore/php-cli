@@ -185,6 +185,21 @@ class CommandTest extends TestCase
         $this->assertSame('user', reset($o)->name());
     }
 
+    public function test_complex_value_option()
+    {
+        $p = $this->newCommand()
+            ->option('-l --limit', 'limit', 'intval')
+            ->option('-o --order-by', 'order by');
+
+        // `--order-by="id desc"` in terminal becomes `--order-by=id desc` in PHP.
+        $v = $p->parse(['cmd', '-l=5', '--order-by=id desc'])->values();
+
+        $this->assertArrayHasKey('limit', $v);
+        $this->assertArrayHasKey('orderBy', $v);
+        $this->assertSame(5, $v['limit']);
+        $this->assertSame('id desc', $v['orderBy']);
+    }
+
     public function test_usage()
     {
         $p = $this->newCommand()->usage('Usage: $ cmd [...]');
