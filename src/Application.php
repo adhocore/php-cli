@@ -367,23 +367,8 @@ class Application
      */
     protected function notFound()
     {
-        $closest   = [];
-        $attempted = $this->argv[1];
         $available = \array_keys($this->commands() + $this->aliases);
-
-        foreach ($available as $cmd) {
-            $lev = \levenshtein($attempted, $cmd);
-            if ($lev > 0 || $lev < 5) {
-                $closest[$cmd] = $lev;
-            }
-        }
-
-        $this->io()->error("Command $attempted not found", true);
-        if ($closest) {
-            \asort($closest);
-            $closest = \key($closest);
-            $this->io()->bgRed("Did you mean $closest?", true);
-        }
+        $this->outputHelper()->showCommandNotFound($this->argv[1], $available);
 
         return ($this->onExit)(127);
     }

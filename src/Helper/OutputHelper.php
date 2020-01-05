@@ -227,6 +227,26 @@ class OutputHelper
         return $this;
     }
 
+    public function showCommandNotFound(string $attempted, array $available): self
+    {
+        $closest = [];
+        foreach ($available as $cmd) {
+            $lev = \levenshtein($attempted, $cmd);
+            if ($lev > 0 || $lev < 5) {
+                $closest[$cmd] = $lev;
+            }
+        }
+
+        $this->writer->error("Command $attempted not found", true);
+        if ($closest) {
+            \asort($closest);
+            $closest = \key($closest);
+            $this->writer->bgRed("Did you mean $closest?", true);
+        }
+
+        return $this;
+    }
+
     /**
      * Sort items by name. As a side effect sets max length of all names.
      *
