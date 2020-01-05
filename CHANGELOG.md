@@ -1,3 +1,9 @@
+## [0.8.3](https://github.com/adhocore/php-cli/releases/tag/0.8.3) (2020-01-05)
+
+### Internal Refactors
+- **App**: Extract cmd not found to outputhelper (Jitendra Adhikari) [_c317634_](https://github.com/adhocore/php-cli/commit/c317634)
+
+
 ## [0.8.2](https://github.com/adhocore/php-cli/releases/tag/0.8.2) (2020-01-03)
 
 ### Bug Fixes
