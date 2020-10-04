@@ -1,5 +1,5 @@
 * text=auto
-*.php text
+*.php text eol=lf
 
 /.github export-ignore
 /.phive export-ignore
