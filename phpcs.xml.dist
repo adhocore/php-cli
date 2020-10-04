@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset>
+  <arg value="psv"/>
+  <arg name="extensions" value="php"/>
+
+  <file>src</file>
+  <file>tests</file>
+
+  <exclude-pattern>/vendor/</exclude-pattern>
+
+  <rule ref="PSR12"/>
+
+  <rule ref="PSR12">
+    <exclude name="PSR12.Classes.ClassInstantiation.MissingParentheses" />
+  </rule>
+
+  <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
+    <exclude-pattern>/src/Input/Command.php</exclude-pattern>
+    <exclude-pattern>/src/Input/Parser.php</exclude-pattern>
+  </rule>
+
+  <rule ref="PSR12.Properties.ConstantVisibility.NotFound">
+    <exclude-pattern>/src/</exclude-pattern>
+  </rule>
+
+  <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
+    <exclude-pattern>/tests/</exclude-pattern>
+  </rule>
+
+  <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
+    <exclude-pattern>/tests/</exclude-pattern>
+  </rule>
+</ruleset>

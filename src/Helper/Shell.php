@@ -157,8 +157,12 @@ class Shell
 
     // @codeCoverageIgnoreEnd
 
-    public function setOptions(string $cwd = null, array $env = null, float $timeout = null, array $otherOptions = []): self
-    {
+    public function setOptions(
+        string $cwd = null,
+        array $env = null,
+        float $timeout = null,
+        array $otherOptions = []
+    ): self {
         $this->cwd            = $cwd;
         $this->env            = $env;
         $this->processTimeout = $timeout;
@@ -176,7 +180,14 @@ class Shell
         $this->descriptors      = $this->getDescriptors();
         $this->processStartTime = \microtime(true);
 
-        $this->process = \proc_open($this->command, $this->descriptors, $this->pipes, $this->cwd, $this->env, $this->otherOptions);
+        $this->process = \proc_open(
+            $this->command,
+            $this->descriptors,
+            $this->pipes,
+            $this->cwd,
+            $this->env,
+            $this->otherOptions
+        );
         $this->setInput();
 
         // @codeCoverageIgnoreStart

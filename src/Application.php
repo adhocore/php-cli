@@ -166,7 +166,13 @@ class Application
     {
         $name = $command->name();
 
-        if ($this->commands[$name] ?? $this->aliases[$name] ?? $this->commands[$alias] ?? $this->aliases[$alias] ?? null) {
+        if (
+            $this->commands[$name] ??
+            $this->aliases[$name] ??
+            $this->commands[$alias] ??
+            $this->aliases[$alias] ??
+            null
+        ) {
             throw new InvalidArgumentException(\sprintf('Command "%s" already added', $name));
         }
 

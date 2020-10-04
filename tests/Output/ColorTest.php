@@ -55,7 +55,10 @@ class ColorTest extends TestCase
         $this->assertSame("\033[0;31mRed\033[0m", $c->colors('<red>Red</end>'));
         $this->assertSame("\033[1;31mBoldRed\n\033[0m", $c->colors('<boldRed>BoldRed<eol/></end>'));
         $this->assertSame("\033[0;36;42mBgGreenCyan\033[0m\n", $c->colors('<bgGreenCyan>BgGreenCyan</end><eol>'));
-        $this->assertSame("\033[0;31mRed\033[0m\nNormal\n\033[1;37mBOLD\033[0m", $c->colors("<red>Red</end>\r\nNormal\n<bold>BOLD</end>"));
+        $this->assertSame(
+            "\033[0;31mRed\033[0m\nNormal\n\033[1;37mBOLD\033[0m",
+            $c->colors("<red>Red</end>\r\nNormal\n<bold>BOLD</end>")
+        );
     }
 
     public function test_magic_call()

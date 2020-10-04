@@ -86,7 +86,10 @@ class WriterTest extends CliTestCase
         ]);
 
         $this->assertSame(3, \substr_count($this->buffer(), '+--------+------+------+'), '3 dashes');
-        $this->assertBufferContains("|\33[1;37;42m A      \33[0m|\33[1;37;42m B C  \33[0m|\33[1;37;42m C D  \33[0m|", 'Head');
+        $this->assertBufferContains(
+            "|\33[1;37;42m A      \33[0m|\33[1;37;42m B C  \33[0m|\33[1;37;42m C D  \33[0m|",
+            'Head'
+        );
         $this->assertBufferContains("|\33[0;35m apple  \33[0m|\33[0;35m ball \33[0m|\33[0;35m cat  \33[0m|", 'Odd');
         $this->assertBufferContains("|\33[0;36m applet \33[0m|\33[0;36m bee  \33[0m|\33[0;36m cute \33[0m|", 'Even');
     }
