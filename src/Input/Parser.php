@@ -203,7 +203,9 @@ abstract class Parser
     /**
      * Validate if all required arguments/options have proper values.
      *
-     * @throw RuntimeException If value missing for required ones.
+     * @throws RuntimeException If value missing for required ones.
+     *
+     * @return void
      */
     protected function validate()
     {
