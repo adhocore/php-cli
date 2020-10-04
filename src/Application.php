@@ -220,7 +220,7 @@ class Application
     public function io(Interactor $io = null)
     {
         if ($io || !$this->io) {
-            $this->io = $io ?? new Interactor();
+            $this->io = $io ?? new Interactor;
         }
 
         if (\func_num_args() === 0) {

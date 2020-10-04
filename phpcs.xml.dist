@@ -10,8 +10,13 @@
 
   <rule ref="PSR12"/>
 
+  <rule ref="PSR12">
+    <exclude name="PSR12.Classes.ClassInstantiation.MissingParentheses" />
+  </rule>
+
   <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
-    <exclude-pattern>/src/</exclude-pattern>
+    <exclude-pattern>/src/Input/Command.php</exclude-pattern>
+    <exclude-pattern>/src/Input/Parser.php</exclude-pattern>
   </rule>
 
   <rule ref="PSR12.Properties.ConstantVisibility.NotFound">

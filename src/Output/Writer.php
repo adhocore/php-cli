@@ -182,8 +182,8 @@ class Writer
         $this->stream  = $path ?: \STDOUT;
         $this->eStream = $path ?: \STDERR;
 
-        $this->cursor    = new Cursor();
-        $this->colorizer = $colorizer ?? new Color();
+        $this->cursor    = new Cursor;
+        $this->colorizer = $colorizer ?? new Color;
     }
 
     /**
@@ -286,7 +286,7 @@ class Writer
      */
     public function table(array $rows, array $styles = []): self
     {
-        $table = (new Table())->render($rows, $styles);
+        $table = (new Table)->render($rows, $styles);
 
         return $this->colors($table);
     }

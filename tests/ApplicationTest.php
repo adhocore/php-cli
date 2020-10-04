@@ -221,7 +221,7 @@ class ApplicationTest extends TestCase
 
         $this->assertInstanceOf(Interactor::class, $oio = $a->io());
 
-        $a->io(new Interactor());
+        $a->io(new Interactor);
 
         $this->assertInstanceOf(Interactor::class, $a->io());
         $this->assertNotSame($oio, $a->io());

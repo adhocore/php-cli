@@ -425,7 +425,7 @@ class Command extends Parser
      */
     protected function writer(): Writer
     {
-        return $this->_app ? $this->_app->io()->writer() : new Writer();
+        return $this->_app ? $this->_app->io()->writer() : new Writer;
     }
 
     /**
@@ -435,6 +435,6 @@ class Command extends Parser
      */
     protected function io(): Interactor
     {
-        return $this->_app ? $this->_app->io() : new Interactor();
+        return $this->_app ? $this->_app->io() : new Interactor;
     }
 }

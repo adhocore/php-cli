@@ -51,7 +51,7 @@ abstract class Parser
      */
     public function parse(array $argv): self
     {
-        $this->_normalizer = new Normalizer();
+        $this->_normalizer = new Normalizer;
 
         \array_shift($argv);
 
