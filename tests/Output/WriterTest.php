@@ -19,7 +19,7 @@ class WriterTest extends CliTestCase
 {
     public function test_simple_write()
     {
-        (new Writer)->write('Hey');
+        (new Writer())->write('Hey');
 
         $this->assertContains('Hey', $this->buffer());
         $this->assertSame("\033[0;37mHey\033[0m", $this->buffer());
@@ -27,7 +27,7 @@ class WriterTest extends CliTestCase
 
     public function test_write_error()
     {
-        (new Writer)->error->write('Something wrong');
+        (new Writer())->error->write('Something wrong');
 
         $this->assertContains('Something wrong', $this->buffer());
         $this->assertSame("\033[0;31mSomething wrong\033[0m", $this->buffer());
@@ -35,7 +35,7 @@ class WriterTest extends CliTestCase
 
     public function test_write_with_newline()
     {
-        (new Writer)->write('Hello', true);
+        (new Writer())->write('Hello', true);
 
         $this->assertContains('Hello', $this->buffer());
         $this->assertSame("\033[0;37mHello\033[0m" . PHP_EOL, $this->buffer());
@@ -43,7 +43,7 @@ class WriterTest extends CliTestCase
 
     public function test_write_bold_red_bggreen()
     {
-        (new Writer)->bold->red->bgGreen->write('bold->red->bgGreen');
+        (new Writer())->bold->red->bgGreen->write('bold->red->bgGreen');
 
         $this->assertContains('bold->red->bgGreen', $this->buffer());
         $this->assertSame("\033[1;31;42mbold->red->bgGreen\033[0m", $this->buffer());
@@ -86,7 +86,10 @@ class WriterTest extends CliTestCase
         ]);
 
         $this->assertSame(3, \substr_count($this->buffer(), '+--------+------+------+'), '3 dashes');
-        $this->assertBufferContains("|\33[1;37;42m A      \33[0m|\33[1;37;42m B C  \33[0m|\33[1;37;42m C D  \33[0m|", 'Head');
+        $this->assertBufferContains(
+            "|\33[1;37;42m A      \33[0m|\33[1;37;42m B C  \33[0m|\33[1;37;42m C D  \33[0m|",
+            'Head'
+        );
         $this->assertBufferContains("|\33[0;35m apple  \33[0m|\33[0;35m ball \33[0m|\33[0;35m cat  \33[0m|", 'Odd');
         $this->assertBufferContains("|\33[0;36m applet \33[0m|\33[0;36m bee  \33[0m|\33[0;36m cute \33[0m|", 'Even');
     }
@@ -103,6 +106,6 @@ class WriterTest extends CliTestCase
 
     public function test_colorizer()
     {
-        $this->assertInstanceOf(Color::class, (new Writer)->colorizer());
+        $this->assertInstanceOf(Color::class, (new Writer())->colorizer());
     }
 }

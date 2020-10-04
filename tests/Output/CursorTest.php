@@ -20,7 +20,7 @@ class CursorTest extends TestCase
     {
         ob_start();
 
-        $c = new Cursor;
+        $c = new Cursor();
 
         echo $c->up(1) . $c->down(2) . $c->right(3) . $c->left(4) . $c->next(0) . $c->prev(2);
 
@@ -31,7 +31,7 @@ class CursorTest extends TestCase
     {
         ob_start();
 
-        $c = new Cursor;
+        $c = new Cursor();
 
         echo $c->eraseLine() . $c->clear() . $c->clearUp() . $c->clearDown();
 
@@ -42,7 +42,7 @@ class CursorTest extends TestCase
     {
         ob_start();
 
-        $c = new Cursor;
+        $c = new Cursor();
 
         echo $c->moveTo(1, 2) . $c->moveTo(5, 8);
 

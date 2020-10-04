@@ -166,7 +166,13 @@ class Application
     {
         $name = $command->name();
 
-        if ($this->commands[$name] ?? $this->aliases[$name] ?? $this->commands[$alias] ?? $this->aliases[$alias] ?? null) {
+        if (
+            $this->commands[$name] ??
+            $this->aliases[$name] ??
+            $this->commands[$alias] ??
+            $this->aliases[$alias] ??
+            null
+        ) {
             throw new InvalidArgumentException(\sprintf('Command "%s" already added', $name));
         }
 
@@ -214,7 +220,7 @@ class Application
     public function io(Interactor $io = null)
     {
         if ($io || !$this->io) {
-            $this->io = $io ?? new Interactor;
+            $this->io = $io ?? new Interactor();
         }
 
         if (\func_num_args() === 0) {
