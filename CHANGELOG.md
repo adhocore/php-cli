@@ -1,3 +1,9 @@
+## [0.8.4](https://github.com/adhocore/php-cli/releases/tag/0.8.4) (2020-10-09)
+
+### Builds
+- **Travis**: Add php 7.3 and 7.4 (Jitendra Adhikari) [_a5c4a16_](https://github.com/adhocore/php-cli/commit/a5c4a16)
+
+
 ## [0.8.3](https://github.com/adhocore/php-cli/releases/tag/0.8.3) (2020-01-05)
 
 ### Internal Refactors
