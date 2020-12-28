@@ -261,6 +261,16 @@ class CommandTest extends TestCase
         $this->assertNull($c->app());
     }
 
+    public function test_unregister()
+    {
+        $c = $this->newCommand();
+        $this->assertCount(3,$c->allOptions());
+        $this->assertArrayHasKey('verbosity', $c->allOptions());
+        $c->unRegister('verbosity');
+        $this->assertCount(2,$c->allOptions());
+        $this->assertArrayNotHasKey('verbosity', $c->allOptions());
+    }
+    
     protected function newCommand(string $version = '0.0.1', string $desc = '', bool $allowUnknown = false, $app = null)
     {
         $p = new Command('cmd', $desc, $allowUnknown, $app);

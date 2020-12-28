@@ -247,6 +247,25 @@ abstract class Parser
 
         $this->set($name, $param->default());
     }
+    /**
+     * 
+     * @param string $name
+     */
+    public function unRegister($name)
+    {
+        if(isset($this->_values[$name])){
+            unset($this->_values[$name]);
+        }
+        
+        if(isset($this->_arguments[$name])){
+            unset($this->_arguments[$name]);
+        }
+        
+        if(isset($this->_options[$name])){
+            unset($this->_options[$name]);
+        }
+        return $this;
+    }
 
     /**
      * What if the given name is already registered.
