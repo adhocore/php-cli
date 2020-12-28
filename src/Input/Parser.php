@@ -247,8 +247,10 @@ abstract class Parser
 
         $this->set($name, $param->default());
     }
+    
     /**
      * unRegister a new argument/option.
+     * 
      * @param string $name
      */
     public function unRegister($name)
