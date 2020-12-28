@@ -248,22 +248,23 @@ abstract class Parser
         $this->set($name, $param->default());
     }
     /**
-     * 
+     * unRegister a new argument/option.
      * @param string $name
      */
     public function unRegister($name)
     {
-        if(isset($this->_values[$name])){
+        if (isset($this->_values[$name])) {
             unset($this->_values[$name]);
         }
-        
-        if(isset($this->_arguments[$name])){
+
+        if (isset($this->_arguments[$name])) {
             unset($this->_arguments[$name]);
         }
-        
-        if(isset($this->_options[$name])){
+
+        if (isset($this->_options[$name])) {
             unset($this->_options[$name]);
         }
+
         return $this;
     }
 
