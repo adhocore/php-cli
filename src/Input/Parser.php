@@ -249,11 +249,11 @@ abstract class Parser
     }
 
     /**
-     * unRegister a new argument/option.
+     * unset a registered argument/option.
      *
      * @param string $name
      */
-    public function unRegister($name)
+    public function unset($name)
     {
         unset($this->_values[$name], $this->_arguments[$name], $this->_options[$name]);
 
