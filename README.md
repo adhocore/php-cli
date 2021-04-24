@@ -3,11 +3,14 @@
 Framework agnostic Command Line Interface utilities and helpers for PHP. Build Console App with ease, fun and love.
 
 [![Latest Version](https://img.shields.io/github/release/adhocore/php-cli.svg?style=flat-square)](https://github.com/adhocore/php-cli/releases)
-[![Travis Build](https://travis-ci.com/adhocore/php-cli.svg?branch=master)](https://travis-ci.com/adhocore/php-cli?branch=master)
-[![Scrutinizer CI](https://img.shields.io/scrutinizer/g/adhocore/php-cli.svg?style=flat-square)](https://scrutinizer-ci.com/g/adhocore/php-cli/?branch=master)
-[![Codecov branch](https://img.shields.io/codecov/c/github/adhocore/php-cli/master.svg?style=flat-square)](https://codecov.io/gh/adhocore/php-cli)
+[![Travis Build](https://travis-ci.com/adhocore/php-cli.svg?branch=main)](https://travis-ci.com/adhocore/php-cli?branch=main)
+[![Scrutinizer CI](https://img.shields.io/scrutinizer/g/adhocore/php-cli.svg?style=flat-square)](https://scrutinizer-ci.com/g/adhocore/php-cli/?branch=main)
+[![Codecov branch](https://img.shields.io/codecov/c/github/adhocore/php-cli/main.svg?style=flat-square)](https://codecov.io/gh/adhocore/php-cli)
 [![StyleCI](https://styleci.io/repos/139012552/shield)](https://styleci.io/repos/139012552)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
+[![Donate](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square)](https://www.paypal.me/ji10/50usd)
+[![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Framework+agnostic+Command+Line+Interface+utilities+and+helpers+for+PHP&url=https://github.com/adhocore/php-cli&hashtags=php,cli,cliapp,console)
+
 
 - Command line application made easy
 - Inspired by nodejs [commander](https://github.com/tj/commander.js) (thanks tj)
