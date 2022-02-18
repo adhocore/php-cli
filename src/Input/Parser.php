@@ -111,7 +111,7 @@ abstract class Parser
      */
     protected function parseOptions(string $arg, string $nextArg = null): bool
     {
-        $value = \substr($nextArg, 0, 1) === '-' ? null : $nextArg;
+        $value = \substr($nextArg ?? '', 0, 1) === '-' ? null : $nextArg;
 
         if (null === $option  = $this->optionFor($arg)) {
             return $this->handleUnknown($arg, $value);
