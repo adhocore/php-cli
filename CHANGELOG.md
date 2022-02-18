@@ -1,3 +1,9 @@
+## [0.9.1](https://github.com/adhocore/php-cli/releases/tag/0.9.1) (2022-02-18)
+
+### Bug Fixes
+- Php8.1 substr, d197dc6 (Jitendra A)
+
+
 ## [0.8.4](https://github.com/adhocore/php-cli/releases/tag/0.8.4) (2020-10-09)
 
 ### Builds
