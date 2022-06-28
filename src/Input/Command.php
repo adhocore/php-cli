@@ -31,35 +31,17 @@ class Command extends Parser
 {
     use InflectsString;
 
-    /** @var callable */
-    protected $_action;
+    protected $_action = null;
 
-    /** @var string */
-    protected $_version;
+    protected string $_version = '';
 
-    /** @var string */
-    protected $_name;
+    protected string $_usage = '';
 
-    /** @var string */
-    protected $_desc;
+    protected ?string $_alias = null;
 
-    /** @var string Usage examples */
-    protected $_usage;
+    private array $_events = [];
 
-    /** @var string Command alias */
-    protected $_alias;
-
-    /** @var App The cli app this command is bound to */
-    protected $_app;
-
-    /** @var callable[] Events for options */
-    private $_events = [];
-
-    /** @var bool Whether to allow unknown (not registered) options */
-    private $_allowUnknown = false;
-
-    /** @var bool If the last seen arg was variadic */
-    private $_argVariadic = false;
+    private bool $_argVariadic = false;
 
     /**
      * Constructor.
@@ -69,13 +51,12 @@ class Command extends Parser
      * @param bool   $allowUnknown
      * @param App    $app
      */
-    public function __construct(string $name, string $desc = '', bool $allowUnknown = false, App $app = null)
-    {
-        $this->_name         = $name;
-        $this->_desc         = $desc;
-        $this->_allowUnknown = $allowUnknown;
-        $this->_app          = $app;
-
+    public function __construct(
+        protected string $_name,
+        protected string $_desc = '',
+        protected bool $_allowUnknown = false,
+        protected ?App $_app = null
+    ) {
         $this->defaults();
     }
 
@@ -88,17 +69,11 @@ class Command extends Parser
     {
         $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
         $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
-        $this->option('-v, --verbosity', 'Verbosity level', null, 0)->on(function () {
-            $this->set('verbosity', ($this->verbosity ?? 0) + 1);
+        $this->option('-v, --verbosity', 'Verbosity level', null, 0)->on(
+            fn () => $this->set('verbosity', ($this->verbosity ?? 0) + 1) && false
+        );
 
-            return false;
-        });
-
-        // @codeCoverageIgnoreStart
-        $this->onExit(function ($exitCode = 0) {
-            exit($exitCode);
-        });
-        // @codeCoverageIgnoreEnd
+        $this->onExit(fn ($exitCode = 0) => exit($exitCode));
 
         return $this;
     }

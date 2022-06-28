@@ -21,11 +21,9 @@ namespace Ahc\Cli\Input;
  */
 class Option extends Parameter
 {
-    /** @var string Short name */
-    protected $short = '';
+    protected string $short = '';
 
-    /** @var string Long name */
-    protected $long = '';
+    protected string $long = '';
 
     /**
      * {@inheritdoc}

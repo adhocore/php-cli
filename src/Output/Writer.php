@@ -164,14 +164,11 @@ class Writer
     /** @var resource Error output file handle */
     protected $eStream;
 
-    /** @var string Write method to be relayed to Colorizer */
-    protected $method;
+    protected ?string $method = null;
 
-    /** @var Color */
-    protected $colorizer;
+    protected Color $colorizer;
 
-    /** @var Cursor */
-    protected $cursor;
+    protected Cursor $cursor;
 
     public function __construct(string $path = null, Color $colorizer = null)
     {
@@ -222,7 +219,7 @@ class Writer
      */
     public function write(string $text, bool $eol = false): self
     {
-        list($method, $this->method) = [$this->method ?: 'line', ''];
+        [$method, $this->method] = [$this->method ?: 'line', ''];
 
         $text  = $this->colorizer->{$method}($text, []);
         $error = \stripos($method, 'error') !== false;

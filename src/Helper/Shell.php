@@ -35,48 +35,46 @@ class Shell
     const STATE_TERMINATED = 'terminated';
 
     /** @var bool Whether to wait for the process to finish or return instantly */
-    protected $async = false;
-
-    /** @var string Command to be executed */
-    protected $command;
+    protected bool $async = false;
 
     /** @var string Current working directory */
-    protected $cwd = null;
+    protected ?string $cwd = null;
 
     /** @var array Descriptor to be passed for proc_open */
-    protected $descriptors;
+    protected array $descriptors;
 
     /** @var array An array of environment variables */
-    protected $env = null;
+    protected array $env = [];
 
     /** @var int Exit code of the process once it has been terminated */
-    protected $exitCode = null;
-
-    /** @var string Input for stdin */
-    protected $input;
+    protected int $exitCode = 0;
 
     /** @var array Other options to be passed for proc_open */
-    protected $otherOptions = [];
+    protected array $otherOptions = [];
 
     /** @var array Pointers to stdin, stdout & stderr */
-    protected $pipes = null;
+    protected array $pipes = [];
 
     /** @var resource The actual process resource returned from proc_open */
     protected $process = null;
 
     /** @var int Process starting time in unix timestamp */
-    protected $processStartTime;
+    protected int $processStartTime = 0;
 
     /** @var array Status of the process as returned from proc_get_status */
-    protected $processStatus = null;
+    protected ?array $processStatus = null;
 
     /** @var float Default timeout for the process in seconds with microseconds */
-    protected $processTimeout = null;
+    protected ?float $processTimeout = null;
 
     /** @var string Current state of the shell execution, set from this class, NOT for proc_get_status */
-    protected $state = self::STATE_READY;
+    protected string $state = self::STATE_READY;
 
-    public function __construct(string $command, string $input = null)
+    /**
+     * @param string $command Command to be executed
+     * @param string $input   Input for stdin
+     */
+    public function __construct(protected string $command, protected ?string $input = null)
     {
         // @codeCoverageIgnoreStart
         if (!\function_exists('proc_open')) {
@@ -164,7 +162,7 @@ class Shell
         array $otherOptions = []
     ): self {
         $this->cwd            = $cwd;
-        $this->env            = $env;
+        $this->env            = $env ?? [];
         $this->processTimeout = $timeout;
         $this->otherOptions   = $otherOptions;
 

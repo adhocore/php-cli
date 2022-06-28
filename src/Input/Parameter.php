@@ -25,35 +25,22 @@ abstract class Parameter
 {
     use InflectsString;
 
-    /** @var string */
-    protected $name;
+    protected string $name;
 
-    /** @var string */
-    protected $raw;
+    protected bool $required = false;
 
-    /** @var string */
-    protected $desc;
+    protected bool $optional = false;
 
-    /** @var mixed */
-    protected $default;
+    protected bool $variadic = false;
 
-    /** @var callable The sanitizer/filter callback */
-    protected $filter;
+    protected $filter = null;
 
-    /** @var bool */
-    protected $required = false;
-
-    /** @var bool */
-    protected $optional = false;
-
-    /** @var bool */
-    protected $variadic = false;
-
-    public function __construct(string $raw, string $desc = '', $default = null, callable $filter = null)
-    {
-        $this->raw      = $raw;
-        $this->desc     = $desc;
-        $this->default  = $default;
+    public function __construct(
+        protected string $raw,
+        protected string $desc = '',
+        protected $default = null,
+        $filter = null
+    ) {
         $this->filter   = $filter;
         $this->required = \strpos($raw, '<') !== false;
         $this->optional = \strpos($raw, '[') !== false;

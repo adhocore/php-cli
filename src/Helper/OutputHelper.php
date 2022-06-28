@@ -28,11 +28,10 @@ use Ahc\Cli\Output\Writer;
  */
 class OutputHelper
 {
-    /** @var Writer */
-    protected $writer;
+    protected Writer $writer;
 
     /** @var int Max width of command name */
-    protected $maxCmdName;
+    protected int $maxCmdName = 0;
 
     public function __construct(Writer $writer = null)
     {
@@ -144,9 +143,7 @@ class OutputHelper
      */
     public function showCommandsHelp(array $commands, string $header = '', string $footer = ''): self
     {
-        $this->maxCmdName = $commands ? \max(\array_map(function (Command $cmd) {
-            return \strlen($cmd->name());
-        }, $commands)) : 0;
+        $this->maxCmdName = $commands ? \max(\array_map(fn (Command $cmd) => \strlen($cmd->name()), $commands)) : 0;
 
         $this->showHelp('Commands', $commands, $header, $footer);
 
@@ -204,7 +201,7 @@ class OutputHelper
     {
         $usage = \str_replace('$0', $_SERVER['argv'][0] ?? '[cmd]', $usage);
 
-        if (\strpos($usage, ' ## ') === false) {
+        if (!\str_contains($usage, ' ## ')) {
             $this->writer->eol()->boldGreen('Usage Examples:', true)->colors($usage)->eol();
 
             return $this;
@@ -217,7 +214,8 @@ class OutputHelper
             }
         }
 
-        $maxlen = \max($lines) + 4;
+        $maxlen = ($lines ? \max($lines) : 0) + 4;
+        // $usage  = \preg_replace_callback('~ ## ~', fn() => \str_pad('# ', $maxlen - \array_shift($lines), ' ', \STR_PAD_LEFT), $usage);
         $usage  = \preg_replace_callback('~ ## ~', function () use (&$lines, $maxlen) {
             return \str_pad('# ', $maxlen - \array_shift($lines), ' ', \STR_PAD_LEFT);
         }, $usage);
@@ -257,15 +255,11 @@ class OutputHelper
      */
     protected function sortItems(array $items, &$max = 0): array
     {
-        $max = \max(\array_map(function ($item) {
-            return \strlen($this->getName($item));
-        }, $items));
+        $max = \max(\array_map(fn ($item) => \strlen($this->getName($item)), $items));
 
-        \uasort($items, function ($a, $b) {
-            /* @var Parameter $b */
-            /* @var Parameter $a */
-            return $a->name() <=> $b->name();
-        });
+        /* @var Parameter $b */
+        /* @var Parameter $a */
+        \uasort($items, fn ($a, $b) => $a->name() <=> $b->name());
 
         return $items;
     }

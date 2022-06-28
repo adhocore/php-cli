@@ -26,19 +26,16 @@ use Ahc\Cli\Helper\Normalizer;
 abstract class Parser
 {
     /** @var string|null The last seen variadic option name */
-    protected $_lastVariadic;
+    protected ?string $_lastVariadic = null;
 
-    /** @var Normalizer */
-    protected $_normalizer;
+    protected Normalizer $_normalizer;
 
-    /** @var Option[] Registered options */
-    private $_options = [];
+    private array $_options = [];
 
-    /** @var Argument[] Registered arguments */
-    private $_arguments = [];
+    private array $_arguments = [];
 
     /** @var array Parsed values indexed by option name */
-    private $_values = [];
+    private array $_values = [];
 
     /**
      * Parse the argv input.
@@ -60,7 +57,7 @@ abstract class Parser
         $literal = false;
 
         for ($i = 0; $i < $count; $i++) {
-            list($arg, $nextArg) = [$argv[$i], $argv[$i + 1] ?? null];
+            [$arg, $nextArg] = [$argv[$i], $argv[$i + 1] ?? null];
 
             if ($arg === '--') {
                 $literal = true;
@@ -210,15 +207,15 @@ abstract class Parser
     protected function validate()
     {
         /** @var Parameter[] $missingItems */
-        $missingItems = \array_filter($this->_options + $this->_arguments, function ($item) {
-            /* @var Parameter $item */
-            return $item->required() && \in_array($this->_values[$item->attributeName()], [null, []]);
-        });
+        /** @var Parameter $item */
+        $missingItems = \array_filter($this->_options + $this->_arguments,
+            fn ($item) => $item->required() && \in_array($this->_values[$item->attributeName()], [null, []])
+        );
 
         foreach ($missingItems as $item) {
-            list($name, $label) = [$item->name(), 'Argument'];
+            [$name, $label] = [$item->name(), 'Argument'];
             if ($item instanceof Option) {
-                list($name, $label) = [$item->long(), 'Option'];
+                [$name, $label] = [$item->long(), 'Option'];
             }
 
             throw new RuntimeException(

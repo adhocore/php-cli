@@ -34,11 +34,10 @@ class Color
     const GRAY     = 47;
     const DARKGRAY = 100;
 
-    /** @var string Cli format */
-    protected $format = "\033[:mod:;:fg:;:bg:m:txt:\033[0m";
+    protected string $format = "\033[:mod:;:fg:;:bg:m:txt:\033[0m";
 
     /** @var array Custom styles */
-    protected static $styles = [];
+    protected static array $styles = [];
 
     /**
      * Returns a line formatted as comment.
@@ -197,7 +196,7 @@ class Color
             throw new InvalidArgumentException('Text required');
         }
 
-        list($name, $text, $style) = $this->parseCall($name, $arguments);
+        [$name, $text, $style] = $this->parseCall($name, $arguments);
 
         if (isset(static::$styles[$name])) {
             return $this->line($text, $style + static::$styles[$name]);
@@ -225,7 +224,7 @@ class Color
      */
     protected function parseCall(string $name, array $arguments): array
     {
-        list($text, $style) = $arguments + ['', []];
+        [$text, $style] = $arguments + ['', []];
 
         $mods = ['bold' => 1, 'dim' => 2, 'italic' => 3, 'underline' => 4, 'flash' => 5];
 
@@ -240,7 +239,7 @@ class Color
             return [\lcfirst($name) ?: 'line', $text, $style];
         }
 
-        list($name, $style) = $this->buildStyle($name, $style, $matches);
+        [$name, $style] = $this->buildStyle($name, $style, $matches);
 
         return [$name, $text, $style];
     }

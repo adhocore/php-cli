@@ -30,8 +30,8 @@ class Argument extends Parameter
 
         // Format is "name:default+value1,default+value2" ('+' => ' ')!
         if (\strpos($name, ':') !== false) {
-            $name                             = \str_replace('+', ' ', $name);
-            list($this->name, $this->default) = \explode(':', $name, 2);
+            $name                         = \str_replace('+', ' ', $name);
+            [$this->name, $this->default] = \explode(':', $name, 2);
         }
 
         $this->prepDefault();

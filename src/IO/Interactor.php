@@ -163,8 +163,8 @@ use Ahc\Cli\Output\Writer;
  */
 class Interactor
 {
-    protected $reader;
-    protected $writer;
+    protected Reader $reader;
+    protected Writer $writer;
 
     /**
      * Constructor.

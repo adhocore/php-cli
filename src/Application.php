@@ -27,41 +27,28 @@ use Ahc\Cli\IO\Interactor;
 class Application
 {
     /** @var Command[] */
-    protected $commands = [];
+    protected array $commands = [];
 
     /** @var array Raw argv sent to parse() */
-    protected $argv = [];
+    protected array $argv = [];
 
     /** @var array Command aliases [alias => cmd] */
-    protected $aliases = [];
-
-    /** @var string */
-    protected $name;
-
-    /** @var string App version */
-    protected $version = '';
+    protected array $aliases = [];
 
     /** @var string Ascii art logo */
-    protected $logo = '';
+    protected string $logo = '';
 
-    protected $default = '__default__';
+    protected string $default = '__default__';
 
     /** @var Interactor */
-    protected $io;
+    protected Interactor $io;
 
     /** @var callable The callable to perform exit */
     protected $onExit;
 
-    public function __construct(string $name, string $version = '0.0.1', callable $onExit = null)
+    public function __construct(protected string $name, protected string $version = '0.0.1', callable $onExit = null)
     {
-        $this->name    = $name;
-        $this->version = $version;
-
-        // @codeCoverageIgnoreStart
-        $this->onExit = $onExit ?? function ($exitCode = 0) {
-            exit($exitCode);
-        };
-        // @codeCoverageIgnoreEnd
+        $this->onExit = $onExit ?? fn ($exitCode = 0) => exit($exitCode);
 
         $this->command('__default__', 'Default command', '', true)->on([$this, 'showHelp'], 'help');
     }
@@ -202,7 +189,7 @@ class Application
         $argv += [null, null, null];
 
         return
-             // cmd
+            // cmd
             $this->commands[$argv[1]]
             // cmd alias
             ?? $this->commands[$this->aliases[$argv[1]] ?? null]
