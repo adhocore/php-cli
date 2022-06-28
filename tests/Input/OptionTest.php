@@ -69,7 +69,7 @@ class OptionTest extends TestCase
 
         $this->assertSame('orange', $o->default(), 'default shouldnt be filtered');
 
-        $o = new Option('--long-only');
+        $o                   = new Option('--long-only');
         $this->assertSame($r = rand(), $o->filter($r));
     }
 

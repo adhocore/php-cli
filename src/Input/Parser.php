@@ -208,7 +208,8 @@ abstract class Parser
     {
         /** @var Parameter[] $missingItems */
         /** @var Parameter $item */
-        $missingItems = \array_filter($this->_options + $this->_arguments,
+        $missingItems = \array_filter(
+            $this->_options + $this->_arguments,
             fn ($item) => $item->required() && \in_array($this->_values[$item->attributeName()], [null, []])
         );
 
