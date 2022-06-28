@@ -19,13 +19,13 @@ class DefaultOptionTest extends CliTestCase
     public function test_version()
     {
         $p = $this->newCommand('v1.0.1')->parse(['php', '--version']);
-        $this->assertContains('v1.0.1', $this->buffer(), 'Long');
+        $this->assertStringContainsString('v1.0.1', $this->buffer(), 'Long');
     }
 
     public function test_V()
     {
         $p = $this->newCommand('v2.0.1')->parse(['php', '-V']);
-        $this->assertContains('v2.0.1', $this->buffer(), 'Short');
+        $this->assertStringContainsString('v2.0.1', $this->buffer(), 'Short');
     }
 
     public function test_help()
@@ -36,18 +36,18 @@ class DefaultOptionTest extends CliTestCase
             ->usage('cmdname --option opt <arg>')
             ->parse(['php', '--help']);
 
-        $this->assertContains('cmdname', $buffer = $this->buffer());
-        $this->assertContains('Usage Examples:', $buffer);
-        $this->assertContains('--option opt <arg>', $buffer);
-        $this->assertContains('[arg]', $buffer);
-        $this->assertContains('Some desc', $buffer);
-        $this->assertContains('[-o|--option]', $buffer);
+        $this->assertStringContainsString('cmdname', $buffer = $this->buffer());
+        $this->assertStringContainsString('Usage Examples:', $buffer);
+        $this->assertStringContainsString('--option opt <arg>', $buffer);
+        $this->assertStringContainsString('[arg]', $buffer);
+        $this->assertStringContainsString('Some desc', $buffer);
+        $this->assertStringContainsString('[-o|--option]', $buffer);
     }
 
     public function test_help_unknown()
     {
         $p = $this->newCommand()->arguments('[apple]')->parse(['php', '--unknown', '1']);
-        $this->assertContains('[apple]', $this->buffer(), 'Show help');
+        $this->assertStringContainsString('[apple]', $this->buffer(), 'Show help');
     }
 
     public function test_verbosity()

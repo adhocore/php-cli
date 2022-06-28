@@ -18,12 +18,12 @@ class ReaderTest extends TestCase
 {
     protected static $in = __DIR__ . '/input';
 
-    public function setUp()
+    public function setUp(): void
     {
         file_put_contents(static::$in, '');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         unlink(static::$in);
     }

@@ -21,13 +21,13 @@ class InteractorTest extends TestCase
     protected static $in = __DIR__ . '/input';
     protected static $ou = __DIR__ . '/output';
 
-    public function setUp()
+    public function setUp(): void
     {
         file_put_contents(static::$in, '');
         file_put_contents(static::$ou, '');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unlink(static::$in);
         unlink(static::$ou);
@@ -127,7 +127,7 @@ class InteractorTest extends TestCase
             return (int) $v;
         }));
 
-        $this->assertContains('gte 5', file_get_contents(static::$ou));
+        $this->assertStringContainsString('gte 5', file_get_contents(static::$ou));
     }
 
     public function test_prompt_hidden()
@@ -136,7 +136,7 @@ class InteractorTest extends TestCase
 
         $this->assertSame('abcde', $i->promptHidden('pass'));
 
-        $this->assertNotContains('abcde', file_get_contents(static::$ou));
+        $this->assertStringNotContainsString('abcde', file_get_contents(static::$ou));
     }
 
     public function test_call()
@@ -146,7 +146,7 @@ class InteractorTest extends TestCase
         $this->assertSame('a', $i->read('a'));
 
         $i->write(__METHOD__);
-        $this->assertContains(__METHOD__, file_get_contents(static::$ou));
+        $this->assertStringContainsString(__METHOD__, file_get_contents(static::$ou));
     }
 
     protected function newInteractor(string $in = '')
