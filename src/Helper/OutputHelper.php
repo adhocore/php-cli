@@ -215,7 +215,11 @@ class OutputHelper
         }
 
         $maxlen = ($lines ? \max($lines) : 0) + 4;
-        // $usage  = \preg_replace_callback('~ ## ~', fn() => \str_pad('# ', $maxlen - \array_shift($lines), ' ', \STR_PAD_LEFT), $usage);
+        // $usage  = \preg_replace_callback(
+        //     '~ ## ~',
+        //     fn() => \str_pad('# ', $maxlen - \array_shift($lines), ' ', \STR_PAD_LEFT),
+        //     $usage
+        // );
         $usage  = \preg_replace_callback('~ ## ~', function () use (&$lines, $maxlen) {
             return \str_pad('# ', $maxlen - \array_shift($lines), ' ', \STR_PAD_LEFT);
         }, $usage);
