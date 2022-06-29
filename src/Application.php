@@ -48,7 +48,7 @@ class Application
 
     public function __construct(protected string $name, protected string $version = '0.0.1', callable $onExit = null)
     {
-        $this->onExit = $onExit ?? fn ($exitCode = 0) => exit($exitCode);
+        $this->onExit = $onExit ?? fn (int $exitCode = 0) => exit($exitCode);
 
         $this->command('__default__', 'Default command', '', true)->on([$this, 'showHelp'], 'help');
     }
