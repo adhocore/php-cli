@@ -18,16 +18,16 @@ use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends TestCase
 {
-    protected static $in = __DIR__ . '/input';
-    protected static $ou = __DIR__ . '/output';
+    protected static $in = __DIR__ . '/input.test';
+    protected static $ou = __DIR__ . '/output.test';
 
-    public function setUp()
+    public function setUp(): void
     {
         file_put_contents(static::$in, '');
         file_put_contents(static::$ou, '');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         unlink(static::$in);
         unlink(static::$ou);
@@ -112,10 +112,10 @@ class ApplicationTest extends TestCase
 
         $out = file_get_contents(static::$ou);
 
-        $this->assertContains('git, version 0.0.2', $out);
-        $this->assertContains($logo, $out);
-        $this->assertContains('add', $out);
-        $this->assertContains('stage change', $out);
+        $this->assertStringContainsString('git, version 0.0.2', $out);
+        $this->assertStringContainsString($logo, $out);
+        $this->assertStringContainsString('add', $out);
+        $this->assertStringContainsString('stage change', $out);
     }
 
     public function test_action()
@@ -163,7 +163,7 @@ class ApplicationTest extends TestCase
 
         $a->handle(['git', 'add', 'a.php', 'b.php']);
 
-        $this->assertContains('Dummy InvalidArgumentException', file_get_contents(static::$ou));
+        $this->assertStringContainsString('Dummy InvalidArgumentException', file_get_contents(static::$ou));
     }
 
     public function test_array_action()
@@ -236,10 +236,10 @@ class ApplicationTest extends TestCase
 
         $o = file_get_contents(static::$ou);
 
-        $this->assertContains('test, version 0.0.1-test', $o);
-        $this->assertContains('Commands:', $o);
-        $this->assertContains('make', $o);
-        $this->assertContains('Make tests', $o);
+        $this->assertStringContainsString('test, version 0.0.1-test', $o);
+        $this->assertStringContainsString('Commands:', $o);
+        $this->assertStringContainsString('make', $o);
+        $this->assertStringContainsString('Make tests', $o);
     }
 
     public function test_cmd_not_found()
@@ -247,8 +247,8 @@ class ApplicationTest extends TestCase
         $a = $this->newApp('test')->add(new Command('cmd'))->handle(['test', 'cm']);
         $o = file_get_contents(static::$ou);
 
-        $this->assertContains('Command cm not found', $o);
-        $this->assertContains('Did you mean cmd?', $o);
+        $this->assertStringContainsString('Command cm not found', $o);
+        $this->assertStringContainsString('Did you mean cmd?', $o);
     }
 
     protected function newApp(string $name, string $version = '')

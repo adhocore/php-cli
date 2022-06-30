@@ -164,14 +164,11 @@ class Writer
     /** @var resource Error output file handle */
     protected $eStream;
 
-    /** @var string Write method to be relayed to Colorizer */
-    protected $method;
+    protected ?string $method = null;
 
-    /** @var Color */
-    protected $colorizer;
+    protected Color $colorizer;
 
-    /** @var Cursor */
-    protected $cursor;
+    protected Cursor $cursor;
 
     public function __construct(string $path = null, Color $colorizer = null)
     {
@@ -188,8 +185,6 @@ class Writer
 
     /**
      * Get Colorizer.
-     *
-     * @return Color
      */
     public function colorizer(): Color
     {
@@ -214,15 +209,10 @@ class Writer
 
     /**
      * Write the formatted text to stdout or stderr.
-     *
-     * @param string $text
-     * @param bool   $eol
-     *
-     * @return self
      */
     public function write(string $text, bool $eol = false): self
     {
-        list($method, $this->method) = [$this->method ?: 'line', ''];
+        [$method, $this->method] = [$this->method ?: 'line', ''];
 
         $text  = $this->colorizer->{$method}($text, []);
         $error = \stripos($method, 'error') !== false;
@@ -236,11 +226,6 @@ class Writer
 
     /**
      * Really write to the stream.
-     *
-     * @param string $text
-     * @param bool   $error
-     *
-     * @return self
      */
     protected function doWrite(string $text, bool $error = false): self
     {
@@ -253,10 +238,6 @@ class Writer
 
     /**
      * Write EOL n times.
-     *
-     * @param int $n
-     *
-     * @return self
      */
     public function eol(int $n = 1): self
     {
@@ -265,11 +246,6 @@ class Writer
 
     /**
      * Write raw text (as it is).
-     *
-     * @param string $text
-     * @param bool   $error
-     *
-     * @return self
      */
     public function raw($text, bool $error = false): self
     {

@@ -42,7 +42,7 @@ class Reader
      *
      * @return mixed
      */
-    public function read($default = null, callable $fn = null)
+    public function read($default = null, callable $fn = null): mixed
     {
         $in = \rtrim(\fgets($this->stream), "\r\n");
 
@@ -105,7 +105,7 @@ class Reader
      *
      * @return mixed
      */
-    public function readHidden($default = null, callable $fn = null)
+    public function readHidden($default = null, callable $fn = null): mixed
     {
         // @codeCoverageIgnoreStart
         if ('\\' === \DIRECTORY_SEPARATOR) {
@@ -131,7 +131,7 @@ class Reader
      *
      * @return mixed
      */
-    protected function readHiddenWinOS($default = null, callable $fn = null)
+    protected function readHiddenWinOS($default = null, callable $fn = null): mixed
     {
         $cmd = 'powershell -Command ' . \implode('; ', \array_filter([
             '$pword = Read-Host -AsSecureString',

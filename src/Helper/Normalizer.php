@@ -26,10 +26,6 @@ class Normalizer
 {
     /**
      * Normalize argv args. Like splitting `-abc` and `--xyz=...`.
-     *
-     * @param array $args
-     *
-     * @return array
      */
     public function normalizeArgs(array $args): array
     {
@@ -53,13 +49,8 @@ class Normalizer
 
     /**
      * Normalizes value as per context and runs thorugh filter if possible.
-     *
-     * @param Parameter   $parameter
-     * @param string|null $value
-     *
-     * @return mixed
      */
-    public function normalizeValue(Parameter $parameter, string $value = null)
+    public function normalizeValue(Parameter $parameter, string $value = null): mixed
     {
         if ($parameter instanceof Option && $parameter->bool()) {
             return !$parameter->default();

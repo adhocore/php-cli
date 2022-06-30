@@ -34,19 +34,13 @@ class Color
     const GRAY     = 47;
     const DARKGRAY = 100;
 
-    /** @var string Cli format */
-    protected $format = "\033[:mod:;:fg:;:bg:m:txt:\033[0m";
+    protected string $format = "\033[:mod:;:fg:;:bg:m:txt:\033[0m";
 
     /** @var array Custom styles */
-    protected static $styles = [];
+    protected static array $styles = [];
 
     /**
      * Returns a line formatted as comment.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function comment(string $text, array $style = []): string
     {
@@ -55,11 +49,6 @@ class Color
 
     /**
      * Returns a line formatted as comment.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function error(string $text, array $style = []): string
     {
@@ -68,11 +57,6 @@ class Color
 
     /**
      * Returns a line formatted as ok msg.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function ok(string $text, array $style = []): string
     {
@@ -81,11 +65,6 @@ class Color
 
     /**
      * Returns a line formatted as warning.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function warn(string $text, array $style = []): string
     {
@@ -94,11 +73,6 @@ class Color
 
     /**
      * Returns a line formatted as info.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function info(string $text, array $style = []): string
     {
@@ -107,11 +81,6 @@ class Color
 
     /**
      * Returns a formatted/colored line.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function line(string $text, array $style = []): string
     {
@@ -135,10 +104,6 @@ class Color
      * Prepare a multi colored string with html like tags.
      *
      * Example: "<errorBold>Text</end><eol/><bgGreenBold>Text</end><eol>"
-     *
-     * @param string $text
-     *
-     * @return string
      */
     public function colors(string $text): string
     {
@@ -167,7 +132,7 @@ class Color
      *
      * @return void
      */
-    public static function style(string $name, array $style)
+    public static function style(string $name, array $style): void
     {
         $allow = ['fg' => true, 'bg' => true, 'bold' => true];
         $style = \array_intersect_key($style, $allow);
@@ -197,7 +162,7 @@ class Color
             throw new InvalidArgumentException('Text required');
         }
 
-        list($name, $text, $style) = $this->parseCall($name, $arguments);
+        [$name, $text, $style] = $this->parseCall($name, $arguments);
 
         if (isset(static::$styles[$name])) {
             return $this->line($text, $style + static::$styles[$name]);
@@ -217,15 +182,10 @@ class Color
 
     /**
      * Parse the name argument pairs to determine callable method and style params.
-     *
-     * @param string $name
-     * @param array  $arguments
-     *
-     * @return array
      */
     protected function parseCall(string $name, array $arguments): array
     {
-        list($text, $style) = $arguments + ['', []];
+        [$text, $style] = $arguments + ['', []];
 
         $mods = ['bold' => 1, 'dim' => 2, 'italic' => 3, 'underline' => 4, 'flash' => 5];
 
@@ -240,19 +200,13 @@ class Color
             return [\lcfirst($name) ?: 'line', $text, $style];
         }
 
-        list($name, $style) = $this->buildStyle($name, $style, $matches);
+        [$name, $style] = $this->buildStyle($name, $style, $matches);
 
         return [$name, $text, $style];
     }
 
     /**
      * Build style parameter from matching combination.
-     *
-     * @param string $name
-     * @param array  $style
-     * @param array  $matches
-     *
-     * @return array
      */
     protected function buildStyle(string $name, array $style, array $matches): array
     {

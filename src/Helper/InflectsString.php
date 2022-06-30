@@ -23,10 +23,6 @@ trait InflectsString
 {
     /**
      * Convert a string to camel case.
-     *
-     * @param string $string
-     *
-     * @return string
      */
     public function toCamelCase(string $string): string
     {
@@ -39,10 +35,6 @@ trait InflectsString
 
     /**
      * Convert a string to capitalized words.
-     *
-     * @param string $string
-     *
-     * @return string
      */
     public function toWords(string $string): string
     {

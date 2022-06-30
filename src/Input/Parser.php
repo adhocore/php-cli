@@ -26,19 +26,16 @@ use Ahc\Cli\Helper\Normalizer;
 abstract class Parser
 {
     /** @var string|null The last seen variadic option name */
-    protected $_lastVariadic;
+    protected ?string $_lastVariadic = null;
 
-    /** @var Normalizer */
-    protected $_normalizer;
+    protected Normalizer $_normalizer;
 
-    /** @var Option[] Registered options */
-    private $_options = [];
+    private array $_options = [];
 
-    /** @var Argument[] Registered arguments */
-    private $_arguments = [];
+    private array $_arguments = [];
 
     /** @var array Parsed values indexed by option name */
-    private $_values = [];
+    private array $_values = [];
 
     /**
      * Parse the argv input.
@@ -60,7 +57,7 @@ abstract class Parser
         $literal = false;
 
         for ($i = 0; $i < $count; $i++) {
-            list($arg, $nextArg) = [$argv[$i], $argv[$i + 1] ?? null];
+            [$arg, $nextArg] = [$argv[$i], $argv[$i + 1] ?? null];
 
             if ($arg === '--') {
                 $literal = true;
@@ -124,12 +121,8 @@ abstract class Parser
 
     /**
      * Get matching option by arg (name) or null.
-     *
-     * @param string $arg
-     *
-     * @return Option|null
      */
-    protected function optionFor(string $arg)
+    protected function optionFor(string $arg): ?Option
     {
         foreach ($this->_options as $option) {
             if ($option->is($arg)) {
@@ -150,7 +143,7 @@ abstract class Parser
      *
      * @return mixed If true it will indicate that value has been eaten.
      */
-    abstract protected function handleUnknown(string $arg, string $value = null);
+    abstract protected function handleUnknown(string $arg, string $value = null): mixed;
 
     /**
      * Emit the event with value.
@@ -160,7 +153,7 @@ abstract class Parser
      *
      * @return mixed
      */
-    abstract protected function emit(string $event, $value = null);
+    abstract protected function emit(string $event, $value = null): mixed;
 
     /**
      * Sets value of an option.
@@ -180,12 +173,6 @@ abstract class Parser
 
     /**
      * Set a raw value.
-     *
-     * @param mixed $key
-     * @param mixed $value
-     * @param bool  $variadic
-     *
-     * @return bool
      */
     protected function set($key, $value, bool $variadic = false): bool
     {
@@ -207,18 +194,19 @@ abstract class Parser
      *
      * @return void
      */
-    protected function validate()
+    protected function validate(): void
     {
         /** @var Parameter[] $missingItems */
-        $missingItems = \array_filter($this->_options + $this->_arguments, function ($item) {
-            /* @var Parameter $item */
-            return $item->required() && \in_array($this->_values[$item->attributeName()], [null, []]);
-        });
+        /** @var Parameter $item */
+        $missingItems = \array_filter(
+            $this->_options + $this->_arguments,
+            fn ($item) => $item->required() && \in_array($this->_values[$item->attributeName()], [null, []])
+        );
 
         foreach ($missingItems as $item) {
-            list($name, $label) = [$item->name(), 'Argument'];
+            [$name, $label] = [$item->name(), 'Argument'];
             if ($item instanceof Option) {
-                list($name, $label) = [$item->long(), 'Option'];
+                [$name, $label] = [$item->long(), 'Option'];
             }
 
             throw new RuntimeException(
@@ -229,12 +217,8 @@ abstract class Parser
 
     /**
      * Register a new argument/option.
-     *
-     * @param Parameter $param
-     *
-     * @return void
      */
-    protected function register(Parameter $param)
+    protected function register(Parameter $param): void
     {
         $this->ifAlreadyRegistered($param);
 
@@ -249,11 +233,9 @@ abstract class Parser
     }
 
     /**
-     * unset a registered argument/option.
-     *
-     * @param string $name
+     * Unset a registered argument/option.
      */
-    public function unset($name)
+    public function unset(string $name): self
     {
         unset($this->_values[$name], $this->_arguments[$name], $this->_options[$name]);
 
@@ -267,7 +249,7 @@ abstract class Parser
      *
      * @throws \InvalidArgumentException If given param name is already registered.
      */
-    protected function ifAlreadyRegistered(Parameter $param)
+    protected function ifAlreadyRegistered(Parameter $param): void
     {
         if ($this->registered($param->attributeName())) {
             throw new InvalidParameterException(\sprintf(
@@ -279,10 +261,6 @@ abstract class Parser
 
     /**
      * Check if either argument/option with given name is registered.
-     *
-     * @param string $attribute
-     *
-     * @return bool
      */
     public function registered($attribute): bool
     {
@@ -311,20 +289,14 @@ abstract class Parser
 
     /**
      * Magic getter for specific value by its key.
-     *
-     * @param string $key
-     *
-     * @return mixed
      */
-    public function __get(string $key)
+    public function __get(string $key): mixed
     {
         return $this->_values[$key] ?? null;
     }
 
     /**
      * Get the command arguments i.e which is not an option.
-     *
-     * @return array
      */
     public function args(): array
     {
@@ -333,10 +305,6 @@ abstract class Parser
 
     /**
      * Get values indexed by camelized attribute name.
-     *
-     * @param bool $withDefaults
-     *
-     * @return array
      */
     public function values(bool $withDefaults = true): array
     {

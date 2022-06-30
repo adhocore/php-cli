@@ -18,9 +18,9 @@ use PHPUnit\Framework\TestCase;
  */
 class CliTestCase extends TestCase
 {
-    protected static $ou = __DIR__ . '/output';
+    protected static $ou = __DIR__ . '/output.test';
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Thanks: https://stackoverflow.com/a/39785995
         stream_filter_register('intercept', StreamInterceptor::class);
@@ -28,19 +28,19 @@ class CliTestCase extends TestCase
         stream_filter_append(\STDERR, 'intercept');
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         ob_start();
         StreamInterceptor::$buffer = '';
         file_put_contents(static::$ou, '');
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         ob_end_clean();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         unlink(static::$ou);
     }
@@ -52,7 +52,7 @@ class CliTestCase extends TestCase
 
     public function assertBufferContains($expect)
     {
-        $this->assertContains($expect, $this->buffer());
+        $this->assertStringContainsString($expect, $this->buffer());
     }
 }
 

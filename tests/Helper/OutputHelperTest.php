@@ -23,12 +23,12 @@ class OutputHelperTest extends TestCase
 {
     protected static $ou = __DIR__ . '/output';
 
-    public function setUp()
+    public function setUp(): void
     {
         file_put_contents(static::$ou, '');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         unlink(static::$ou);
     }
@@ -130,7 +130,7 @@ class OutputHelperTest extends TestCase
     public function newHelper()
     {
         return new OutputHelper(new Writer(static::$ou, new class extends Color {
-            protected $format = ':txt:';
+            protected string $format = ':txt:';
         }));
     }
 

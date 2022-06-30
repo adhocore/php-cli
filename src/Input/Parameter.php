@@ -25,35 +25,22 @@ abstract class Parameter
 {
     use InflectsString;
 
-    /** @var string */
-    protected $name;
+    protected string $name;
 
-    /** @var string */
-    protected $raw;
+    protected bool $required = false;
 
-    /** @var string */
-    protected $desc;
+    protected bool $optional = false;
 
-    /** @var mixed */
-    protected $default;
+    protected bool $variadic = false;
 
-    /** @var callable The sanitizer/filter callback */
-    protected $filter;
+    protected $filter = null;
 
-    /** @var bool */
-    protected $required = false;
-
-    /** @var bool */
-    protected $optional = false;
-
-    /** @var bool */
-    protected $variadic = false;
-
-    public function __construct(string $raw, string $desc = '', $default = null, callable $filter = null)
-    {
-        $this->raw      = $raw;
-        $this->desc     = $desc;
-        $this->default  = $default;
+    public function __construct(
+        protected string $raw,
+        protected string $desc = '',
+        protected $default = null,
+        $filter = null
+    ) {
         $this->filter   = $filter;
         $this->required = \strpos($raw, '<') !== false;
         $this->optional = \strpos($raw, '[') !== false;
@@ -64,17 +51,11 @@ abstract class Parameter
 
     /**
      * Parse raw string representation of parameter.
-     *
-     * @param string $raw
-     *
-     * @return void
      */
-    abstract protected function parse(string $raw);
+    abstract protected function parse(string $raw): void;
 
     /**
      * Get raw definition.
-     *
-     * @return string
      */
     public function raw(): string
     {
@@ -83,8 +64,6 @@ abstract class Parameter
 
     /**
      * Get name.
-     *
-     * @return string
      */
     public function name(): string
     {
@@ -93,8 +72,6 @@ abstract class Parameter
 
     /**
      * Get description.
-     *
-     * @return string
      */
     public function desc(): string
     {
@@ -103,8 +80,6 @@ abstract class Parameter
 
     /**
      * Get normalized name.
-     *
-     * @return string
      */
     public function attributeName(): string
     {
@@ -113,8 +88,6 @@ abstract class Parameter
 
     /**
      * Check this param is required.
-     *
-     * @return bool
      */
     public function required(): bool
     {
@@ -123,8 +96,6 @@ abstract class Parameter
 
     /**
      * Check this param is optional.
-     *
-     * @return bool
      */
     public function optional(): bool
     {
@@ -133,8 +104,6 @@ abstract class Parameter
 
     /**
      * Check this param is variadic.
-     *
-     * @return bool
      */
     public function variadic(): bool
     {
@@ -143,10 +112,8 @@ abstract class Parameter
 
     /**
      * Gets default value.
-     *
-     * @return mixed
      */
-    public function default()
+    public function default(): mixed
     {
         if ($this->variadic()) {
             return (array) $this->default;
@@ -157,12 +124,8 @@ abstract class Parameter
 
     /**
      * Run the filter/sanitizer/validato callback for this prop.
-     *
-     * @param mixed $raw
-     *
-     * @return mixed
      */
-    public function filter($raw)
+    public function filter(mixed $raw): mixed
     {
         if ($this->filter) {
             $callback = $this->filter;

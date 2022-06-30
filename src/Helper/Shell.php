@@ -35,48 +35,46 @@ class Shell
     const STATE_TERMINATED = 'terminated';
 
     /** @var bool Whether to wait for the process to finish or return instantly */
-    protected $async = false;
-
-    /** @var string Command to be executed */
-    protected $command;
+    protected bool $async = false;
 
     /** @var string Current working directory */
-    protected $cwd = null;
+    protected ?string $cwd = null;
 
     /** @var array Descriptor to be passed for proc_open */
-    protected $descriptors;
+    protected array $descriptors;
 
     /** @var array An array of environment variables */
-    protected $env = null;
+    protected array $env = [];
 
     /** @var int Exit code of the process once it has been terminated */
-    protected $exitCode = null;
-
-    /** @var string Input for stdin */
-    protected $input;
+    protected ?int $exitCode = null;
 
     /** @var array Other options to be passed for proc_open */
-    protected $otherOptions = [];
+    protected array $otherOptions = [];
 
     /** @var array Pointers to stdin, stdout & stderr */
-    protected $pipes = null;
+    protected array $pipes = [];
 
     /** @var resource The actual process resource returned from proc_open */
     protected $process = null;
 
     /** @var int Process starting time in unix timestamp */
-    protected $processStartTime;
+    protected int $processStartTime = 0;
 
     /** @var array Status of the process as returned from proc_get_status */
-    protected $processStatus = null;
+    protected ?array $processStatus = null;
 
     /** @var float Default timeout for the process in seconds with microseconds */
-    protected $processTimeout = null;
+    protected ?float $processTimeout = null;
 
     /** @var string Current state of the shell execution, set from this class, NOT for proc_get_status */
-    protected $state = self::STATE_READY;
+    protected string $state = self::STATE_READY;
 
-    public function __construct(string $command, string $input = null)
+    /**
+     * @param string $command Command to be executed
+     * @param string $input   Input for stdin
+     */
+    public function __construct(protected string $command, protected ?string $input = null)
     {
         // @codeCoverageIgnoreStart
         if (!\function_exists('proc_open')) {
@@ -104,32 +102,30 @@ class Shell
         return '\\' === \DIRECTORY_SEPARATOR;
     }
 
-    protected function setInput()
+    protected function setInput(): void
     {
         \fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input);
     }
 
-    protected function updateProcessStatus()
+    protected function updateProcessStatus(): void
     {
-        if ($this->state !== self::STATE_STARTED) {
-            return;
-        }
+        if ($this->state === self::STATE_STARTED) {
+            $this->processStatus = \proc_get_status($this->process);
 
-        $this->processStatus = \proc_get_status($this->process);
-
-        if ($this->processStatus['running'] === false && $this->exitCode === null) {
-            $this->exitCode = $this->processStatus['exitcode'];
+            if ($this->processStatus['running'] === false && $this->exitCode === null) {
+                $this->exitCode = $this->processStatus['exitcode'];
+            }
         }
     }
 
-    protected function closePipes()
+    protected function closePipes(): void
     {
         \fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
         \fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
         \fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 
-    protected function wait()
+    protected function wait(): ?int
     {
         while ($this->isRunning()) {
             usleep(5000);
@@ -139,7 +135,7 @@ class Shell
         return $this->exitCode;
     }
 
-    protected function checkTimeout()
+    protected function checkTimeout(): void
     {
         if ($this->processTimeout === null) {
             return;
@@ -154,7 +150,6 @@ class Shell
         }
         // @codeCoverageIgnoreStart
     }
-
     // @codeCoverageIgnoreEnd
 
     public function setOptions(
@@ -164,7 +159,7 @@ class Shell
         array $otherOptions = []
     ): self {
         $this->cwd            = $cwd;
-        $this->env            = $env;
+        $this->env            = $env ?? [];
         $this->processTimeout = $timeout;
         $this->otherOptions   = $otherOptions;
 
@@ -229,7 +224,7 @@ class Shell
         return \stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 
-    public function getExitCode()
+    public function getExitCode(): ?int
     {
         $this->updateProcessStatus();
 
@@ -247,12 +242,12 @@ class Shell
         return $this->processStatus['running'];
     }
 
-    public function getProcessId()
+    public function getProcessId(): ?int
     {
         return $this->isRunning() ? $this->processStatus['pid'] : null;
     }
 
-    public function stop()
+    public function stop(): ?int
     {
         $this->closePipes();
 
@@ -267,7 +262,7 @@ class Shell
         return $this->exitCode;
     }
 
-    public function kill()
+    public function kill(): void
     {
         if (\is_resource($this->process)) {
             \proc_terminate($this->process);

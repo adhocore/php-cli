@@ -32,7 +32,7 @@ class ShellTest extends TestCase
 
         $shell->execute(true);
 
-        $this->assertInternalType('int', $pid = $shell->getProcessId());
+        $this->assertIsInt($pid = $shell->getProcessId());
         $this->assertGreaterThan(getmypid(), $pid);
     }
 
@@ -51,12 +51,11 @@ class ShellTest extends TestCase
         $this->assertSame('closed', $shell->getState());
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Timeout occurred, process terminated.
-     */
     public function test_timeout()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Timeout occurred, process terminated.');
+
         $shell = new Shell('sleep 1');
 
         try {
@@ -68,12 +67,11 @@ class ShellTest extends TestCase
         }
     }
 
-    /**
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Process is already running
-     */
     public function test_rerun()
     {
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Process is already running');
+
         $shell = new Shell('sleep 1');
 
         $shell->execute(true)->execute();
@@ -81,15 +79,16 @@ class ShellTest extends TestCase
 
     public function test_error_output()
     {
-        $shell = new Shell('php -r "fwrite(STDERR, \'error occurred\');"');
+        $shell = new Shell('false');
 
-        $this->assertSame($shell->execute()->getErrorOutput(), 'error occurred');
+        $this->assertSame(1, $shell->execute()->getExitCode());
+        $this->assertSame('', $shell->execute()->getErrorOutput());
     }
 
     public function test_exitcode()
     {
-        $shell = new Shell('php -v');
+        $shell = new Shell('true');
 
-        $this->assertNull($shell->getExitCode());
+        $this->assertSame(0, $shell->execute()->getExitCode());
     }
 }

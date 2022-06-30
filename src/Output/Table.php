@@ -24,12 +24,12 @@ class Table
             return '';
         }
 
-        list($head, $rows) = $table;
+        [$head, $rows] = $table;
 
         $styles = $this->normalizeStyles($styles);
         $title  = $body = $dash = [];
 
-        list($start, $end) = $styles['head'];
+        [$start, $end] = $styles['head'];
         foreach ($head as $col => $size) {
             $dash[]  = \str_repeat('-', $size + 2);
             $title[] = \str_pad($this->toWords($col), $size, ' ');
@@ -41,7 +41,7 @@ class Table
         foreach ($rows as $row) {
             $parts = [];
 
-            list($start, $end) = $styles[['even', 'odd'][(int) $odd]];
+            [$start, $end] = $styles[['even', 'odd'][(int) $odd]];
             foreach ($head as $col => $size) {
                 $parts[] = \str_pad($row[$col] ?? '', $size, ' ');
             }
@@ -84,7 +84,7 @@ class Table
         return [$head, $rows];
     }
 
-    protected function normalizeStyles(array $styles)
+    protected function normalizeStyles(array $styles): array
     {
         $default = [
             // styleFor => ['styleStartFn', 'end']
