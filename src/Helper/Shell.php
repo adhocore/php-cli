@@ -47,7 +47,7 @@ class Shell
     protected array $env = [];
 
     /** @var int Exit code of the process once it has been terminated */
-    protected int $exitCode = 0;
+    protected ?int $exitCode = null;
 
     /** @var array Other options to be passed for proc_open */
     protected array $otherOptions = [];
