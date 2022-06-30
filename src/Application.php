@@ -55,8 +55,6 @@ class Application
 
     /**
      * Get the name.
-     *
-     * @return string
      */
     public function name(): string
     {
@@ -65,8 +63,6 @@ class Application
 
     /**
      * Get the version.
-     *
-     * @return string
      */
     public function version(): string
     {
@@ -89,8 +85,6 @@ class Application
 
     /**
      * Get the raw argv.
-     *
-     * @return array
      */
     public function argv(): array
     {
@@ -117,14 +111,6 @@ class Application
 
     /**
      * Add a command by its name desc alias etc.
-     *
-     * @param string $name
-     * @param string $desc
-     * @param string $alias
-     * @param bool   $allowUnknown
-     * @param bool   $default
-     *
-     * @return Command
      */
     public function command(
         string $name,
@@ -142,12 +128,6 @@ class Application
 
     /**
      * Add a prepred command.
-     *
-     * @param Command $command
-     * @param string  $alias
-     * @param bool    $default
-     *
-     * @return self
      */
     public function add(Command $command, string $alias = '', bool $default = false): self
     {
@@ -179,10 +159,6 @@ class Application
 
     /**
      * Gets matching command for given argv.
-     *
-     * @param array $argv
-     *
-     * @return Command
      */
     public function commandFor(array $argv): Command
     {
@@ -249,12 +225,8 @@ class Application
 
     /**
      * Handle the request, invoke action and call exit handler.
-     *
-     * @param array $argv
-     *
-     * @return mixed
      */
-    public function handle(array $argv)
+    public function handle(array $argv): mixed
     {
         if (\count($argv) < 2) {
             return $this->showHelp();
@@ -275,10 +247,6 @@ class Application
 
     /**
      * Get aliases for given command.
-     *
-     * @param Command $command
-     *
-     * @return array
      */
     protected function aliasesFor(Command $command): array
     {
@@ -296,10 +264,8 @@ class Application
 
     /**
      * Show help of all commands.
-     *
-     * @return mixed
      */
-    public function showHelp()
+    public function showHelp(): mixed
     {
         $writer = $this->io()->writer();
         $header = "{$this->name}, version {$this->version}";
@@ -323,12 +289,8 @@ class Application
 
     /**
      * Invoke command action.
-     *
-     * @param Command $command
-     *
-     * @return mixed
      */
-    protected function doAction(Command $command)
+    protected function doAction(Command $command): mixed
     {
         if ($command->name() === '__default__') {
             return $this->notFound();
@@ -338,7 +300,7 @@ class Application
         $command->interact($this->io());
 
         if (!$command->action() && !\method_exists($command, 'execute')) {
-            return;
+            return null;
         }
 
         $params = [];
@@ -355,10 +317,8 @@ class Application
 
     /**
      * Command not found handler.
-     *
-     * @return mixed
      */
-    protected function notFound()
+    protected function notFound(): mixed
     {
         $available = \array_keys($this->commands() + $this->aliases);
         $this->outputHelper()->showCommandNotFound($this->argv[1], $available);

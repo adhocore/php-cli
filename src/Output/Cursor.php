@@ -95,8 +95,6 @@ class Cursor
 
     /**
      * Returns signal to erase current line.
-     *
-     * @return string
      */
     public function eraseLine(): string
     {
@@ -105,8 +103,6 @@ class Cursor
 
     /**
      * Returns signal to clear string.
-     *
-     * @return string
      */
     public function clear(): string
     {
@@ -115,8 +111,6 @@ class Cursor
 
     /**
      * Returns signal to erase lines upward.
-     *
-     * @return string
      */
     public function clearUp(): string
     {
@@ -125,8 +119,6 @@ class Cursor
 
     /**
      * Returns signal to erase lines downward.
-     *
-     * @return string
      */
     public function clearDown(): string
     {
@@ -135,11 +127,6 @@ class Cursor
 
     /**
      * Returns signal to move cursor to given x, y position.
-     *
-     * @param int $x
-     * @param int $y
-     *
-     * @return string
      */
     public function moveTo(int $x, int $y): string
     {

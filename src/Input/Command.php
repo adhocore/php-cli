@@ -62,8 +62,6 @@ class Command extends Parser
 
     /**
      * Sets default options, actions and exit handler.
-     *
-     * @return self
      */
     protected function defaults(): self
     {
@@ -80,10 +78,6 @@ class Command extends Parser
 
     /**
      * Sets version.
-     *
-     * @param string $version
-     *
-     * @return self
      */
     public function version(string $version): self
     {
@@ -94,8 +88,6 @@ class Command extends Parser
 
     /**
      * Gets command name.
-     *
-     * @return string
      */
     public function name(): string
     {
@@ -104,8 +96,6 @@ class Command extends Parser
 
     /**
      * Gets command description.
-     *
-     * @return string
      */
     public function desc(): string
     {
@@ -114,20 +104,14 @@ class Command extends Parser
 
     /**
      * Get the app this command belongs to.
-     *
-     * @return null|App
      */
-    public function app()
+    public function app(): ?App
     {
         return $this->_app;
     }
 
     /**
      * Bind command to the app.
-     *
-     * @param App|null $app
-     *
-     * @return self
      */
     public function bind(App $app = null): self
     {
@@ -138,10 +122,6 @@ class Command extends Parser
 
     /**
      * Registers argument definitions (all at once). Only last one can be variadic.
-     *
-     * @param string $definitions
-     *
-     * @return self
      */
     public function arguments(string $definitions): self
     {
@@ -156,12 +136,6 @@ class Command extends Parser
 
     /**
      * Register an argument.
-     *
-     * @param string $raw
-     * @param string $desc
-     * @param mixed  $default
-     *
-     * @return self
      */
     public function argument(string $raw, string $desc = '', $default = null): self
     {
@@ -182,13 +156,6 @@ class Command extends Parser
 
     /**
      * Registers new option.
-     *
-     * @param string        $raw
-     * @param string        $desc
-     * @param callable|null $filter
-     * @param mixed         $default
-     *
-     * @return self
      */
     public function option(string $raw, string $desc = '', callable $filter = null, $default = null): self
     {
@@ -201,8 +168,6 @@ class Command extends Parser
 
     /**
      * Gets user options (i.e without defaults).
-     *
-     * @return array
      */
     public function userOptions(): array
     {
@@ -251,11 +216,6 @@ class Command extends Parser
 
     /**
      * Sets event handler for last (or given) option.
-     *
-     * @param callable $fn
-     * @param string   $option
-     *
-     * @return self
      */
     public function on(callable $fn, string $option = null): self
     {
@@ -268,10 +228,6 @@ class Command extends Parser
 
     /**
      * Register exit handler.
-     *
-     * @param callable $fn
-     *
-     * @return self
      */
     public function onExit(callable $fn): self
     {
@@ -283,7 +239,7 @@ class Command extends Parser
     /**
      * {@inheritdoc}
      */
-    protected function handleUnknown(string $arg, string $value = null)
+    protected function handleUnknown(string $arg, string $value = null): mixed
     {
         if ($this->_allowUnknown) {
             return $this->set($this->toCamelCase($arg), $value);
@@ -304,10 +260,8 @@ class Command extends Parser
 
     /**
      * Shows command help then aborts.
-     *
-     * @return mixed
      */
-    public function showHelp()
+    public function showHelp(): mixed
     {
         $io     = $this->io();
         $helper = new OutputHelper($io->writer());
@@ -329,10 +283,8 @@ class Command extends Parser
 
     /**
      * Shows command version then aborts.
-     *
-     * @return mixed
      */
-    public function showVersion()
+    public function showVersion(): mixed
     {
         $this->writer()->bold($this->_version, true);
 
@@ -342,7 +294,7 @@ class Command extends Parser
     /**
      * {@inheritdoc}
      */
-    public function emit(string $event, $value = null)
+    public function emit(string $event, $value = null): mixed
     {
         if (empty($this->_events[$event])) {
             return null;
@@ -353,24 +305,16 @@ class Command extends Parser
 
     /**
      * Tap return given object or if that is null then app instance. This aids for chaining.
-     *
-     * @param mixed $object
-     *
-     * @return mixed
      */
-    public function tap($object = null)
+    public function tap(object $object = null)
     {
         return $object ?? $this->_app;
     }
 
     /**
      * Performs user interaction if required to set some missing values.
-     *
-     * @param Interactor $io
-     *
-     * @return void
      */
-    public function interact(Interactor $io)
+    public function interact(Interactor $io): void
     {
         // Subclasses will do the needful.
     }
@@ -395,8 +339,6 @@ class Command extends Parser
 
     /**
      * Get a writer instance.
-     *
-     * @return Writer
      */
     protected function writer(): Writer
     {
@@ -405,8 +347,6 @@ class Command extends Parser
 
     /**
      * Get IO instance.
-     *
-     * @return Interactor
      */
     protected function io(): Interactor
     {

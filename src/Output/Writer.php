@@ -185,8 +185,6 @@ class Writer
 
     /**
      * Get Colorizer.
-     *
-     * @return Color
      */
     public function colorizer(): Color
     {
@@ -211,11 +209,6 @@ class Writer
 
     /**
      * Write the formatted text to stdout or stderr.
-     *
-     * @param string $text
-     * @param bool   $eol
-     *
-     * @return self
      */
     public function write(string $text, bool $eol = false): self
     {
@@ -233,11 +226,6 @@ class Writer
 
     /**
      * Really write to the stream.
-     *
-     * @param string $text
-     * @param bool   $error
-     *
-     * @return self
      */
     protected function doWrite(string $text, bool $error = false): self
     {
@@ -250,10 +238,6 @@ class Writer
 
     /**
      * Write EOL n times.
-     *
-     * @param int $n
-     *
-     * @return self
      */
     public function eol(int $n = 1): self
     {
@@ -262,11 +246,6 @@ class Writer
 
     /**
      * Write raw text (as it is).
-     *
-     * @param string $text
-     * @param bool   $error
-     *
-     * @return self
      */
     public function raw($text, bool $error = false): self
     {

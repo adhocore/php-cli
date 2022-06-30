@@ -40,12 +40,8 @@ class OutputHelper
 
     /**
      * Print stack trace and error msg of an exception.
-     *
-     * @param \Throwable $e
-     *
-     * @return void
      */
-    public function printTrace(\Throwable $e)
+    public function printTrace(\Throwable $e): void
     {
         $eClass = \get_class($e);
 
@@ -78,7 +74,7 @@ class OutputHelper
         $this->writer->colors($traceStr);
     }
 
-    protected function stringifyArgs(array $args)
+    protected function stringifyArgs(array $args): string
     {
         $holder = [];
 
@@ -89,7 +85,7 @@ class OutputHelper
         return \implode(', ', $holder);
     }
 
-    protected function stringifyArg($arg)
+    protected function stringifyArg($arg): string
     {
         if (\is_scalar($arg)) {
             return \var_export($arg, true);
@@ -152,15 +148,8 @@ class OutputHelper
 
     /**
      * Show help with headers and footers.
-     *
-     * @param string $for
-     * @param array  $items
-     * @param string $header
-     * @param string $footer
-     *
-     * @return void
      */
-    protected function showHelp(string $for, array $items, string $header = '', string $footer = '')
+    protected function showHelp(string $for, array $items, string $header = '', string $footer = ''): void
     {
         if ($header) {
             $this->writer->bold($header, true);
@@ -192,10 +181,6 @@ class OutputHelper
      * Show usage examples of a Command.
      *
      * It replaces $0 with actual command name and properly pads ` ## ` segments.
-     *
-     * @param string $usage Usage description.
-     *
-     * @return self
      */
     public function showUsage(string $usage): self
     {
@@ -215,11 +200,6 @@ class OutputHelper
         }
 
         $maxlen = ($lines ? \max($lines) : 0) + 4;
-        // $usage  = \preg_replace_callback(
-        //     '~ ## ~',
-        //     fn() => \str_pad('# ', $maxlen - \array_shift($lines), ' ', \STR_PAD_LEFT),
-        //     $usage
-        // );
         $usage  = \preg_replace_callback('~ ## ~', function () use (&$lines, $maxlen) {
             return \str_pad('# ', $maxlen - \array_shift($lines), ' ', \STR_PAD_LEFT);
         }, $usage);
@@ -261,8 +241,6 @@ class OutputHelper
     {
         $max = \max(\array_map(fn ($item) => \strlen($this->getName($item)), $items));
 
-        /* @var Parameter $b */
-        /* @var Parameter $a */
         \uasort($items, fn ($a, $b) => $a->name() <=> $b->name());
 
         return $items;
@@ -288,12 +266,8 @@ class OutputHelper
 
     /**
      * Get parameter label for humans.
-     *
-     * @param Parameter $item
-     *
-     * @return string
      */
-    protected function label(Parameter $item)
+    protected function label(Parameter $item): string
     {
         $name = $item->name();
 

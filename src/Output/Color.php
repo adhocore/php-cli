@@ -41,11 +41,6 @@ class Color
 
     /**
      * Returns a line formatted as comment.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function comment(string $text, array $style = []): string
     {
@@ -54,11 +49,6 @@ class Color
 
     /**
      * Returns a line formatted as comment.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function error(string $text, array $style = []): string
     {
@@ -67,11 +57,6 @@ class Color
 
     /**
      * Returns a line formatted as ok msg.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function ok(string $text, array $style = []): string
     {
@@ -80,11 +65,6 @@ class Color
 
     /**
      * Returns a line formatted as warning.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function warn(string $text, array $style = []): string
     {
@@ -93,11 +73,6 @@ class Color
 
     /**
      * Returns a line formatted as info.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function info(string $text, array $style = []): string
     {
@@ -106,11 +81,6 @@ class Color
 
     /**
      * Returns a formatted/colored line.
-     *
-     * @param string $text
-     * @param array  $style
-     *
-     * @return string
      */
     public function line(string $text, array $style = []): string
     {
@@ -134,10 +104,6 @@ class Color
      * Prepare a multi colored string with html like tags.
      *
      * Example: "<errorBold>Text</end><eol/><bgGreenBold>Text</end><eol>"
-     *
-     * @param string $text
-     *
-     * @return string
      */
     public function colors(string $text): string
     {
@@ -166,7 +132,7 @@ class Color
      *
      * @return void
      */
-    public static function style(string $name, array $style)
+    public static function style(string $name, array $style): void
     {
         $allow = ['fg' => true, 'bg' => true, 'bold' => true];
         $style = \array_intersect_key($style, $allow);
@@ -216,11 +182,6 @@ class Color
 
     /**
      * Parse the name argument pairs to determine callable method and style params.
-     *
-     * @param string $name
-     * @param array  $arguments
-     *
-     * @return array
      */
     protected function parseCall(string $name, array $arguments): array
     {
@@ -246,12 +207,6 @@ class Color
 
     /**
      * Build style parameter from matching combination.
-     *
-     * @param string $name
-     * @param array  $style
-     * @param array  $matches
-     *
-     * @return array
      */
     protected function buildStyle(string $name, array $style, array $matches): array
     {

@@ -84,7 +84,7 @@ class Table
         return [$head, $rows];
     }
 
-    protected function normalizeStyles(array $styles)
+    protected function normalizeStyles(array $styles): array
     {
         $default = [
             // styleFor => ['styleStartFn', 'end']

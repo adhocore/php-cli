@@ -223,7 +223,7 @@ class Interactor
      *
      * @return mixed User input or default.
      */
-    public function choice(string $text, array $choices, $default = null, bool $case = false)
+    public function choice(string $text, array $choices, $default = null, bool $case = false): mixed
     {
         $this->writer->yellow($text);
 
@@ -244,7 +244,7 @@ class Interactor
      *
      * @return mixed User input or default.
      */
-    public function choices(string $text, array $choices, $default = null, bool $case = false)
+    public function choices(string $text, array $choices, $default = null, bool $case = false): mixed
     {
         $this->writer->yellow($text);
 
@@ -278,7 +278,7 @@ class Interactor
      *
      * @return mixed
      */
-    public function prompt(string $text, $default = null, callable $fn = null, int $retry = 3)
+    public function prompt(string $text, $default = null, callable $fn = null, int $retry = 3): mixed
     {
         $error  = 'Invalid value. Please try again!';
         $hidden = \func_get_args()[4] ?? false;
@@ -312,7 +312,7 @@ class Interactor
      *
      * @return mixed
      */
-    public function promptHidden(string $text, callable $fn = null, int $retry = 3)
+    public function promptHidden(string $text, callable $fn = null, int $retry = 3): mixed
     {
         return $this->prompt($text, null, $fn, $retry, true);
     }
@@ -347,13 +347,8 @@ class Interactor
 
     /**
      * Show prompt with possible options.
-     *
-     * @param array $choices
-     * @param mixed $default
-     *
-     * @return self
      */
-    protected function promptOptions(array $choices, $default): self
+    protected function promptOptions(array $choices, mixed $default): self
     {
         $options = '';
 
@@ -371,14 +366,8 @@ class Interactor
 
     /**
      * Check if user choice is one of possible choices.
-     *
-     * @param string $choice  User choice.
-     * @param array  $choices Possible choices.
-     * @param bool   $case    If input is case sensitive.
-     *
-     * @return bool
      */
-    protected function isValidChoice($choice, array $choices, bool $case)
+    protected function isValidChoice(string $choice, array $choices, bool $case): bool
     {
         if ($this->isAssocChoice($choices)) {
             $choices = \array_keys($choices);
@@ -397,23 +386,14 @@ class Interactor
 
     /**
      * Check if the choices array is associative.
-     *
-     * @param array $array Choices
-     *
-     * @return bool
      */
-    protected function isAssocChoice(array $array)
+    protected function isAssocChoice(array $array): bool
     {
         return !empty($array) && \array_keys($array) != \range(0, \count($array) - 1);
     }
 
     /**
      * Channel method calls to reader/writer.
-     *
-     * @param string $method
-     * @param array  $arguments
-     *
-     * @return mixed
      */
     public function __call(string $method, array $arguments)
     {

@@ -24,7 +24,7 @@ class Argument extends Parameter
     /**
      * {@inheritdoc}
      */
-    protected function parse(string $arg)
+    protected function parse(string $arg): void
     {
         $this->name = $name = \str_replace(['<', '>', '[', ']', '.'], '', $arg);
 
@@ -37,7 +37,7 @@ class Argument extends Parameter
         $this->prepDefault();
     }
 
-    protected function prepDefault()
+    protected function prepDefault(): void
     {
         if ($this->variadic && $this->default && !\is_array($this->default)) {
             $this->default = \explode(',', $this->default, 2);
