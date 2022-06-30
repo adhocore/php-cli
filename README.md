@@ -17,7 +17,7 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 - Command line application made easy
 - Inspired by nodejs [commander](https://github.com/tj/commander.js) (thanks tj)
 - Zero dependency.
-- For PHP7 and for good
+- For PHP7, PHP8 and for good
 
 [![Screen Preview](https://i.imgur.com/qIYg9Zn.gif "Preview from adhocore/phalcon-ext which uses this cli package")](https://github.com/adhocore/phalcon-ext/tree/master/example/cli)
 
@@ -31,7 +31,11 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 
 ## Installation
 ```bash
-composer require adhocore/cli
+# PHP8.0 and above v1.0.0
+composer require adhocore/cli:^v1.0.0
+
+# PHP 7.x
+composer require adhocore/cli:^v0.9.0
 ```
 
 ## Usage
