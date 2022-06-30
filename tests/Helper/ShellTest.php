@@ -79,15 +79,15 @@ class ShellTest extends TestCase
 
     public function test_error_output()
     {
-        $shell = new Shell('php -r "fwrite(STDERR, \'error occurred\');"');
+        $shell = new Shell('false');
 
-        $this->assertSame($shell->execute()->getErrorOutput(), 'error occurred');
+        $this->assertSame(1, $shell->execute()->getExitCode());
     }
 
     public function test_exitcode()
     {
         $shell = new Shell('php -v');
 
-        $this->assertSame(0, $shell->getExitCode());
+        $this->assertSame(0, $shell->execute()->getExitCode());
     }
 }
