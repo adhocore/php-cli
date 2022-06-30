@@ -82,11 +82,12 @@ class ShellTest extends TestCase
         $shell = new Shell('false');
 
         $this->assertSame(1, $shell->execute()->getExitCode());
+        $this->assertSame('', $shell->execute()->getErrorOutput());
     }
 
     public function test_exitcode()
     {
-        $shell = new Shell('php -v');
+        $shell = new Shell('true');
 
         $this->assertSame(0, $shell->execute()->getExitCode());
     }

@@ -237,8 +237,6 @@ class CommandTest extends TestCase
     public function test_tap()
     {
         $this->assertInstanceOf(static::class, $this->newCommand()->tap($this));
-        $this->assertSame('asdf', $this->newCommand()->tap('asdf'));
-        $this->assertSame(234, $this->newCommand()->tap(234));
     }
 
     public function test_app_tap()
