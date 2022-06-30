@@ -1,3 +1,18 @@
+## [v1.0.0](https://github.com/adhocore/php-cli/releases/tag/v1.0.0) (2022-06-30)
+
+### Bug Fixes
+- **Shell**: Exitcode is null first (Jitendra Adhikari)
+
+### Internal Refactors
+- Add typehints, remove redundant docblocks (Jitendra Adhikari)
+- Use php8 syntax (Jitendra Adhikari)
+
+### Miscellaneous
+- Typehint (Jitendra)
+- Run on >= php8 (Jitendra Adhikari)
+- Use php8 deps (Jitendra Adhikari)
+
+
 ## [0.9.1](https://github.com/adhocore/php-cli/releases/tag/0.9.1) (2022-02-18)
 
 ### Bug Fixes
