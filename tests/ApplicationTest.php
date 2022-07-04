@@ -251,6 +251,16 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('Did you mean cmd?', $o);
     }
 
+    public function test_io_returns_new_instance_if_not_provided(): void
+    {
+        $app = new Application('some-name', '0.0.1', fn () => false);
+
+        $this->assertInstanceOf(
+            Interactor::class,
+            $app->io()
+        );
+    }
+
     protected function newApp(string $name, string $version = '')
     {
         $app = new Application($name, $version ?: '0.0.1', function () {

@@ -40,8 +40,8 @@ class Application
 
     protected string $default = '__default__';
 
-    /** @var Interactor */
-    protected Interactor $io;
+    /** @var null|Interactor */
+    protected ?Interactor $io = null;
 
     /** @var callable The callable to perform exit */
     protected $onExit;
