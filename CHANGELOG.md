@@ -1,3 +1,9 @@
+## [v1.0.1](https://github.com/adhocore/php-cli/releases/tag/v1.0.1) (2022-07-05)
+
+### Bug Fixes
+- Correct io() fallback mechanism (Daniel Jakob) [_4072eaf_](https://github.com/adhocore/php-cli/commit/4072eaf)
+
+
 ## [v1.0.0](https://github.com/adhocore/php-cli/releases/tag/v1.0.0) (2022-06-30)
 
 ### Bug Fixes
