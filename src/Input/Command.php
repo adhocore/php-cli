@@ -43,6 +43,8 @@ class Command extends Parser
 
     private bool $_argVariadic = false;
 
+    protected string $_group = 'default';
+
     /**
      * Constructor.
      *
@@ -92,6 +94,14 @@ class Command extends Parser
     public function name(): string
     {
         return $this->_name;
+    }
+
+    /**
+     * Gets command group name
+     */
+    public function group(): string
+    {
+        return $this->_group;
     }
 
     /**

@@ -131,17 +131,18 @@ class OutputHelper
     }
 
     /**
-     * @param Command[] $commands
+     * @param array<string, Command[]> $groups
      * @param string    $header
      * @param string    $footer
      *
      * @return self
      */
-    public function showCommandsHelp(array $commands, string $header = '', string $footer = ''): self
+    public function showCommandsHelp(array $groups, string $header = '', string $footer = ''): self
     {
-        $this->maxCmdName = $commands ? \max(\array_map(fn (Command $cmd) => \strlen($cmd->name()), $commands)) : 0;
+        $keys = array_keys($groups);
+        $this->maxCmdName = $groups ? \max(\array_map(fn (string $group) => \strlen($group), $keys)) : 0;
 
-        $this->showHelp('Commands', $commands, $header, $footer);
+        $this->showHelpForGroup('Commands', $groups, $header, $footer);
 
         return $this;
     }
@@ -155,7 +156,9 @@ class OutputHelper
             $this->writer->bold($header, true);
         }
 
-        $this->writer->eol()->boldGreen($for . ':', true);
+        if (!empty($for)) {
+            $this->writer->eol()->boldGreen($for . ':', true);
+        }
 
         if (empty($items)) {
             $this->writer->bold('  (n/a)', true);
@@ -170,6 +173,33 @@ class OutputHelper
 
             $this->writer->bold('  ' . \str_pad($name, $padLen + $space));
             $this->writer->comment($desc, true);
+        }
+
+        if ($footer) {
+            $this->writer->eol()->yellow($footer, true);
+        }
+    }
+
+    /**
+     * Show help with headers and footers.
+     */
+    protected function showHelpForGroup(string $for, array $groups, string $header = '', string $footer = ''): void
+    {
+        if ($header) {
+            $this->writer->bold($header, true);
+        }
+
+        $this->writer->eol()->boldGreen($for . ':', true);
+
+        if (empty($groups)) {
+            $this->writer->bold('  (n/a)', true);
+
+            return;
+        }
+
+        foreach ($groups as $name => $commands) {
+            $this->writer->eol()->boldYellow('> ' . $name, true);
+            $this->showHelp('', $commands);
         }
 
         if ($footer) {

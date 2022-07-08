@@ -29,6 +29,9 @@ class Application
     /** @var Command[] */
     protected array $commands = [];
 
+    /** @var array<string, Command[]> */
+    protected array $groups = [];
+
     /** @var array Raw argv sent to parse() */
     protected array $argv = [];
 
@@ -81,6 +84,23 @@ class Application
         unset($commands['__default__']);
 
         return $commands;
+    }
+
+    /**
+     * Get the groups
+     *
+     * @return array<string, Command>
+     */
+    public function groups(): array
+    {
+        $groups = $this->groups;
+
+        foreach ($groups as $name => $commands) {
+            unset($commands['__default__']);
+            $groups[$name] = $commands;
+        }
+
+        return $groups;
     }
 
     /**
@@ -153,6 +173,9 @@ class Application
         }
 
         $this->commands[$name] = $command->version($this->version)->onExit($this->onExit)->bind($this);
+
+        $group = $command->group();
+        $this->groups[$group] = array_merge($this->groups[$group] ?? [], [$name => $this->commands[$name]]);
 
         return $this;
     }
@@ -275,7 +298,7 @@ class Application
             $writer->write($this->logo, true);
         }
 
-        $this->outputHelper()->showCommandsHelp($this->commands(), $header, $footer);
+        $this->outputHelper()->showCommandsHelp($this->groups(), $header, $footer);
 
         return ($this->onExit)();
     }
