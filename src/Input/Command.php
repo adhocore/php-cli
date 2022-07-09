@@ -43,7 +43,7 @@ class Command extends Parser
 
     private bool $_argVariadic = false;
 
-    protected string $_group = 'default';
+    protected ?string $_group = null;
 
     /**
      * Constructor.
@@ -60,6 +60,10 @@ class Command extends Parser
         protected ?App $_app = null
     ) {
         $this->defaults();
+
+        if (empty($this->_group)) {
+            $this->_group = \str_contains($_name, ':') ? \strstr($_name, ':', true) : '*';
+        }
     }
 
     /**
@@ -102,6 +106,14 @@ class Command extends Parser
     public function group(): string
     {
         return $this->_group;
+    }
+
+    /**
+     * Set command group name
+     */
+    public function setGroup(string $group): void
+    {
+        $this->_group = $group;
     }
 
     /**
