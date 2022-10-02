@@ -200,7 +200,7 @@ class Writer
      */
     public function __get(string $name): self
     {
-        if (\strpos($this->method, $name) === false) {
+        if ($this->method === null || !\str_contains($this->method, $name)) {
             $this->method .= $this->method ? \ucfirst($name) : $name;
         }
 
