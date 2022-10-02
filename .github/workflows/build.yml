@@ -1,0 +1,62 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+
+  tests:
+    name: Tests
+    env:
+      extensions: pcov
+
+    strategy:
+      matrix:
+        include:
+          - php: '8.0'
+          - php: '8.1'
+          - php: '8.2'
+      fail-fast: true
+
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          coverage: "none"
+          ini-values: date.timezone=Asia/Bangkok,memory_limit=-1,default_socket_timeout=10,session.gc_probability=0,zend.assertions=1
+          php-version: "${{ matrix.php }}"
+          extensions: "${{ env.extensions }}"
+          tools: flex
+
+      - name: Before run
+        run: |
+          echo COLUMNS=120 >> $GITHUB_ENV
+          for P in src tests; do find $P -type f -name '*.php' -exec php -l {} \;; done
+
+      - name: Install dependencies
+        run: composer install --no-progress --ansi -o
+
+      - name: Run tests
+        run: composer test:cov
+
+      - name: Codecov
+        run: bash <(curl -s https://codecov.io/bash)
