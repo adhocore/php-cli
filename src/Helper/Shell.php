@@ -58,8 +58,8 @@ class Shell
     /** @var resource The actual process resource returned from proc_open */
     protected $process = null;
 
-    /** @var int Process starting time in unix timestamp */
-    protected int $processStartTime = 0;
+    /** @var float Process starting time in unix timestamp */
+    protected float $processStartTime = 0;
 
     /** @var array Status of the process as returned from proc_get_status */
     protected ?array $processStatus = null;
@@ -104,7 +104,7 @@ class Shell
 
     protected function setInput(): void
     {
-        \fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input);
+        \fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input ?? '');
     }
 
     protected function updateProcessStatus(): void
