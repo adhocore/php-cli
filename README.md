@@ -231,6 +231,27 @@ $app->logo('Ascii art logo of your app');
 $app->handle($_SERVER['argv']); // if argv[1] is `i` or `init` it executes InitCommand
 ```
 
+#### Grouping commands
+
+Grouped commands are listed together in commands list. Explicit grouping a command is optional.
+By default if a command name has a colon `:` then the part before it is taken as a group,
+else `*` is taken as a group.
+
+> Example: command name `app:env` has a default group `app`, command name `appenv` has group `*`.
+
+```php
+// Add grouped commands:
+$app->group('Configuration', function ($app) {
+    $app->add(new ConfigSetCommand);
+    $app->add(new ConfigListCommand);
+});
+
+// Alternatively, set group one by one in each commands:
+$app->add((new ConfigSetCommand)->inGroup('Config'));
+$app->add((new ConfigListCommand)->inGroup('Config'));
+...
+```
+
 #### App help
 
 It can be triggered manually with `$app->showHelp()` or automatic when `-h` or `--help` option is passed to `$app->parse()`.
