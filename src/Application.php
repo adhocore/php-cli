@@ -158,6 +158,26 @@ class Application
     }
 
     /**
+     * Groups commands set within the callable.
+     *
+     * @param string   $group The group name
+     * @param callable $fn    The callable that recieves Application instance and adds commands.
+     *
+     * @return self
+     */
+    public function group(string $group, callable $fn): self
+    {
+        $old = array_fill_keys(array_keys($this->commands), true);
+
+        $fn($this);
+        foreach (array_diff_key($this->commands, $old) as $cmd) {
+            $cmd->inGroup($group);
+        }
+
+        return $this;
+    }
+
+    /**
      * Gets matching command for given argv.
      */
     public function commandFor(array $argv): Command
