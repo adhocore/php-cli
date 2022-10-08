@@ -86,27 +86,27 @@ return [
     'argvs' => [
         [
             'argv'   => [],
-            'throws' => [\RuntimeException::class, 'Option "--virtual" is required'],
+            'throws' => [RuntimeException::class, 'Option "--virtual" is required'],
         ],
         [
             'argv'   => [''],
-            'throws' => [\RuntimeException::class, 'Option "--virtual" is required'],
+            'throws' => [RuntimeException::class, 'Option "--virtual" is required'],
         ],
         [
             'argv'   => ['-x', 1],
-            'throws' => [\RuntimeException::class, 'Option "--virtual" is required'],
+            'throws' => [RuntimeException::class, 'Option "--virtual" is required'],
         ],
         [
             'argv'   => ['-x', 1],
-            'throws' => [\RuntimeException::class, 'Option "--virtual" is required'],
+            'throws' => [RuntimeException::class, 'Option "--virtual" is required'],
         ],
         [
             'argv'   => ['-v'],
-            'throws' => [\RuntimeException::class, 'Option "--virtual" is required'],
+            'throws' => [RuntimeException::class, 'Option "--virtual" is required'],
         ],
         [
             'argv'   => ['--virtual'],
-            'throws' => [\RuntimeException::class, 'Option "--virtual" is required'],
+            'throws' => [RuntimeException::class, 'Option "--virtual" is required'],
         ],
     ],
 ];

@@ -11,7 +11,11 @@
 
 namespace Ahc\Cli\Test;
 
+use php_user_filter;
 use PHPUnit\Framework\TestCase;
+use ReturnTypeWillChange;
+use const STDERR;
+use const STDOUT;
 
 /**
  * To test console output.
@@ -24,8 +28,8 @@ class CliTestCase extends TestCase
     {
         // Thanks: https://stackoverflow.com/a/39785995
         stream_filter_register('intercept', StreamInterceptor::class);
-        stream_filter_append(\STDOUT, 'intercept');
-        stream_filter_append(\STDERR, 'intercept');
+        stream_filter_append(STDOUT, 'intercept');
+        stream_filter_append(STDERR, 'intercept');
     }
 
     public function setUp(): void
@@ -56,10 +60,11 @@ class CliTestCase extends TestCase
     }
 }
 
-class StreamInterceptor extends \php_user_filter
+class StreamInterceptor extends php_user_filter
 {
     public static $buffer = '';
 
+    #[ReturnTypeWillChange]
     public function filter($in, $out, &$consumed, $closing)
     {
         while ($bucket = stream_bucket_make_writeable($in)) {

@@ -13,7 +13,10 @@ namespace Ahc\Cli\Test\Input;
 
 use Ahc\Cli\Application;
 use Ahc\Cli\Input\Command;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use function debug_backtrace;
 
 class CommandTest extends TestCase
 {
@@ -68,7 +71,7 @@ class CommandTest extends TestCase
 
     public function test_arguments_variadic_not_last()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Only last argument can be variadic');
 
         $p = $this->newCommand()->arguments('[paths...]')->argument('[env]', 'Env');
@@ -94,7 +97,7 @@ class CommandTest extends TestCase
 
     public function test_options_repeat()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The parameter "--apple" is already registered');
 
         $p = $this->newCommand()->option('-a --apple', 'Apple')->option('-a --apple', 'Apple');
@@ -105,7 +108,7 @@ class CommandTest extends TestCase
         $p = $this->newCommand('', '', true)->parse(['php', '--hot-path', '/path']);
         $this->assertSame('/path', $p->hotPath, 'Allow unknown');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Option "--random" not registered');
 
         // Dont allow unknown
@@ -135,7 +138,7 @@ class CommandTest extends TestCase
         $p = $this->newCommand()->option('-u --user-id [id]', 'User id', null, 1)->parse(['php']);
         $this->assertSame(1, $p->userId, 'Optional default');
 
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Option "--user-id" is required');
 
         $p = $this->newCommand()->option('-u --user-id <id>', 'User id')->parse(['php']);
@@ -273,7 +276,7 @@ class CommandTest extends TestCase
     {
         $p = new Command('cmd', $desc, $allowUnknown, $app);
 
-        return $p->version($version . \debug_backtrace()[1]['function'])->onExit(function () {
+        return $p->version($version . debug_backtrace()[1]['function'])->onExit(function () {
             return false;
         });
     }

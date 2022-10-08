@@ -18,6 +18,10 @@ use Ahc\Cli\Input\Option;
 use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
 use PHPUnit\Framework\TestCase;
+use function file;
+use function implode;
+use function str_replace;
+use const FILE_IGNORE_NEW_LINES;
 
 class OutputHelperTest extends TestCase
 {
@@ -111,7 +115,7 @@ class OutputHelperTest extends TestCase
 
         $_SERVER['argv'][0] = 'test';
 
-        $this->newHelper()->showUsage(\implode('', [
+        $this->newHelper()->showUsage(implode('', [
             '<bold>  $0</end> <comment>-a apple</end> ## apple only<eol>',
             '<bold>  $0</end> <comment>-a apple -b ball</end> ## apple ball<eol>',
             'loooooooooooong text ## something<eol>',
@@ -142,6 +146,6 @@ class OutputHelperTest extends TestCase
 
     protected function output(): array
     {
-        return \str_replace("\033[0m", '', \file(static::$ou, \FILE_IGNORE_NEW_LINES));
+        return str_replace("\033[0m", '', file(static::$ou, FILE_IGNORE_NEW_LINES));
     }
 }

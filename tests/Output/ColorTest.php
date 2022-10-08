@@ -12,6 +12,7 @@
 namespace Ahc\Cli\Test\Output;
 
 use Ahc\Cli\Output\Color;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class ColorTest extends TestCase
@@ -33,7 +34,7 @@ class ColorTest extends TestCase
 
         $this->assertSame("\033[1;31;43malert\033[0m", (new Color)->alert('alert'));
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Trying to define existing style');
 
         Color::style('alert', ['bg' => Color::BLACK]);
@@ -41,7 +42,7 @@ class ColorTest extends TestCase
 
     public function test_invalid_custom_style()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Trying to set empty or invalid style');
 
         Color::style('alert', ['invalid' => true]);
@@ -65,7 +66,7 @@ class ColorTest extends TestCase
     {
         $this->assertSame("\033[1;37mline\033[0m", (new Color)->bold('line'));
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Text required');
 
         (new Color)->bgRed();
@@ -78,7 +79,7 @@ class ColorTest extends TestCase
 
     public function test_magic_call_invalid()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Style "random" not defined');
 
         (new Color)->random('Rand');

@@ -14,6 +14,7 @@ namespace Ahc\Cli\Test;
 use Ahc\Cli\Application;
 use Ahc\Cli\Input\Command;
 use Ahc\Cli\IO\Interactor;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends TestCase
@@ -72,7 +73,7 @@ class ApplicationTest extends TestCase
         $ct = 0;
         foreach ($a->commands() as $cmd) {
             if (in_array($cmd->name(), ['config:set', 'config:get', 'config:del'], true)) {
-                ++$ct;
+                $ct++;
                 $this->assertSame('Configuration', $cmd->group());
             }
         }
@@ -97,7 +98,7 @@ class ApplicationTest extends TestCase
 
         $a->command('clean', 'Cleanup project status', 'c');
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Command "c" already added');
         $a->command('c', 'Cleanup project status', 'd');
     }
@@ -179,7 +180,7 @@ class ApplicationTest extends TestCase
         $a = $this->newApp('git', '0.0.2');
 
         $a->command('add', 'stage change', 'a')->arguments('<files...>')->action(function () {
-            throw new \InvalidArgumentException('Dummy InvalidArgumentException');
+            throw new InvalidArgumentException('Dummy InvalidArgumentException');
         });
 
         $a->handle(['git', 'add', 'a.php', 'b.php']);
@@ -230,7 +231,7 @@ class ApplicationTest extends TestCase
     {
         $a = $this->newApp('test', '0.0.1-test');
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $a->add(new Command('cmd'), 'cm');
         $a->add(new Command('cm'));
