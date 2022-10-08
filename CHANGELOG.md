@@ -1,3 +1,26 @@
+## [v1.2.0](https://github.com/adhocore/php-cli/releases/tag/v1.2.0) (2022-10-08)
+
+### Features
+- **App**: Set common group to commands set via callable (Jitendra Adhikari) [_6c6e53c_](https://github.com/adhocore/php-cli/commit/6c6e53c)
+- **Helper**: Support grouped sorting for show help (Jitendra Adhikari) [_314a887_](https://github.com/adhocore/php-cli/commit/314a887)
+- **Input**: Add Groupable interface, make Command groupable (Jitendra Adhikari) [_29b09ce_](https://github.com/adhocore/php-cli/commit/29b09ce)
+
+### Bug Fixes
+- Adapt for strict type php8 (Jitendra Adhikari) [_8198969_](https://github.com/adhocore/php-cli/commit/8198969)
+
+### Internal Refactors
+- *****: Use imports instead of FQN (Jitendra Adhikari) [_bd0a70c_](https://github.com/adhocore/php-cli/commit/bd0a70c)
+
+### Miscellaneous
+- **Travis**: Retire it :( (Jitendra Adhikari) [_70e510b_](https://github.com/adhocore/php-cli/commit/70e510b)
+
+### Documentations
+- Add Grouping commands section (Jitendra Adhikari) [_3e05837_](https://github.com/adhocore/php-cli/commit/3e05837)
+
+### Builds
+- **Workflow**: Add github action build (Jitendra Adhikari) [_9b4da7d_](https://github.com/adhocore/php-cli/commit/9b4da7d)
+
+
 ## [v1.0.1](https://github.com/adhocore/php-cli/releases/tag/v1.0.1) (2022-07-05)
 
 ### Bug Fixes
