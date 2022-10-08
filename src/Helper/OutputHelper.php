@@ -14,9 +14,37 @@ namespace Ahc\Cli\Helper;
 use Ahc\Cli\Exception;
 use Ahc\Cli\Input\Argument;
 use Ahc\Cli\Input\Command;
+use Ahc\Cli\Input\Groupable;
 use Ahc\Cli\Input\Option;
 use Ahc\Cli\Input\Parameter;
 use Ahc\Cli\Output\Writer;
+use Throwable;
+use function array_map;
+use function array_shift;
+use function asort;
+use function explode;
+use function get_class;
+use function gettype;
+use function implode;
+use function is_array;
+use function is_object;
+use function is_scalar;
+use function key;
+use function levenshtein;
+use function max;
+use function method_exists;
+use function preg_replace;
+use function preg_replace_callback;
+use function realpath;
+use function str_contains;
+use function str_pad;
+use function str_replace;
+use function strlen;
+use function strrpos;
+use function trim;
+use function uasort;
+use function var_export;
+use const STR_PAD_LEFT;
 
 /**
  * This helper helps you by showing you help information :).
@@ -41,9 +69,9 @@ class OutputHelper
     /**
      * Print stack trace and error msg of an exception.
      */
-    public function printTrace(\Throwable $e): void
+    public function printTrace(Throwable $e): void
     {
-        $eClass = \get_class($e);
+        $eClass = get_class($e);
 
         $this->writer->colors(
             "{$eClass} <red>{$e->getMessage()}</end><eol/>" .
@@ -66,7 +94,7 @@ class OutputHelper
 
             $traceStr .= "  <comment>$i)</end> <red>$symbol</end><comment>($args)</end>";
             if ('' !== $trace['file']) {
-                $file      = \realpath($trace['file']);
+                $file      = realpath($trace['file']);
                 $traceStr .= "<eol/>     <yellow>at $file</end><white>:{$trace['line']}</end><eol/>";
             }
         }
@@ -82,24 +110,24 @@ class OutputHelper
             $holder[] = $this->stringifyArg($arg);
         }
 
-        return \implode(', ', $holder);
+        return implode(', ', $holder);
     }
 
     protected function stringifyArg($arg): string
     {
-        if (\is_scalar($arg)) {
-            return \var_export($arg, true);
+        if (is_scalar($arg)) {
+            return var_export($arg, true);
         }
 
-        if (\is_object($arg)) {
-            return \method_exists($arg, '__toString') ? (string) $arg : \get_class($arg);
+        if (is_object($arg)) {
+            return method_exists($arg, '__toString') ? (string) $arg : get_class($arg);
         }
 
-        if (\is_array($arg)) {
+        if (is_array($arg)) {
             return '[' . $this->stringifyArgs($arg) . ']';
         }
 
-        return \gettype($arg);
+        return gettype($arg);
     }
 
     /**
@@ -139,7 +167,7 @@ class OutputHelper
      */
     public function showCommandsHelp(array $commands, string $header = '', string $footer = ''): self
     {
-        $this->maxCmdName = $commands ? \max(\array_map(fn (Command $cmd) => \strlen($cmd->name()), $commands)) : 0;
+        $this->maxCmdName = $commands ? max(array_map(static fn (Command $cmd) => strlen($cmd->name()), $commands)) : 0;
 
         $this->showHelp('Commands', $commands, $header, $footer);
 
@@ -189,24 +217,24 @@ class OutputHelper
      */
     public function showUsage(string $usage): self
     {
-        $usage = \str_replace('$0', $_SERVER['argv'][0] ?? '[cmd]', $usage);
+        $usage = str_replace('$0', $_SERVER['argv'][0] ?? '[cmd]', $usage);
 
-        if (!\str_contains($usage, ' ## ')) {
+        if (!str_contains($usage, ' ## ')) {
             $this->writer->eol()->boldGreen('Usage Examples:', true)->colors($usage)->eol();
 
             return $this;
         }
 
-        $lines = \explode("\n", \str_replace(['<eol>', '<eol/>', '</eol>', "\r\n"], "\n", $usage));
+        $lines = explode("\n", str_replace(['<eol>', '<eol/>', '</eol>', "\r\n"], "\n", $usage));
         foreach ($lines as $i => &$pos) {
-            if (false === $pos = \strrpos(\preg_replace('~</?\w+/?>~', '', $pos), ' ##')) {
+            if (false === $pos = strrpos(preg_replace('~</?\w+/?>~', '', $pos), ' ##')) {
                 unset($lines[$i]);
             }
         }
 
-        $maxlen = ($lines ? \max($lines) : 0) + 4;
-        $usage  = \preg_replace_callback('~ ## ~', function () use (&$lines, $maxlen) {
-            return \str_pad('# ', $maxlen - \array_shift($lines), ' ', \STR_PAD_LEFT);
+        $maxlen = ($lines ? max($lines) : 0) + 4;
+        $usage  = preg_replace_callback('~ ## ~', function () use (&$lines, $maxlen) {
+            return str_pad('# ', $maxlen - array_shift($lines), ' ', STR_PAD_LEFT);
         }, $usage);
 
         $this->writer->eol()->boldGreen('Usage Examples:', true)->colors($usage)->eol();
@@ -218,7 +246,7 @@ class OutputHelper
     {
         $closest = [];
         foreach ($available as $cmd) {
-            $lev = \levenshtein($attempted, $cmd);
+            $lev = levenshtein($attempted, $cmd);
             if ($lev > 0 || $lev < 5) {
                 $closest[$cmd] = $lev;
             }
@@ -226,8 +254,8 @@ class OutputHelper
 
         $this->writer->error("Command $attempted not found", true);
         if ($closest) {
-            \asort($closest);
-            $closest = \key($closest);
+            asort($closest);
+            $closest = key($closest);
             $this->writer->bgRed("Did you mean $closest?", true);
         }
 
@@ -268,7 +296,7 @@ class OutputHelper
         $name = $item->name();
 
         if ($item instanceof Command) {
-            return \trim(\str_pad($name, $this->maxCmdName) . ' ' . $item->alias());
+            return trim(str_pad($name, $this->maxCmdName) . ' ' . $item->alias());
         }
 
         return $this->label($item);

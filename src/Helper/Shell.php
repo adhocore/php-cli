@@ -12,6 +12,18 @@
 namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Exception\RuntimeException;
+use function fclose;
+use function function_exists;
+use function fwrite;
+use function is_resource;
+use function microtime;
+use function proc_close;
+use function proc_get_status;
+use function proc_open;
+use function proc_terminate;
+use function stream_get_contents;
+use function stream_set_blocking;
+use const DIRECTORY_SEPARATOR;
 
 /**
  * A thin proc_open wrapper to execute shell commands.
@@ -77,7 +89,7 @@ class Shell
     public function __construct(protected string $command, protected ?string $input = null)
     {
         // @codeCoverageIgnoreStart
-        if (!\function_exists('proc_open')) {
+        if (!function_exists('proc_open')) {
             throw new RuntimeException('Required proc_open could not be found in your PHP setup.');
         }
         // @codeCoverageIgnoreEnd
@@ -99,18 +111,18 @@ class Shell
 
     protected function isWindows(): bool
     {
-        return '\\' === \DIRECTORY_SEPARATOR;
+        return '\\' === DIRECTORY_SEPARATOR;
     }
 
     protected function setInput(): void
     {
-        \fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input ?? '');
+        fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input ?? '');
     }
 
     protected function updateProcessStatus(): void
     {
         if ($this->state === self::STATE_STARTED) {
-            $this->processStatus = \proc_get_status($this->process);
+            $this->processStatus = proc_get_status($this->process);
 
             if ($this->processStatus['running'] === false && $this->exitCode === null) {
                 $this->exitCode = $this->processStatus['exitcode'];
@@ -120,9 +132,9 @@ class Shell
 
     protected function closePipes(): void
     {
-        \fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
-        \fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
-        \fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
+        fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
+        fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
+        fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 
     protected function wait(): ?int
@@ -141,7 +153,7 @@ class Shell
             return;
         }
 
-        $executionDuration = \microtime(true) - $this->processStartTime;
+        $executionDuration = microtime(true) - $this->processStartTime;
 
         if ($executionDuration > $this->processTimeout) {
             $this->kill();
@@ -173,9 +185,9 @@ class Shell
         }
 
         $this->descriptors      = $this->getDescriptors();
-        $this->processStartTime = \microtime(true);
+        $this->processStartTime = microtime(true);
 
-        $this->process = \proc_open(
+        $this->process = proc_open(
             $this->command,
             $this->descriptors,
             $this->pipes,
@@ -186,7 +198,7 @@ class Shell
         $this->setInput();
 
         // @codeCoverageIgnoreStart
-        if (!\is_resource($this->process)) {
+        if (!is_resource($this->process)) {
             throw new RuntimeException('Bad program could not be started.');
         }
         // @codeCoverageIgnoreEnd
@@ -206,7 +218,7 @@ class Shell
 
     private function setOutputStreamNonBlocking(): bool
     {
-        return \stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], false);
+        return stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], false);
     }
 
     public function getState(): string
@@ -216,12 +228,12 @@ class Shell
 
     public function getOutput(): string
     {
-        return \stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
+        return stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
     }
 
     public function getErrorOutput(): string
     {
-        return \stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
+        return stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 
     public function getExitCode(): ?int
@@ -251,8 +263,8 @@ class Shell
     {
         $this->closePipes();
 
-        if (\is_resource($this->process)) {
-            \proc_close($this->process);
+        if (is_resource($this->process)) {
+            proc_close($this->process);
         }
 
         $this->state = self::STATE_CLOSED;
@@ -264,8 +276,8 @@ class Shell
 
     public function kill(): void
     {
-        if (\is_resource($this->process)) {
-            \proc_terminate($this->process);
+        if (is_resource($this->process)) {
+            proc_terminate($this->process);
         }
 
         $this->state = self::STATE_TERMINATED;

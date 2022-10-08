@@ -13,6 +13,21 @@ namespace Ahc\Cli\IO;
 
 use Ahc\Cli\Input\Reader;
 use Ahc\Cli\Output\Writer;
+use Throwable;
+use function array_keys;
+use function array_map;
+use function count;
+use function explode;
+use function func_get_args;
+use function in_array;
+use function is_string;
+use function ltrim;
+use function max;
+use function method_exists;
+use function range;
+use function str_pad;
+use function str_replace;
+use function strtolower;
 
 /**
  * Cli Interactor.
@@ -210,7 +225,7 @@ class Interactor
     {
         $choice = $this->choice($text, ['y', 'n'], $default, false);
 
-        return \strtolower($choice[0] ?? $default) === 'y';
+        return strtolower($choice[0] ?? $default) === 'y';
     }
 
     /**
@@ -252,8 +267,8 @@ class Interactor
 
         $choice = $this->reader->read($default);
 
-        if (\is_string($choice)) {
-            $choice = \explode(',', \str_replace(' ', '', $choice));
+        if (is_string($choice)) {
+            $choice = explode(',', str_replace(' ', '', $choice));
         }
 
         $valid = [];
@@ -281,14 +296,14 @@ class Interactor
     public function prompt(string $text, $default = null, callable $fn = null, int $retry = 3): mixed
     {
         $error  = 'Invalid value. Please try again!';
-        $hidden = \func_get_args()[4] ?? false;
+        $hidden = func_get_args()[4] ?? false;
         $readFn = ['read', 'readHidden'][(int) $hidden];
 
         $this->writer->yellow($text)->comment(null !== $default ? " [$default]: " : ': ');
 
         try {
             $input = $this->reader->{$readFn}($default, $fn);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $input = '';
             $error = $e->getMessage();
         }
@@ -332,17 +347,17 @@ class Interactor
             return $this->promptOptions($choices, $default);
         }
 
-        $maxLen = \max(\array_map('strlen', \array_keys($choices)));
+        $maxLen = max(array_map('strlen', array_keys($choices)));
 
         foreach ($choices as $choice => $desc) {
-            $this->writer->eol()->cyan(\str_pad("  [$choice]", $maxLen + 6))->comment($desc);
+            $this->writer->eol()->cyan(str_pad("  [$choice]", $maxLen + 6))->comment($desc);
         }
 
         $label = $multi ? 'Choices (comma separated)' : 'Choice';
 
         $this->writer->eol()->yellow($label);
 
-        return $this->promptOptions(\array_keys($choices), $default);
+        return $this->promptOptions(array_keys($choices), $default);
     }
 
     /**
@@ -353,11 +368,11 @@ class Interactor
         $options = '';
 
         foreach ($choices as $choice) {
-            $style    = \in_array($choice, (array) $default) ? 'boldCyan' : 'cyan';
+            $style    = in_array($choice, (array) $default) ? 'boldCyan' : 'cyan';
             $options .= "/<$style>$choice</end>";
         }
 
-        $options = \ltrim($options, '/');
+        $options = ltrim($options, '/');
 
         $this->writer->colors(" ($options): ");
 
@@ -370,7 +385,7 @@ class Interactor
     protected function isValidChoice(string $choice, array $choices, bool $case): bool
     {
         if ($this->isAssocChoice($choices)) {
-            $choices = \array_keys($choices);
+            $choices = array_keys($choices);
         }
 
         $fn = ['\strcasecmp', '\strcmp'][(int) $case];
@@ -389,7 +404,7 @@ class Interactor
      */
     protected function isAssocChoice(array $array): bool
     {
-        return !empty($array) && \array_keys($array) != \range(0, \count($array) - 1);
+        return !empty($array) && array_keys($array) != range(0, count($array) - 1);
     }
 
     /**
@@ -397,7 +412,7 @@ class Interactor
      */
     public function __call(string $method, array $arguments)
     {
-        if (\method_exists($this->reader, $method)) {
+        if (method_exists($this->reader, $method)) {
             return $this->reader->{$method}(...$arguments);
         }
 

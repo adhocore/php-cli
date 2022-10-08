@@ -11,6 +11,18 @@
 
 namespace Ahc\Cli\Input;
 
+use function array_filter;
+use function fgets;
+use function fopen;
+use function implode;
+use function rtrim;
+use function shell_exec;
+use function stream_get_contents;
+use function stream_select;
+use const DIRECTORY_SEPARATOR;
+use const PHP_EOL;
+use const STDIN;
+
 /**
  * Cli Reader.
  *
@@ -31,7 +43,7 @@ class Reader
      */
     public function __construct(string $path = null)
     {
-        $this->stream = $path ? \fopen($path, 'r') : \STDIN;
+        $this->stream = $path ? fopen($path, 'r') : STDIN;
     }
 
     /**
@@ -44,7 +56,7 @@ class Reader
      */
     public function read($default = null, callable $fn = null): mixed
     {
-        $in = \rtrim(\fgets($this->stream), "\r\n");
+        $in = rtrim(fgets($this->stream), "\r\n");
 
         if ('' === $in && null !== $default) {
             return $default;
@@ -64,7 +76,7 @@ class Reader
      */
     public function readAll(callable $fn = null): string
     {
-        $in = \stream_get_contents($this->stream);
+        $in = stream_get_contents($this->stream);
 
         return $fn ? $fn($in) : $in;
     }
@@ -85,8 +97,8 @@ class Reader
         $write = [];
         $exept = [];
 
-        if (\stream_select($read, $write, $exept, 0) === 1) {
-            while ($line = \fgets($this->stream)) {
+        if (stream_select($read, $write, $exept, 0) === 1) {
+            while ($line = fgets($this->stream)) {
                 $stdin .= $line;
             }
         }
@@ -108,16 +120,16 @@ class Reader
     public function readHidden($default = null, callable $fn = null): mixed
     {
         // @codeCoverageIgnoreStart
-        if ('\\' === \DIRECTORY_SEPARATOR) {
+        if ('\\' === DIRECTORY_SEPARATOR) {
             return $this->readHiddenWinOS($default, $fn);
         }
         // @codeCoverageIgnoreEnd
 
-        \shell_exec('stty -echo');
+        shell_exec('stty -echo');
         $in = $this->read($default, $fn);
-        \shell_exec('stty echo');
+        shell_exec('stty echo');
 
-        echo \PHP_EOL;
+        echo PHP_EOL;
 
         return $in;
     }
@@ -133,14 +145,14 @@ class Reader
      */
     protected function readHiddenWinOS($default = null, callable $fn = null): mixed
     {
-        $cmd = 'powershell -Command ' . \implode('; ', \array_filter([
+        $cmd = 'powershell -Command ' . implode('; ', array_filter([
             '$pword = Read-Host -AsSecureString',
             '$pword = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($pword)',
             '$pword = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($pword)',
             'echo $pword',
         ]));
 
-        $in = \rtrim(\shell_exec($cmd), "\r\n");
+        $in = rtrim(shell_exec($cmd), "\r\n");
 
         if ('' === $in && null !== $default) {
             return $default;

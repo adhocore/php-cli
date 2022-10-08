@@ -18,6 +18,15 @@ use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\IO\Interactor;
 use Ahc\Cli\Output\Writer;
+use Closure;
+use function array_filter;
+use function array_keys;
+use function end;
+use function explode;
+use function func_num_args;
+use function sprintf;
+use function str_contains;
+use function strstr;
 
 /**
  * Parser aware Command for the cli (based on tj/commander.js).
@@ -74,7 +83,7 @@ class Command extends Parser implements Groupable
             fn () => $this->set('verbosity', ($this->verbosity ?? 0) + 1) && false
         );
 
-        $this->onExit(fn ($exitCode = 0) => exit($exitCode));
+        $this->onExit(static fn ($exitCode = 0) => exit($exitCode));
 
         return $this;
     }
@@ -146,7 +155,7 @@ class Command extends Parser implements Groupable
      */
     public function arguments(string $definitions): self
     {
-        $definitions = \explode(' ', $definitions);
+        $definitions = explode(' ', $definitions);
 
         foreach ($definitions as $raw) {
             $this->argument($raw);
@@ -208,7 +217,7 @@ class Command extends Parser implements Groupable
      */
     public function usage(string $usage = null)
     {
-        if (\func_num_args() === 0) {
+        if (func_num_args() === 0) {
             return $this->_usage;
         }
 
@@ -226,7 +235,7 @@ class Command extends Parser implements Groupable
      */
     public function alias(string $alias = null)
     {
-        if (\func_num_args() === 0) {
+        if (func_num_args() === 0) {
             return $this->_alias;
         }
 
@@ -240,9 +249,9 @@ class Command extends Parser implements Groupable
      */
     public function on(callable $fn, string $option = null): self
     {
-        $names = \array_keys($this->allOptions());
+        $names = array_keys($this->allOptions());
 
-        $this->_events[$option ?? \end($names)] = $fn;
+        $this->_events[$option ?? end($names)] = $fn;
 
         return $this;
     }
@@ -266,12 +275,12 @@ class Command extends Parser implements Groupable
             return $this->set($this->toCamelCase($arg), $value);
         }
 
-        $values = \array_filter($this->values(false));
+        $values = array_filter($this->values(false));
 
         // Has some value, error!
         if ($values) {
             throw new RuntimeException(
-                \sprintf('Option "%s" not registered', $arg)
+                sprintf('Option "%s" not registered', $arg)
             );
         }
 
@@ -349,11 +358,11 @@ class Command extends Parser implements Groupable
      */
     public function action(callable $action = null)
     {
-        if (\func_num_args() === 0) {
+        if (func_num_args() === 0) {
             return $this->_action;
         }
 
-        $this->_action = $action instanceof \Closure ? \Closure::bind($action, $this) : $action;
+        $this->_action = $action instanceof Closure ? Closure::bind($action, $this) : $action;
 
         return $this;
     }
