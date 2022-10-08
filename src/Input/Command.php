@@ -27,11 +27,13 @@ use Ahc\Cli\Output\Writer;
  *
  * @link    https://github.com/adhocore/cli
  */
-class Command extends Parser
+class Command extends Parser implements Groupable
 {
     use InflectsString;
 
     protected $_action = null;
+
+    protected string $_group;
 
     protected string $_version = '';
 
@@ -58,6 +60,7 @@ class Command extends Parser
         protected ?App $_app = null
     ) {
         $this->defaults();
+        $this->inGroup(str_contains($_name, ':') ? strstr($_name, ':', true) : '');
     }
 
     /**
@@ -100,6 +103,24 @@ class Command extends Parser
     public function desc(): string
     {
         return $this->_desc;
+    }
+
+    /**
+     * Sets command group.
+     */
+    public function inGroup(string $group): self
+    {
+        $this->_group = $group;
+
+        return $this;
+    }
+
+    /**
+     * Gets command group.
+     */
+    public function group(): string
+    {
+        return $this->_group;
     }
 
     /**
