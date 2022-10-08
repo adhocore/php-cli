@@ -164,11 +164,16 @@ class OutputHelper
         }
 
         $space = 4;
+        $group = $lastGroup = null;
         foreach ($this->sortItems($items, $padLen) as $item) {
-            $name = $this->getName($item);
-            $desc = \str_replace(["\r\n", "\n"], \str_pad("\n", $padLen + $space + 3), $item->desc());
+            $name  = $this->getName($item);
+            if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
+                $this->writer->boldYellow($group ?: '*', true);
+                $lastGroup = $group;
+            }
+            $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc());
 
-            $this->writer->bold('  ' . \str_pad($name, $padLen + $space));
+            $this->writer->bold('  ' . str_pad($name, $padLen + $space));
             $this->writer->comment($desc, true);
         }
 
@@ -239,9 +244,14 @@ class OutputHelper
      */
     protected function sortItems(array $items, &$max = 0): array
     {
-        $max = \max(\array_map(fn ($item) => \strlen($this->getName($item)), $items));
+        $max = max(array_map(fn ($item) => strlen($this->getName($item)), $items));
 
-        \uasort($items, fn ($a, $b) => $a->name() <=> $b->name());
+        uasort($items, static function ($a, $b) {
+            $aName = $a instanceof Groupable ? $a->group() . $a->name() : $a->name();
+            $bName = $b instanceof Groupable ? $b->group() . $b->name() : $b->name();
+
+            return $aName <=> $bName;
+        });
 
         return $items;
     }
