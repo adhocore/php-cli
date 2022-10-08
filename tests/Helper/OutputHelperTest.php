@@ -74,14 +74,20 @@ class OutputHelperTest extends TestCase
         $this->newHelper()->showCommandsHelp([
             new Command('rm', 'Remove file or folder'),
             new Command('mkdir', 'Make a folder'),
+            new Command('group:rm', 'Remove file or folder'),
+            new Command('group:mkdir', 'Make a folder'),
         ], 'Cmd Header', 'Cmd Footer');
 
         $this->assertSame([
             'Cmd Header',
             '',
             'Commands:',
-            '  mkdir    Make a folder',
-            '  rm       Remove file or folder',
+            'group',
+            '  group:mkdir    Make a folder',
+            '  group:rm       Remove file or folder',
+            '*',
+            '  mkdir          Make a folder',
+            '  rm             Remove file or folder',
             '',
             'Cmd Footer',
         ], $this->output());
