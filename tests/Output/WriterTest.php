@@ -14,6 +14,8 @@ namespace Ahc\Cli\Test\Output;
 use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
 use Ahc\Cli\Test\CliTestCase;
+use InvalidArgumentException;
+use function substr_count;
 
 class WriterTest extends CliTestCase
 {
@@ -85,7 +87,7 @@ class WriterTest extends CliTestCase
             'even' => 'cyan',
         ]);
 
-        $this->assertSame(3, \substr_count($this->buffer(), '+--------+------+------+'), '3 dashes');
+        $this->assertSame(3, substr_count($this->buffer(), '+--------+------+------+'), '3 dashes');
         $this->assertBufferContains(
             "|\33[1;37;42m A      \33[0m|\33[1;37;42m B C  \33[0m|\33[1;37;42m C D  \33[0m|",
             'Head'
@@ -98,7 +100,7 @@ class WriterTest extends CliTestCase
     {
         $w = new Writer(static::$ou);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Rows must be array of assoc arrays');
 
         $w->table([1, 2]);

@@ -14,6 +14,7 @@ namespace Ahc\Cli\Test\Helper;
 use Ahc\Cli\Input\Reader;
 use Ahc\Cli\IO\Interactor;
 use Ahc\Cli\Output\Writer;
+use Exception;
 use PHPUnit\Framework\TestCase;
 
 class InteractorTest extends TestCase
@@ -121,7 +122,7 @@ class InteractorTest extends TestCase
 
         $this->assertSame(5, $i->prompt('gte 5', null, function ($v) {
             if ((int) $v < 5) {
-                throw new \Exception('gte 5');
+                throw new Exception('gte 5');
             }
 
             return (int) $v;

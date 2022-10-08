@@ -13,6 +13,8 @@ namespace Ahc\Cli\Test\Helper;
 
 use Ahc\Cli\Helper\Shell;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Throwable;
 
 class ShellTest extends TestCase
 {
@@ -53,14 +55,14 @@ class ShellTest extends TestCase
 
     public function test_timeout()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Timeout occurred, process terminated.');
 
         $shell = new Shell('sleep 1');
 
         try {
             $shell->setOptions(null, null, 0.01)->execute();
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->assertSame('terminated', $shell->getState());
 
             throw $e;
@@ -69,7 +71,7 @@ class ShellTest extends TestCase
 
     public function test_rerun()
     {
-        $this->expectException(\RuntimeException::class);
+        $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Process is already running');
 
         $shell = new Shell('sleep 1');

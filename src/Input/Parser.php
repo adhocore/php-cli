@@ -14,6 +14,17 @@ namespace Ahc\Cli\Input;
 use Ahc\Cli\Exception\InvalidParameterException;
 use Ahc\Cli\Exception\RuntimeException;
 use Ahc\Cli\Helper\Normalizer;
+use InvalidArgumentException;
+use function array_diff_key;
+use function array_filter;
+use function array_key_exists;
+use function array_merge;
+use function array_shift;
+use function count;
+use function in_array;
+use function reset;
+use function sprintf;
+use function substr;
 
 /**
  * Argv parser for the cli.
@@ -50,10 +61,10 @@ abstract class Parser
     {
         $this->_normalizer = new Normalizer;
 
-        \array_shift($argv);
+        array_shift($argv);
 
         $argv    = $this->_normalizer->normalizeArgs($argv);
-        $count   = \count($argv);
+        $count   = count($argv);
         $literal = false;
 
         for ($i = 0; $i < $count; $i++) {
@@ -86,7 +97,7 @@ abstract class Parser
             return $this->set($this->_lastVariadic, $arg, true);
         }
 
-        if (!$argument = \reset($this->_arguments)) {
+        if (!$argument = reset($this->_arguments)) {
             return $this->set(null, $arg);
         }
 
@@ -94,7 +105,7 @@ abstract class Parser
 
         // Otherwise we will always collect same arguments again!
         if (!$argument->variadic()) {
-            \array_shift($this->_arguments);
+            array_shift($this->_arguments);
         }
     }
 
@@ -108,7 +119,7 @@ abstract class Parser
      */
     protected function parseOptions(string $arg, string $nextArg = null): bool
     {
-        $value = \substr($nextArg ?? '', 0, 1) === '-' ? null : $nextArg;
+        $value = substr($nextArg ?? '', 0, 1) === '-' ? null : $nextArg;
 
         if (null === $option  = $this->optionFor($arg)) {
             return $this->handleUnknown($arg, $value);
@@ -179,12 +190,12 @@ abstract class Parser
         if (null === $key) {
             $this->_values[] = $value;
         } elseif ($variadic) {
-            $this->_values[$key] = \array_merge($this->_values[$key], (array) $value);
+            $this->_values[$key] = array_merge($this->_values[$key], (array) $value);
         } else {
             $this->_values[$key] = $value;
         }
 
-        return !\in_array($value, [true, false, null], true);
+        return !in_array($value, [true, false, null], true);
     }
 
     /**
@@ -198,9 +209,9 @@ abstract class Parser
     {
         /** @var Parameter[] $missingItems */
         /** @var Parameter $item */
-        $missingItems = \array_filter(
+        $missingItems = array_filter(
             $this->_options + $this->_arguments,
-            fn ($item) => $item->required() && \in_array($this->_values[$item->attributeName()], [null, []])
+            fn ($item) => $item->required() && in_array($this->_values[$item->attributeName()], [null, []])
         );
 
         foreach ($missingItems as $item) {
@@ -210,7 +221,7 @@ abstract class Parser
             }
 
             throw new RuntimeException(
-                \sprintf('%s "%s" is required', $label, $name)
+                sprintf('%s "%s" is required', $label, $name)
             );
         }
     }
@@ -247,12 +258,12 @@ abstract class Parser
      *
      * @param Parameter $param
      *
-     * @throws \InvalidArgumentException If given param name is already registered.
+     * @throws InvalidArgumentException If given param name is already registered.
      */
     protected function ifAlreadyRegistered(Parameter $param): void
     {
         if ($this->registered($param->attributeName())) {
-            throw new InvalidParameterException(\sprintf(
+            throw new InvalidParameterException(sprintf(
                 'The parameter "%s" is already registered',
                 $param instanceof Option ? $param->long() : $param->name()
             ));
@@ -264,7 +275,7 @@ abstract class Parser
      */
     public function registered($attribute): bool
     {
-        return \array_key_exists($attribute, $this->_values);
+        return array_key_exists($attribute, $this->_values);
     }
 
     /**
@@ -300,7 +311,7 @@ abstract class Parser
      */
     public function args(): array
     {
-        return \array_diff_key($this->_values, $this->_options);
+        return array_diff_key($this->_values, $this->_options);
     }
 
     /**

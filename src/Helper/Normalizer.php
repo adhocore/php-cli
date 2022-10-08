@@ -13,6 +13,12 @@ namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Input\Option;
 use Ahc\Cli\Input\Parameter;
+use function array_merge;
+use function explode;
+use function implode;
+use function ltrim;
+use function preg_match;
+use function str_split;
 
 /**
  * Internal value &/or argument normalizer. Has little to no usefulness as public api.
@@ -32,13 +38,13 @@ class Normalizer
         $normalized = [];
 
         foreach ($args as $arg) {
-            if (\preg_match('/^\-\w=/', $arg)) {
-                $normalized = \array_merge($normalized, explode('=', $arg));
-            } elseif (\preg_match('/^\-\w{2,}/', $arg)) {
-                $splitArg   = \implode(' -', \str_split(\ltrim($arg, '-')));
-                $normalized = \array_merge($normalized, \explode(' ', '-' . $splitArg));
-            } elseif (\preg_match('/^\-\-([^\s\=]+)\=/', $arg)) {
-                $normalized = \array_merge($normalized, explode('=', $arg));
+            if (preg_match('/^\-\w=/', $arg)) {
+                $normalized = array_merge($normalized, explode('=', $arg));
+            } elseif (preg_match('/^\-\w{2,}/', $arg)) {
+                $splitArg   = implode(' -', str_split(ltrim($arg, '-')));
+                $normalized = array_merge($normalized, explode(' ', '-' . $splitArg));
+            } elseif (preg_match('/^\-\-([^\s\=]+)\=/', $arg)) {
+                $normalized = array_merge($normalized, explode('=', $arg));
             } else {
                 $normalized[] = $arg;
             }

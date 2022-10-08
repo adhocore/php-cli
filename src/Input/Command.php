@@ -18,6 +18,15 @@ use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\IO\Interactor;
 use Ahc\Cli\Output\Writer;
+use Closure;
+use function array_filter;
+use function array_keys;
+use function end;
+use function explode;
+use function func_num_args;
+use function sprintf;
+use function str_contains;
+use function strstr;
 
 /**
  * Parser aware Command for the cli (based on tj/commander.js).
@@ -27,11 +36,13 @@ use Ahc\Cli\Output\Writer;
  *
  * @link    https://github.com/adhocore/cli
  */
-class Command extends Parser
+class Command extends Parser implements Groupable
 {
     use InflectsString;
 
     protected $_action = null;
+
+    protected string $_group;
 
     protected string $_version = '';
 
@@ -58,6 +69,7 @@ class Command extends Parser
         protected ?App $_app = null
     ) {
         $this->defaults();
+        $this->inGroup(str_contains($_name, ':') ? strstr($_name, ':', true) : '');
     }
 
     /**
@@ -71,7 +83,7 @@ class Command extends Parser
             fn () => $this->set('verbosity', ($this->verbosity ?? 0) + 1) && false
         );
 
-        $this->onExit(fn ($exitCode = 0) => exit($exitCode));
+        $this->onExit(static fn ($exitCode = 0) => exit($exitCode));
 
         return $this;
     }
@@ -103,6 +115,24 @@ class Command extends Parser
     }
 
     /**
+     * Sets command group.
+     */
+    public function inGroup(string $group): self
+    {
+        $this->_group = $group;
+
+        return $this;
+    }
+
+    /**
+     * Gets command group.
+     */
+    public function group(): string
+    {
+        return $this->_group;
+    }
+
+    /**
      * Get the app this command belongs to.
      */
     public function app(): ?App
@@ -125,7 +155,7 @@ class Command extends Parser
      */
     public function arguments(string $definitions): self
     {
-        $definitions = \explode(' ', $definitions);
+        $definitions = explode(' ', $definitions);
 
         foreach ($definitions as $raw) {
             $this->argument($raw);
@@ -187,7 +217,7 @@ class Command extends Parser
      */
     public function usage(string $usage = null)
     {
-        if (\func_num_args() === 0) {
+        if (func_num_args() === 0) {
             return $this->_usage;
         }
 
@@ -205,7 +235,7 @@ class Command extends Parser
      */
     public function alias(string $alias = null)
     {
-        if (\func_num_args() === 0) {
+        if (func_num_args() === 0) {
             return $this->_alias;
         }
 
@@ -219,9 +249,9 @@ class Command extends Parser
      */
     public function on(callable $fn, string $option = null): self
     {
-        $names = \array_keys($this->allOptions());
+        $names = array_keys($this->allOptions());
 
-        $this->_events[$option ?? \end($names)] = $fn;
+        $this->_events[$option ?? end($names)] = $fn;
 
         return $this;
     }
@@ -245,12 +275,12 @@ class Command extends Parser
             return $this->set($this->toCamelCase($arg), $value);
         }
 
-        $values = \array_filter($this->values(false));
+        $values = array_filter($this->values(false));
 
         // Has some value, error!
         if ($values) {
             throw new RuntimeException(
-                \sprintf('Option "%s" not registered', $arg)
+                sprintf('Option "%s" not registered', $arg)
             );
         }
 
@@ -328,11 +358,11 @@ class Command extends Parser
      */
     public function action(callable $action = null)
     {
-        if (\func_num_args() === 0) {
+        if (func_num_args() === 0) {
             return $this->_action;
         }
 
-        $this->_action = $action instanceof \Closure ? \Closure::bind($action, $this) : $action;
+        $this->_action = $action instanceof Closure ? Closure::bind($action, $this) : $action;
 
         return $this;
     }

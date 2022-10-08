@@ -13,6 +13,7 @@ namespace Ahc\Cli\Test\Input;
 
 use Ahc\Cli\Input\Reader;
 use PHPUnit\Framework\TestCase;
+use function ucwords;
 
 class ReaderTest extends TestCase
 {
@@ -42,7 +43,7 @@ class ReaderTest extends TestCase
         $r = new Reader(static::$in);
 
         $this->assertSame('The Value', $r->read('dflt', function ($v) {
-            return \ucwords($v);
+            return ucwords($v);
         }));
     }
 }

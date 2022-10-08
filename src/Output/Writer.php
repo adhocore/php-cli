@@ -11,6 +11,18 @@
 
 namespace Ahc\Cli\Output;
 
+use function fopen;
+use function fwrite;
+use function max;
+use function method_exists;
+use function str_repeat;
+use function stripos;
+use function strpos;
+use function ucfirst;
+use const PHP_EOL;
+use const STDERR;
+use const STDOUT;
+
 /**
  * Cli Writer.
  *
@@ -173,11 +185,11 @@ class Writer
     public function __construct(string $path = null, Color $colorizer = null)
     {
         if ($path) {
-            $path = \fopen($path, 'w');
+            $path = fopen($path, 'w');
         }
 
-        $this->stream  = $path ?: \STDOUT;
-        $this->eStream = $path ?: \STDERR;
+        $this->stream  = $path ?: STDOUT;
+        $this->eStream = $path ?: STDERR;
 
         $this->cursor    = new Cursor;
         $this->colorizer = $colorizer ?? new Color;
@@ -200,8 +212,8 @@ class Writer
      */
     public function __get(string $name): self
     {
-        if ($this->method === null || !\str_contains($this->method, $name)) {
-            $this->method .= $this->method ? \ucfirst($name) : $name;
+        if ($this->method === null || strpos($this->method, $name) === false) {
+            $this->method .= $this->method ? ucfirst($name) : $name;
         }
 
         return $this;
@@ -215,10 +227,10 @@ class Writer
         [$method, $this->method] = [$this->method ?: 'line', ''];
 
         $text  = $this->colorizer->{$method}($text, []);
-        $error = \stripos($method, 'error') !== false;
+        $error = stripos($method, 'error') !== false;
 
         if ($eol) {
-            $text .= \PHP_EOL;
+            $text .= PHP_EOL;
         }
 
         return $this->doWrite($text, $error);
@@ -231,7 +243,7 @@ class Writer
     {
         $stream = $error ? $this->eStream : $this->stream;
 
-        \fwrite($stream, $text);
+        fwrite($stream, $text);
 
         return $this;
     }
@@ -241,7 +253,7 @@ class Writer
      */
     public function eol(int $n = 1): self
     {
-        return $this->doWrite(\str_repeat(PHP_EOL, \max($n, 1)));
+        return $this->doWrite(str_repeat(PHP_EOL, max($n, 1)));
     }
 
     /**
@@ -277,7 +289,7 @@ class Writer
      */
     public function __call(string $method, array $arguments): self
     {
-        if (\method_exists($this->cursor, $method)) {
+        if (method_exists($this->cursor, $method)) {
             return $this->doWrite($this->cursor->{$method}(...$arguments));
         }
 

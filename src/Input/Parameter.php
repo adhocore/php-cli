@@ -12,6 +12,7 @@
 namespace Ahc\Cli\Input;
 
 use Ahc\Cli\Helper\InflectsString;
+use function strpos;
 
 /**
  * Cli Parameter.
@@ -42,9 +43,9 @@ abstract class Parameter
         $filter = null
     ) {
         $this->filter   = $filter;
-        $this->required = \strpos($raw, '<') !== false;
-        $this->optional = \strpos($raw, '[') !== false;
-        $this->variadic = \strpos($raw, '...') !== false;
+        $this->required = strpos($raw, '<') !== false;
+        $this->optional = strpos($raw, '[') !== false;
+        $this->variadic = strpos($raw, '...') !== false;
 
         $this->parse($raw);
     }
