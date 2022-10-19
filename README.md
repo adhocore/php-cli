@@ -3,7 +3,7 @@
 Framework agnostic Command Line Interface utilities and helpers for PHP. Build Console App with ease, fun and love.
 
 [![Latest Version](https://img.shields.io/github/release/adhocore/php-cli.svg?style=flat-square)](https://github.com/adhocore/php-cli/releases)
-[![Travis Build](https://travis-ci.com/adhocore/php-cli.svg?branch=main)](https://travis-ci.com/adhocore/php-cli?branch=main)
+[![Build](https://github.com/adhocore/php-cli/actions/workflows/build.yml/badge.svg)](https://github.com/adhocore/php-cli/actions/workflows/build.yml)
 [![Scrutinizer CI](https://img.shields.io/scrutinizer/g/adhocore/php-cli.svg?style=flat-square)](https://scrutinizer-ci.com/g/adhocore/php-cli/?branch=main)
 [![Codecov branch](https://img.shields.io/codecov/c/github/adhocore/php-cli/main.svg?style=flat-square)](https://codecov.io/gh/adhocore/php-cli)
 [![StyleCI](https://styleci.io/repos/139012552/shield)](https://styleci.io/repos/139012552)
