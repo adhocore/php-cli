@@ -56,7 +56,7 @@ class Shell
     protected array $descriptors;
 
     /** @var array An array of environment variables */
-    protected array $env = [];
+    protected ?array $env = null;
 
     /** @var int Exit code of the process once it has been terminated */
     protected ?int $exitCode = null;
@@ -166,12 +166,12 @@ class Shell
 
     public function setOptions(
         string $cwd = null,
-        array $env = null,
+        ?array $env = null,
         float $timeout = null,
         array $otherOptions = []
     ): self {
         $this->cwd            = $cwd;
-        $this->env            = $env ?? [];
+        $this->env            = $env;
         $this->processTimeout = $timeout;
         $this->otherOptions   = $otherOptions;
 
