@@ -24,7 +24,7 @@ class ShellTest extends TestCase
 
         $shell->execute();
 
-        $this->assertSame("hello\n", $shell->getOutput());
+        $this->assertSame("hello", trim($shell->getOutput())); // trim to remove trailing newline which is OS dependent
         $this->assertSame(0, $shell->getExitCode());
     }
 
@@ -35,7 +35,7 @@ class ShellTest extends TestCase
         $shell->execute(true);
 
         $this->assertIsInt($pid = $shell->getProcessId());
-        $this->assertGreaterThan(getmypid(), $pid);
+        // $this->assertGreaterThan(getmypid(), $pid); // this is not always true especially on windows
     }
 
     public function test_async_stop()
