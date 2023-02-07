@@ -26,7 +26,10 @@ class ReaderTest extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-        unlink(static::$in);
+        // Make sure we clean up after ourselves:
+        if (file_exists(static::$in)) {
+            unlink(static::$in);
+        }
     }
 
     public function test_default()

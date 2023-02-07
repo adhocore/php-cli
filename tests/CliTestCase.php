@@ -46,7 +46,10 @@ class CliTestCase extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-        unlink(static::$ou);
+        // Make sure we clean up after ourselves:
+        if (file_exists(static::$ou)) {
+            unlink(static::$ou);
+        }
     }
 
     public function buffer()
