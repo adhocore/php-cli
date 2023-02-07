@@ -29,7 +29,7 @@ class OutputHelperTest extends TestCase
 
     public function setUp(): void
     {
-        file_put_contents(static::$ou, '');
+        file_put_contents(static::$ou, '', LOCK_EX);
     }
 
     public static function tearDownAfterClass(): void

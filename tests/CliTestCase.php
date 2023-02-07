@@ -36,7 +36,7 @@ class CliTestCase extends TestCase
     {
         ob_start();
         StreamInterceptor::$buffer = '';
-        file_put_contents(static::$ou, '');
+        file_put_contents(static::$ou, '', LOCK_EX);
     }
 
     public function tearDown(): void

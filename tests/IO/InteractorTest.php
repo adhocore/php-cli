@@ -24,8 +24,8 @@ class InteractorTest extends TestCase
 
     public function setUp(): void
     {
-        file_put_contents(static::$in, '');
-        file_put_contents(static::$ou, '');
+        file_put_contents(static::$in, '', LOCK_EX);
+        file_put_contents(static::$ou, '', LOCK_EX);
     }
 
     public function tearDown(): void
@@ -152,7 +152,7 @@ class InteractorTest extends TestCase
 
     protected function newInteractor(string $in = '')
     {
-        file_put_contents(static::$in, $in);
+        file_put_contents(static::$in, $in, LOCK_EX);
 
         return new Interactor(static::$in, static::$ou);
     }

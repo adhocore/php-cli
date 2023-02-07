@@ -24,8 +24,8 @@ class ApplicationTest extends TestCase
 
     public function setUp(): void
     {
-        file_put_contents(static::$in, '');
-        file_put_contents(static::$ou, '');
+        file_put_contents(static::$in, '', LOCK_EX);
+        file_put_contents(static::$ou, '', LOCK_EX);
     }
 
     public function tearDown(): void
