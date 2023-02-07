@@ -10,3 +10,4 @@ composer.lock
 clover.xml
 coverage.xml
 phpcs.xml
+.phpunit.result.cache
