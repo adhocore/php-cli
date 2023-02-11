@@ -53,12 +53,12 @@ class ColorTest extends TestCase
         $c = new Color;
 
         // We use PHP_EOL here because it is platform dependent and eol tag will be replaced by it.
-        $this->assertSame(PHP_EOL."abc".PHP_EOL, $c->colors('<eol>abc</eol>'));
+        $this->assertSame(PHP_EOL . 'abc' . PHP_EOL, $c->colors('<eol>abc</eol>'));
         $this->assertSame("\033[0;31mRed\033[0m", $c->colors('<red>Red</end>'));
-        $this->assertSame("\033[1;31mBoldRed".PHP_EOL."\033[0m", $c->colors('<boldRed>BoldRed<eol/></end>'));
-        $this->assertSame("\033[0;36;42mBgGreenCyan\033[0m".PHP_EOL, $c->colors('<bgGreenCyan>BgGreenCyan</end><eol>'));
+        $this->assertSame("\033[1;31mBoldRed" . PHP_EOL . "\033[0m", $c->colors('<boldRed>BoldRed<eol/></end>'));
+        $this->assertSame("\033[0;36;42mBgGreenCyan\033[0m" . PHP_EOL, $c->colors('<bgGreenCyan>BgGreenCyan</end><eol>'));
         $this->assertSame(
-            "\033[0;31mRed\033[0m".PHP_EOL."Normal".PHP_EOL."\033[1;37mBOLD\033[0m",
+            "\033[0;31mRed\033[0m" . PHP_EOL . 'Normal' . PHP_EOL . "\033[1;37mBOLD\033[0m",
             $c->colors("<red>Red</end>\r\nNormal\n<bold>BOLD</end>")
         );
     }

@@ -51,7 +51,7 @@ class Shell
 
     const DEFAULT_STDOUT_WIN = ['pipe', 'w'];
     const DEFAULT_STDOUT_NIX = ['pipe', 'w'];
-    
+
     const DEFAULT_STDERR_WIN = ['pipe', 'w'];
     const DEFAULT_STDERR_NIX = ['pipe', 'w'];
 
@@ -119,6 +119,7 @@ class Shell
         if (!$stderr) {
             $stderr = $win ? self::DEFAULT_STDERR_WIN : self::DEFAULT_STDERR_NIX;
         }
+
         return [
             self::STDIN_DESCRIPTOR_KEY  => $stdin,
             self::STDOUT_DESCRIPTOR_KEY => $stdout,
@@ -132,6 +133,7 @@ class Shell
         if (defined('PHP_OS')) {
             return 'WIN' === strtoupper(substr(PHP_OS, 0, 3)); // May be 'WINNT' or 'WIN32' or 'Windows'
         }
+
         return '\\' === DIRECTORY_SEPARATOR; // Fallback - Less reliable (Windows 7...)
     }
 
@@ -208,16 +210,17 @@ class Shell
 
         return $this;
     }
-    
+
     /**
      * execute
      * Execute the command with optional stdin, stdout and stderr which override the defaults
-     * If async is set to true, the process will be executed in the background
-     * 
-     * @param  bool $async - default false
-     * @param  ?array $stdin - default null (loads default descriptor)
-     * @param  ?array $stdout - default null (loads default descriptor)
-     * @param  ?array $stderr - default null (loads default descriptor)
+     * If async is set to true, the process will be executed in the background.
+     *
+     * @param bool   $async  - default false
+     * @param ?array $stdin  - default null (loads default descriptor)
+     * @param ?array $stdout - default null (loads default descriptor)
+     * @param ?array $stderr - default null (loads default descriptor)
+     *
      * @return self
      */
     public function execute(bool $async = false, ?array $stdin = null, ?array $stdout = null, ?array $stderr = null): self
@@ -264,6 +267,7 @@ class Shell
         if (!is_resource($this->pipes[self::STDOUT_DESCRIPTOR_KEY])) {
             return false;
         }
+
         return stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], false);
     }
 
@@ -278,6 +282,7 @@ class Shell
         if (!is_resource($this->pipes[self::STDOUT_DESCRIPTOR_KEY])) {
             return '';
         }
+
         return stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
     }
 
@@ -286,6 +291,7 @@ class Shell
         if (!is_resource($this->pipes[self::STDERR_DESCRIPTOR_KEY])) {
             return '';
         }
+
         return stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 

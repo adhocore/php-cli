@@ -24,7 +24,7 @@ class ShellTest extends TestCase
 
         $shell->execute();
 
-        $this->assertSame("hello", trim($shell->getOutput())); // trim to remove trailing newline which is OS dependent
+        $this->assertSame('hello', trim($shell->getOutput())); // trim to remove trailing newline which is OS dependent
         $this->assertSame(0, $shell->getExitCode());
     }
 
