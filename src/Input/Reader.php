@@ -125,9 +125,9 @@ class Reader
         }
         // @codeCoverageIgnoreEnd
 
-        shell_exec('stty -echo');
+        defined('RUNNING_TEST') || shell_exec('stty -echo');
         $in = $this->read($default, $fn);
-        shell_exec('stty echo');
+        defined('RUNNING_TEST') || shell_exec('stty echo');
 
         echo PHP_EOL;
 

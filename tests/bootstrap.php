@@ -10,3 +10,6 @@
  */
 
 require_once __DIR__ . '/../vendor/autoload.php';
+
+defined('RUNNING_TEST') || define('RUNNING_TEST', 1);
+defined('STDIN') || define('STDIN', fopen('php://stdin', 'r'));
