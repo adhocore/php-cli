@@ -24,14 +24,19 @@ class ApplicationTest extends TestCase
 
     public function setUp(): void
     {
-        file_put_contents(static::$in, '');
-        file_put_contents(static::$ou, '');
+        file_put_contents(static::$in, '', LOCK_EX);
+        file_put_contents(static::$ou, '', LOCK_EX);
     }
 
     public function tearDown(): void
     {
-        unlink(static::$in);
-        unlink(static::$ou);
+        // Make sure we clean up after ourselves:
+        if (file_exists(static::$in)) {
+            unlink(static::$in);
+        }
+        if (file_exists(static::$ou)) {
+            unlink(static::$ou);
+        }
     }
 
     public function test_new()

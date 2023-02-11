@@ -21,12 +21,15 @@ class ReaderTest extends TestCase
 
     public function setUp(): void
     {
-        file_put_contents(static::$in, '');
+        file_put_contents(static::$in, '', LOCK_EX);
     }
 
     public static function tearDownAfterClass(): void
     {
-        unlink(static::$in);
+        // Make sure we clean up after ourselves:
+        if (file_exists(static::$in)) {
+            unlink(static::$in);
+        }
     }
 
     public function test_default()
@@ -38,7 +41,7 @@ class ReaderTest extends TestCase
 
     public function test_callback()
     {
-        file_put_contents(static::$in, 'the value');
+        file_put_contents(static::$in, 'the value', LOCK_EX);
 
         $r = new Reader(static::$in);
 

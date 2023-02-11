@@ -36,7 +36,7 @@ class CliTestCase extends TestCase
     {
         ob_start();
         StreamInterceptor::$buffer = '';
-        file_put_contents(static::$ou, '');
+        file_put_contents(static::$ou, '', LOCK_EX);
     }
 
     public function tearDown(): void
@@ -46,7 +46,10 @@ class CliTestCase extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-        unlink(static::$ou);
+        // Make sure we clean up after ourselves:
+        if (file_exists(static::$ou)) {
+            unlink(static::$ou);
+        }
     }
 
     public function buffer()

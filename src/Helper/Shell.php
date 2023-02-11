@@ -46,6 +46,15 @@ class Shell
     const STATE_CLOSED     = 'closed';
     const STATE_TERMINATED = 'terminated';
 
+    const DEFAULT_STDIN_WIN = ['pipe', 'r'];
+    const DEFAULT_STDIN_NIX = ['pipe', 'r'];
+
+    const DEFAULT_STDOUT_WIN = ['pipe', 'w'];
+    const DEFAULT_STDOUT_NIX = ['pipe', 'w'];
+    
+    const DEFAULT_STDERR_WIN = ['pipe', 'w'];
+    const DEFAULT_STDERR_NIX = ['pipe', 'w'];
+
     /** @var bool Whether to wait for the process to finish or return instantly */
     protected bool $async = false;
 
@@ -98,25 +107,40 @@ class Shell
         $this->input   = $input;
     }
 
-    protected function getDescriptors(): array
+    protected function prepareDescriptors(?array $stdin = null, ?array $stdout = null, ?array $stderr = null): array
     {
-        $out = $this->isWindows() ? ['file', 'NUL', 'w'] : ['pipe', 'w'];
-
+        $win = $this->isWindows();
+        if (!$stdin) {
+            $stdin = $win ? self::DEFAULT_STDIN_WIN : self::DEFAULT_STDIN_NIX;
+        }
+        if (!$stdout) {
+            $stdout = $win ? self::DEFAULT_STDOUT_WIN : self::DEFAULT_STDOUT_NIX;
+        }
+        if (!$stderr) {
+            $stderr = $win ? self::DEFAULT_STDERR_WIN : self::DEFAULT_STDERR_NIX;
+        }
         return [
-            self::STDIN_DESCRIPTOR_KEY  => ['pipe', 'r'],
-            self::STDOUT_DESCRIPTOR_KEY => $out,
-            self::STDERR_DESCRIPTOR_KEY => $out,
+            self::STDIN_DESCRIPTOR_KEY  => $stdin,
+            self::STDOUT_DESCRIPTOR_KEY => $stdout,
+            self::STDERR_DESCRIPTOR_KEY => $stderr,
         ];
     }
 
     protected function isWindows(): bool
     {
-        return '\\' === DIRECTORY_SEPARATOR;
+        // If PHP_OS is defined, use it - More reliable:
+        if (defined('PHP_OS')) {
+            return 'WIN' === strtoupper(substr(PHP_OS, 0, 3)); // May be 'WINNT' or 'WIN32' or 'Windows'
+        }
+        return '\\' === DIRECTORY_SEPARATOR; // Fallback - Less reliable (Windows 7...)
     }
 
     protected function setInput(): void
     {
-        fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input ?? '');
+        //Make sure the pipe is a stream resource before writing to it to avoid a warning
+        if (is_resource($this->pipes[self::STDIN_DESCRIPTOR_KEY])) {
+            fwrite($this->pipes[self::STDIN_DESCRIPTOR_KEY], $this->input ?? '');
+        }
     }
 
     protected function updateProcessStatus(): void
@@ -132,9 +156,16 @@ class Shell
 
     protected function closePipes(): void
     {
-        fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
-        fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
-        fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
+        //Make sure the pipe are a stream resource before closing them to avoid a warning
+        if (is_resource($this->pipes[self::STDIN_DESCRIPTOR_KEY])) {
+            fclose($this->pipes[self::STDIN_DESCRIPTOR_KEY]);
+        }
+        if (is_resource($this->pipes[self::STDOUT_DESCRIPTOR_KEY])) {
+            fclose($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
+        }
+        if (is_resource($this->pipes[self::STDERR_DESCRIPTOR_KEY])) {
+            fclose($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
+        }
     }
 
     protected function wait(): ?int
@@ -177,14 +208,25 @@ class Shell
 
         return $this;
     }
-
-    public function execute(bool $async = false): self
+    
+    /**
+     * execute
+     * Execute the command with optional stdin, stdout and stderr which override the defaults
+     * If async is set to true, the process will be executed in the background
+     * 
+     * @param  bool $async - default false
+     * @param  ?array $stdin - default null (loads default descriptor)
+     * @param  ?array $stdout - default null (loads default descriptor)
+     * @param  ?array $stderr - default null (loads default descriptor)
+     * @return self
+     */
+    public function execute(bool $async = false, ?array $stdin = null, ?array $stdout = null, ?array $stderr = null): self
     {
         if ($this->isRunning()) {
             throw new RuntimeException('Process is already running.');
         }
 
-        $this->descriptors      = $this->getDescriptors();
+        $this->descriptors      = $this->prepareDescriptors($stdin, $stdout, $stderr);
         $this->processStartTime = microtime(true);
 
         $this->process = proc_open(
@@ -218,6 +260,10 @@ class Shell
 
     private function setOutputStreamNonBlocking(): bool
     {
+        // Make sure the pipe is a stream resource before setting it to non-blocking to avoid a warning
+        if (!is_resource($this->pipes[self::STDOUT_DESCRIPTOR_KEY])) {
+            return false;
+        }
         return stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], false);
     }
 
@@ -228,11 +274,18 @@ class Shell
 
     public function getOutput(): string
     {
+        // Make sure the pipe is a stream resource before reading it to avoid a warning
+        if (!is_resource($this->pipes[self::STDOUT_DESCRIPTOR_KEY])) {
+            return '';
+        }
         return stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
     }
 
     public function getErrorOutput(): string
     {
+        if (!is_resource($this->pipes[self::STDERR_DESCRIPTOR_KEY])) {
+            return '';
+        }
         return stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
     }
 
