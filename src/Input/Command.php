@@ -17,6 +17,7 @@ use Ahc\Cli\Exception\RuntimeException;
 use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\IO\Interactor;
+use Ahc\Cli\Output\ProgressBar;
 use Ahc\Cli\Output\Writer;
 use Closure;
 use function array_filter;
@@ -39,6 +40,8 @@ use function strstr;
 class Command extends Parser implements Groupable
 {
     use InflectsString;
+
+    protected ?ProgressBar $_progressBar = null;
 
     protected $_action = null;
 
@@ -381,5 +384,21 @@ class Command extends Parser implements Groupable
     protected function io(): Interactor
     {
         return $this->_app ? $this->_app->io() : new Interactor;
+    }
+
+    /**
+     * Get ProgressBar instance.
+     */
+    protected function progress(int $total = null): ProgressBar
+    {
+        if ($this->_progressBar === null) {
+            $this->_progressBar = new ProgressBar(null, $this->writer());
+        }
+
+        if ($total !== null) {
+            $this->_progressBar->total($total);
+        }
+
+        return $this->_progressBar;
     }
 }
