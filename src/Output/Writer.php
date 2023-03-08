@@ -204,6 +204,14 @@ class Writer
     }
 
     /**
+     * Get Cursor.
+     */
+    public function cursor(): Cursor
+    {
+        return $this->cursor;
+    }
+
+    /**
      * Magically set methods.
      *
      * @param string $name Like `red`, `bgRed`, 'bold', `error` etc
