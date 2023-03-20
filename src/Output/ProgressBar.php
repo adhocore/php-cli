@@ -237,7 +237,6 @@ class ProgressBar
     {
         $percentage = $current / $this->total;
         $bar_length = round($this->getBarStrLen() * $percentage);
-
         $bar        = $this->getBar($bar_length);
         $number     = $this->percentageFormatted($percentage);
 
