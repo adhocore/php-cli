@@ -166,7 +166,9 @@ class ProgressBar
             $items = iterator_to_array($items);
         }
 
-        $total = count($items);
+        if (0 === $total = count($items)) {
+            return;
+        }
         if (!$total) {
             return;
         }
