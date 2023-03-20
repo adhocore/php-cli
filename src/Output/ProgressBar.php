@@ -148,7 +148,7 @@ class ProgressBar
      */
     public function forceRedraw(bool $force = true): self
     {
-        $this->forceRedraw = !!$force;
+        $this->forceRedraw = $force;
 
         return $this;
     }
