@@ -16,6 +16,7 @@ use Ahc\Cli\Input\Command;
 use Ahc\Cli\IO\Interactor;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Throwable;
 
 class ApplicationTest extends TestCase
 {
@@ -288,11 +289,19 @@ class ApplicationTest extends TestCase
         );
     }
 
+    public function test_on_exception()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage($msg = 'this will be rethrown and propagated');
+
+        $cmd = (new Command('cmd'))->action(fn () => throw new InvalidArgumentException($msg));
+        $app = $this->newApp('test')->add($cmd)->onException(fn (Throwable $e) => throw $e);
+        $app->handle(['test', 'cmd']);
+    }
+
     protected function newApp(string $name, string $version = '')
     {
-        $app = new Application($name, $version ?: '0.0.1', function () {
-            return false;
-        });
+        $app = new Application($name, $version ?: '0.0.1', fn () => false);
 
         return $app->io(new Interactor(static::$in, static::$ou));
     }
