@@ -8,10 +8,11 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 [![Codecov branch](https://img.shields.io/codecov/c/github/adhocore/php-cli/main.svg?style=flat-square)](https://codecov.io/gh/adhocore/php-cli)
 [![StyleCI](https://styleci.io/repos/139012552/shield)](https://styleci.io/repos/139012552)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Donate 15](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&label=donate+15)](https://www.paypal.me/ji10/15usd)
-[![Donate 25](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&label=donate+25)](https://www.paypal.me/ji10/25usd)
-[![Donate 50](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&label=donate+50)](https://www.paypal.me/ji10/50usd)
 [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Framework+agnostic+Command+Line+Interface+utilities+and+helpers+for+PHP&url=https://github.com/adhocore/php-cli&hashtags=php,cli,cliapp,console)
+[![Support](https://img.shields.io/static/v1?label=Support&message=%E2%9D%A4&logo=GitHub)](https://github.com/sponsors/adhocore)
+<!-- [![Donate 15](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&label=donate+15)](https://www.paypal.me/ji10/15usd)
+[![Donate 25](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&label=donate+25)](https://www.paypal.me/ji10/25usd)
+[![Donate 50](https://img.shields.io/badge/donate-paypal-blue.svg?style=flat-square&label=donate+50)](https://www.paypal.me/ji10/50usd) -->
 
 
 - Command line application made easy
@@ -250,6 +251,25 @@ $app->group('Configuration', function ($app) {
 $app->add((new ConfigSetCommand)->inGroup('Config'));
 $app->add((new ConfigListCommand)->inGroup('Config'));
 ...
+```
+
+#### Exception handler
+
+Set a custom exception handler as callback. The callback receives exception & exit code. The callback may rethrow exception or may exit the program or just log exception and do nothing else.
+
+```php
+$app = new Ahc\Cli\Application('App', 'v0.0.1');
+$app->add(...);
+$app->onException(function (Throwable $e, int $exitCode) {
+    // send to sentry
+    // write to logs
+
+    // optionally, exit with exit code:
+    exit($exitCode);
+
+    // or optionally rethrow, a rethrown exception is propagated to top layer caller.
+    throw $e;
+})->handle($argv);
 ```
 
 #### App help

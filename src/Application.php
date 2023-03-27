@@ -59,6 +59,9 @@ class Application
     /** @var callable The callable to perform exit */
     protected $onExit;
 
+    /** @var callable The callable to catch exception, receives exception & exit code, may rethrow exception or may exit program */
+    protected $onException = null;
+
     public function __construct(protected string $name, protected string $version = '0.0.1', callable $onExit = null)
     {
         $this->onExit = $onExit ?? static fn (int $exitCode = 0) => exit($exitCode);
@@ -123,7 +126,7 @@ class Application
     }
 
     /**
-     * Add a command by its name desc alias etc.
+     * Add a command by its name desc alias etc and return command.
      */
     public function command(
         string $name,
@@ -140,7 +143,7 @@ class Application
     }
 
     /**
-     * Add a prepred command.
+     * Add a prepared command and return itself.
      */
     public function add(Command $command, string $alias = '', bool $default = false): self
     {
@@ -257,6 +260,19 @@ class Application
     }
 
     /**
+     * Sets exception handler callback.
+     *
+     * The callback receives exception & exit code. It may rethrow exception
+     * or may exit the program or just log exception and do nothing else.
+     */
+    public function onException(callable $fn): self
+    {
+        $this->onException = $fn;
+
+        return $this;
+    }
+
+    /**
      * Handle the request, invoke action and call exit handler.
      */
     public function handle(array $argv): mixed
@@ -266,12 +282,12 @@ class Application
         }
 
         $exitCode = 255;
-
         try {
             $command  = $this->parse($argv);
             $result   = $this->doAction($command);
             $exitCode = is_int($result) ? $result : 0;
         } catch (Throwable $e) {
+            isset($this->onException) && ($this->onException)($e, $exitCode);
             $this->outputHelper()->printTrace($e);
         }
 
