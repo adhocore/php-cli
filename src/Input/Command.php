@@ -391,14 +391,6 @@ class Command extends Parser implements Groupable
      */
     protected function progress(int $total = null): ProgressBar
     {
-        if ($this->_progressBar === null) {
-            $this->_progressBar = new ProgressBar(null, $this->writer());
-        }
-
-        if ($total !== null) {
-            $this->_progressBar->total($total);
-        }
-
-        return $this->_progressBar;
+        return new ProgressBar($total, $this->writer());
     }
 }
