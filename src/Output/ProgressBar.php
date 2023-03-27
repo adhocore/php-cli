@@ -61,12 +61,11 @@ class ProgressBar
 
     /**
      * Options for progress bar
-     *
-     * @todo define setter that user can override for custom progress bar
      */
     private array $options = [
         'pointer'    => '>',
         'loader'     => '=',
+        'color'      => 'white',
         'labelColor' => 'white',
     ];
 
@@ -106,6 +105,24 @@ class ProgressBar
     public function total(int $total): self
     {
         $this->total = $total;
+
+        return $this;
+    }
+
+    /**
+     * Set progress bar options
+     */
+    public function option(string|array $key, ?string $value = null): self
+    {
+        if (is_string($key)) {
+            if (empty($value)) {
+                throw new UnexpectedValueException('configuration option value is required');
+            }
+
+            $key = [$key => $value];
+        }
+
+        $this->options = array_merge($this->options, $key);
 
         return $this;
     }
@@ -169,9 +186,7 @@ class ProgressBar
         if (0 === $total = count($items)) {
             return;
         }
-        if (!$total) {
-            return;
-        }
+
         $this->total($total);
 
         foreach ($items as $key => $item) {
@@ -181,7 +196,7 @@ class ProgressBar
                 $label = null;
             }
 
-            $this->advance(1, $label);
+            $this->advance(1, (string) $label);
         }
     }
 
@@ -195,7 +210,7 @@ class ProgressBar
 
         if ($this->shouldRedraw($percentage, $label)) {
             $progress_bar = $this->getProgressBar($current, $label);
-            $this->writer->write($progress_bar, true);
+            $this->writer->colors($progress_bar . '<eol>');
         }
 
         $this->currentPercentage = $percentage;
@@ -248,7 +263,10 @@ class ProgressBar
             $label = $this->labelFormatted('');
         }
 
-        return trim("{$bar} {$number}{$label}");
+        $bar   = '<' . $this->options['color'] . '>' . $bar . ' ' . $number. '</end>';
+        $label = '<' . $this->options['labelColor'] . '>' . $label . '</end>';
+
+        return trim($bar . $label);
     }
 
     /**
