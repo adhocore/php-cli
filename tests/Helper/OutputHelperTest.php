@@ -19,8 +19,6 @@ use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
 use DateTime;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
-use Throwable;
 
 use function file;
 use function implode;

@@ -19,6 +19,7 @@ use Ahc\Cli\Input\Option;
 use Ahc\Cli\Input\Parameter;
 use Ahc\Cli\Output\Writer;
 use Throwable;
+
 use function array_map;
 use function array_shift;
 use function asort;
@@ -44,6 +45,7 @@ use function strrpos;
 use function trim;
 use function uasort;
 use function var_export;
+
 use const STR_PAD_LEFT;
 
 /**

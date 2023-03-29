@@ -17,7 +17,7 @@ use UnexpectedValueException;
 use function count;
 use function iterator_to_array;
 use function min;
-use function round ;
+use function round;
 use function str_repeat;
 use function strlen;
 use function trim;
@@ -30,37 +30,37 @@ use function trim;
 class ProgressBar
 {
     /**
-     * The total number of items involved
+     * The total number of items involved.
      */
     protected int $total = 0;
 
     /**
-     * The current item that the progress bar represents
+     * The current item that the progress bar represents.
      */
     protected int $current = 0;
 
     /**
-     * The current percentage displayed
+     * The current percentage displayed.
      */
     protected string $currentPercentage = '';
 
     /**
-     * The string length of the bar when at 100%
+     * The string length of the bar when at 100%.
      */
     protected int $barStrLen = 0;
 
     /**
-     * Flag indicating whether we are writing the bar for the first time
+     * Flag indicating whether we are writing the bar for the first time.
      */
     protected bool $firstLine = true;
 
     /**
-     * Current status bar label
+     * Current status bar label.
      */
     protected string $label = '';
 
     /**
-     * Options for progress bar
+     * Options for progress bar.
      */
     private array $options = [
         'pointer'    => '>',
@@ -70,7 +70,7 @@ class ProgressBar
     ];
 
     /**
-     * Force a redraw every time
+     * Force a redraw every time.
      */
     protected bool $forceRedraw = false;
 
@@ -86,7 +86,7 @@ class ProgressBar
     protected Terminal $terminal;
 
     /**
-     * If they pass in a total, set the total
+     * If they pass in a total, set the total.
      */
     public function __construct(?int $total = null, ?Writer $writer = null)
     {
@@ -100,7 +100,7 @@ class ProgressBar
     }
 
     /**
-     * Set the total property
+     * Set the total property.
      */
     public function total(int $total): self
     {
@@ -110,7 +110,7 @@ class ProgressBar
     }
 
     /**
-     * Set progress bar options
+     * Set progress bar options.
      */
     public function option(string|array $key, ?string $value = null): self
     {
@@ -128,10 +128,11 @@ class ProgressBar
     }
 
     /**
-     * Determines the current percentage we are at and re-writes the progress bar
+     * Determines the current percentage we are at and re-writes the progress bar.
+     *
+     * @throws UnexpectedValueException
      *
      * @return void
-     * @throws UnexpectedValueException
      */
     public function current(int $current, string $label = '')
     {
@@ -151,9 +152,9 @@ class ProgressBar
     }
 
     /**
-     * Increments the current position we are at and re-writes the progress bar
+     * Increments the current position we are at and re-writes the progress bar.
      *
-     * @param integer $increment The number of items to increment by
+     * @param int $increment The number of items to increment by
      */
     public function advance(int $increment = 1, string $label = '')
     {
@@ -161,7 +162,7 @@ class ProgressBar
     }
 
     /**
-     * Force the progress bar to redraw every time regardless of whether it has changed or not
+     * Force the progress bar to redraw every time regardless of whether it has changed or not.
      */
     public function forceRedraw(bool $force = true): self
     {
@@ -170,11 +171,10 @@ class ProgressBar
         return $this;
     }
 
-
     /**
      * Update a progress bar using an iterable.
      *
-     * @param iterable $items Array or any other iterable object
+     * @param iterable $items    Array or any other iterable object
      * @param callable $callback A handler to run on each item
      */
     public function each($items, callable $callback = null)
@@ -196,9 +196,8 @@ class ProgressBar
         }
     }
 
-
     /**
-     * Draw the progress bar, if necessary
+     * Draw the progress bar, if necessary.
      */
     protected function drawProgressBar(int $current, string $label)
     {
@@ -212,7 +211,7 @@ class ProgressBar
     }
 
     /**
-     * Build the progress bar str and return it
+     * Build the progress bar str and return it.
      */
     protected function getProgressBar(int $current, string $label): string
     {
@@ -226,8 +225,8 @@ class ProgressBar
         // Move the cursor up and clear it to the end
         $lines = $this->hasLabelLine ? 2 : 1;
         $bar   = $this->cursor->up($lines);
-        $bar  .= $this->cr() . $this->cursor->eraseLine();
-        $bar  .= $this->getProgressBarStr($current, $label);
+        $bar .= $this->cr() . $this->cursor->eraseLine();
+        $bar .= $this->getProgressBarStr($current, $label);
 
         // If this line has a label then set that this progress bar has a label line
         if (strlen($label) > 0) {
@@ -239,7 +238,7 @@ class ProgressBar
 
     /**
      * Get the progress bar string, basically:
-     * =============>             50% label
+     * =============>             50% label.
      */
     protected function getProgressBarStr(int $current, string $label): string
     {
@@ -256,14 +255,14 @@ class ProgressBar
             $label = $this->labelFormatted('');
         }
 
-        $bar   = '<' . $this->options['color'] . '>' . $bar . ' ' . $number. '</end>';
+        $bar   = '<' . $this->options['color'] . '>' . $bar . ' ' . $number . '</end>';
         $label = '<' . $this->options['labelColor'] . '>' . $label . '</end>';
 
         return trim($bar . $label);
     }
 
     /**
-     * Get the string for the actual bar based on the current length
+     * Get the string for the actual bar based on the current length.
      */
     protected function getBar(int $length): string
     {
@@ -274,7 +273,7 @@ class ProgressBar
     }
 
     /**
-     * Get the length of the bar string based on the width of the terminal window
+     * Get the length of the bar string based on the width of the terminal window.
      */
     protected function getBarStrLen(): int
     {
@@ -287,7 +286,7 @@ class ProgressBar
     }
 
     /**
-     * Format the percentage so it looks pretty
+     * Format the percentage so it looks pretty.
      */
     protected function percentageFormatted(float $percentage): string
     {
@@ -295,7 +294,7 @@ class ProgressBar
     }
 
     /**
-     * Format the label so it is positioned correctly
+     * Format the label so it is positioned correctly.
      */
     protected function labelFormatted(string $label): string
     {
@@ -303,15 +302,15 @@ class ProgressBar
     }
 
     /**
-     * Determine whether the progress bar has changed and we need to redrew
+     * Determine whether the progress bar has changed and we need to redrew.
      */
     protected function shouldRedraw(string $percentage, string $label): bool
     {
-        return ($this->forceRedraw || $percentage != $this->currentPercentage || $label != $this->label);
+        return $this->forceRedraw || $percentage != $this->currentPercentage || $label != $this->label;
     }
 
     protected function cr(): string
     {
-        return Terminal::isWindows() ? "\r" : "";
+        return Terminal::isWindows() ? "\r" : '';
     }
 }

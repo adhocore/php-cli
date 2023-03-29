@@ -19,6 +19,7 @@ use function str_repeat;
 use function stripos;
 use function strpos;
 use function ucfirst;
+
 use const PHP_EOL;
 use const STDERR;
 use const STDOUT;

@@ -20,6 +20,7 @@ use Ahc\Cli\IO\Interactor;
 use Ahc\Cli\Output\ProgressBar;
 use Ahc\Cli\Output\Writer;
 use Closure;
+
 use function array_filter;
 use function array_keys;
 use function end;

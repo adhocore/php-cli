@@ -17,6 +17,7 @@ use Ahc\Cli\Output\ProgressBar;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+
 use function debug_backtrace;
 
 class CommandTest extends TestCase

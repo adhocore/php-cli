@@ -28,7 +28,7 @@ class ProgressBarTest extends CliTestCase
             $progress->advance(1, "$i x label");
             if ($i === 2) {
                 $progress->forceRedraw(true);
-                $progress->current(2, "2 x label");
+                $progress->current(2, '2 x label');
                 $progress->forceRedraw(false);
             }
         }

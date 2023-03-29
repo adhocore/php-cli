@@ -18,7 +18,6 @@ use function implode;
 use function is_array;
 use function preg_match_all;
 
-
 /**
  * A thin to find some information about the current terminal (width, height, ect...).
  *
@@ -44,7 +43,7 @@ class Terminal
     }
 
     /**
-     * Get the width of the terminal
+     * Get the width of the terminal.
      */
     public function width(): ?int
     {
@@ -52,7 +51,7 @@ class Terminal
     }
 
     /**
-     * Get the height of the terminal
+     * Get the height of the terminal.
      */
     public function height(): ?int
     {
@@ -60,7 +59,7 @@ class Terminal
     }
 
     /**
-     * Get specified terminal dimension
+     * Get specified terminal dimension.
      */
     protected function getDimension(string $key): ?int
     {
@@ -77,7 +76,7 @@ class Terminal
     }
 
     /**
-     * Get information about the dimensions of the Windows terminal
+     * Get information about the dimensions of the Windows terminal.
      *
      * @codeCoverageIgnore
      *

@@ -13,7 +13,6 @@ namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Exception\RuntimeException;
 
-use function defined;
 use function fclose;
 use function function_exists;
 use function fwrite;
@@ -25,10 +24,6 @@ use function proc_open;
 use function proc_terminate;
 use function stream_get_contents;
 use function stream_set_blocking;
-use function strtoupper;
-use function str_starts_with;
-
-use const DIRECTORY_SEPARATOR;
 
 /**
  * A thin proc_open wrapper to execute shell commands.
