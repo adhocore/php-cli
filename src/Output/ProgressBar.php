@@ -280,7 +280,7 @@ class ProgressBar
     {
         if (!$this->barStrLen) {
             // Subtract 10 because of the '> 100%' plus some padding, max 100
-            $this->barStrLen = min($this->terminal->width() - 10, 100);
+            $this->barStrLen = max(50, min($this->terminal->width() - 10, 100));
         }
 
         return $this->barStrLen;
