@@ -31,6 +31,18 @@ use function preg_match_all;
  */
 class Terminal
 {
+    public static function isWindows(): bool
+    {
+        // If PHP_OS is defined, use it - More reliable:
+        if (defined('PHP_OS')) {
+            return str_starts_with(strtoupper(PHP_OS), 'WIN'); // May be 'WINNT' or 'WIN32' or 'Windows'
+        }
+
+        // @codeCoverageIgnoreStart
+        return '\\' === DIRECTORY_SEPARATOR; // Fallback - Less reliable (Windows 7...)
+        // @codeCoverageIgnoreEnd
+    }
+
     /**
      * Get the width of the terminal
      */
@@ -52,30 +64,22 @@ class Terminal
      */
     protected function getDimension(string $key): ?int
     {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $index      = array_search($key, ['height', 'width']);
-            $dimensions = $this->getDimensions();
-
-            return $dimensions[$index] ?? null;
+        if (static::isWindows()) {
+            // @codeCoverageIgnoreStart
+            return $this->getDimensions()[array_search($key, ['height', 'width'])] ?? null;
+            // @codeCoverageIgnoreEnd
         }
 
-        $commands = [
-            'width'  => 'cols',
-            'height' => 'lines',
-        ];
-        $type = $commands[$key];
-
+        $type   = ['width'  => 'cols', 'height' => 'lines'][$key];
         $result = exec("tput {$type} 2>/dev/null");
 
-        if ($result !== false) {
-            return (int) $result;
-        }
-
-        return null;
+        return $result === false ? null : (int) $result;
     }
 
     /**
      * Get information about the dimensions of the Windows terminal
+     *
+     * @codeCoverageIgnore
      *
      * @return int[]
      */
