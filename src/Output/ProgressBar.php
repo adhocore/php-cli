@@ -141,7 +141,7 @@ class ProgressBar
         }
 
         if ($current > $this->total) {
-            throw new UnexpectedValueException('The current is greater than the total.');
+            throw new UnexpectedValueException(sprintf('The current (%d) is greater than the total (%d).', $current, $this->total));
         }
 
         $this->drawProgressBar($current, $label);
@@ -190,13 +190,9 @@ class ProgressBar
         $this->total($total);
 
         foreach ($items as $key => $item) {
-            if ($callback) {
-                $label = $callback($item, $key);
-            } else {
-                $label = null;
-            }
+            $label = $callback ? (string) $callback($item, $key) : '';
 
-            $this->advance(1, (string) $label);
+            $this->advance(1, $label);
         }
     }
 
@@ -209,8 +205,7 @@ class ProgressBar
         $percentage = $this->percentageFormatted($current / $this->total);
 
         if ($this->shouldRedraw($percentage, $label)) {
-            $progress_bar = $this->getProgressBar($current, $label);
-            $this->writer->colors($progress_bar . '<eol>');
+            $this->writer->colors($this->getProgressBar($current, $label) . '<eol>');
         }
 
         $this->currentPercentage = $percentage;
@@ -229,19 +224,17 @@ class ProgressBar
         }
 
         // Move the cursor up and clear it to the end
-        $line_count = $this->hasLabelLine ? 2 : 1;
-
-        $progress_bar  = $this->cursor->up($line_count);
-        $progress_bar .= "\r";
-        $progress_bar .= $this->cursor->eraseLine();
-        $progress_bar .= $this->getProgressBarStr($current, $label);
+        $lines = $this->hasLabelLine ? 2 : 1;
+        $bar   = $this->cursor->up($lines);
+        $bar  .= $this->cr() . $this->cursor->eraseLine();
+        $bar  .= $this->getProgressBarStr($current, $label);
 
         // If this line has a label then set that this progress bar has a label line
         if (strlen($label) > 0) {
             $this->hasLabelLine = true;
         }
 
-        return $progress_bar;
+        return $bar;
     }
 
     /**
@@ -306,7 +299,7 @@ class ProgressBar
      */
     protected function labelFormatted(string $label): string
     {
-        return "\n" . "\r". $this->cursor->eraseLine() . $label;
+        return "\n" . $this->cr() . $this->cursor->eraseLine() . $label;
     }
 
     /**
@@ -315,5 +308,10 @@ class ProgressBar
     protected function shouldRedraw(string $percentage, string $label): bool
     {
         return ($this->forceRedraw || $percentage != $this->currentPercentage || $label != $this->label);
+    }
+
+    protected function cr(): string
+    {
+        return Terminal::isWindows() ? "\r" : "";
     }
 }
