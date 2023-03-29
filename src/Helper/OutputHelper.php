@@ -102,7 +102,7 @@ class OutputHelper
         $this->writer->colors($traceStr);
     }
 
-    protected function stringifyArgs(array $args): string
+    public function stringifyArgs(array $args): string
     {
         $holder = [];
 
