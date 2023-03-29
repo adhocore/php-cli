@@ -17,10 +17,15 @@ use Ahc\Cli\Input\Command;
 use Ahc\Cli\Input\Option;
 use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
+use DateTime;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
+use Throwable;
+
 use function file;
 use function implode;
 use function str_replace;
+
 use const FILE_IGNORE_NEW_LINES;
 
 class OutputHelperTest extends TestCase
@@ -138,6 +143,13 @@ class OutputHelperTest extends TestCase
         ], $this->output());
 
         $_SERVER['argv'][0] = $argv0;
+    }
+
+    public function test_stringify()
+    {
+        $str = $this->newHelper()->stringifyArgs([[null, 'string', 10000, 12.345, new DateTime]]);
+
+        $this->assertSame("[NULL, 'string', 10000, 12.345, DateTime]", $str);
     }
 
     public function newHelper()
