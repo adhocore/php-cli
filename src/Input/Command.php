@@ -41,8 +41,6 @@ class Command extends Parser implements Groupable
 {
     use InflectsString;
 
-    protected ?ProgressBar $_progressBar = null;
-
     protected $_action = null;
 
     protected string $_group;
