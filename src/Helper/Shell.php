@@ -12,6 +12,7 @@
 namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Exception\RuntimeException;
+
 use function fclose;
 use function function_exists;
 use function fwrite;
@@ -23,7 +24,6 @@ use function proc_open;
 use function proc_terminate;
 use function stream_get_contents;
 use function stream_set_blocking;
-use const DIRECTORY_SEPARATOR;
 
 /**
  * A thin proc_open wrapper to execute shell commands.
@@ -109,7 +109,7 @@ class Shell
 
     protected function prepareDescriptors(?array $stdin = null, ?array $stdout = null, ?array $stderr = null): array
     {
-        $win = $this->isWindows();
+        $win = Terminal::isWindows();
         if (!$stdin) {
             $stdin = $win ? self::DEFAULT_STDIN_WIN : self::DEFAULT_STDIN_NIX;
         }
@@ -125,16 +125,6 @@ class Shell
             self::STDOUT_DESCRIPTOR_KEY => $stdout,
             self::STDERR_DESCRIPTOR_KEY => $stderr,
         ];
-    }
-
-    protected function isWindows(): bool
-    {
-        // If PHP_OS is defined, use it - More reliable:
-        if (defined('PHP_OS')) {
-            return 'WIN' === strtoupper(substr(PHP_OS, 0, 3)); // May be 'WINNT' or 'WIN32' or 'Windows'
-        }
-
-        return '\\' === DIRECTORY_SEPARATOR; // Fallback - Less reliable (Windows 7...)
     }
 
     protected function setInput(): void
@@ -263,12 +253,9 @@ class Shell
 
     private function setOutputStreamNonBlocking(): bool
     {
-        // Make sure the pipe is a stream resource before setting it to non-blocking to avoid a warning
-        if (!is_resource($this->pipes[self::STDOUT_DESCRIPTOR_KEY])) {
-            return false;
-        }
+        $isRes = is_resource($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
 
-        return stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], false);
+        return $isRes ? stream_set_blocking($this->pipes[self::STDOUT_DESCRIPTOR_KEY], false) : false;
     }
 
     public function getState(): string
@@ -278,21 +265,16 @@ class Shell
 
     public function getOutput(): string
     {
-        // Make sure the pipe is a stream resource before reading it to avoid a warning
-        if (!is_resource($this->pipes[self::STDOUT_DESCRIPTOR_KEY])) {
-            return '';
-        }
+        $isRes = is_resource($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
 
-        return stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]);
+        return $isRes ? stream_get_contents($this->pipes[self::STDOUT_DESCRIPTOR_KEY]) : '';
     }
 
     public function getErrorOutput(): string
     {
-        if (!is_resource($this->pipes[self::STDERR_DESCRIPTOR_KEY])) {
-            return '';
-        }
+        $isRes = is_resource($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
 
-        return stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]);
+        return $isRes ? stream_get_contents($this->pipes[self::STDERR_DESCRIPTOR_KEY]) : '';
     }
 
     public function getExitCode(): ?int

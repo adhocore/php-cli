@@ -456,6 +456,65 @@ echo  $cursor->up(1)
     . $cursor->moveTo(5, 8); // x, y
 ```
 
+### Progress Bar
+
+Easily add a progress bar to your output:
+
+```php
+$progress = new Ahc\Cli\Output\ProgressBar(100);
+for ($i = 0; $i <= 100; $i++) {
+    $progress->current($i);
+
+    // Simulate something happening
+    usleep(80000);
+}
+```
+
+You can also manually advance the bar:
+
+```php
+$progress = new Ahc\Cli\Output\ProgressBar(100);
+
+// Do something
+
+$progress->advance(); // Adds 1 to the current progress
+
+// Do something
+
+$progress->advance(10); // Adds 10 to the current progress
+
+// Do something
+
+$progress->advance(5, 'Still going.'); // Adds 5, displays a label
+```
+
+You can override the progress bar options to customize it to your liking:
+
+```php
+$progress = new Ahc\Cli\Output\ProgressBar(100);
+$progress->option('pointer', '>>');
+$progress->option('loader', '▩');
+
+// You can set the progress fluently
+$progress->option('pointer', '>>')->option('loader', '▩');
+
+// You can also use an associative array to set many options in one time
+$progress->option([
+    'pointer' => '>>',
+    'loader'  => '▩'
+]);
+
+// Available options
++------------+------------------------------+---------------+
+| Option     | Description                  | Default value |
++------------+------------------------------+---------------+
+| pointer    | The progress bar head symbol | >             |
+| loader     | The loader symbol            | =             |
+| color      | The color of progress bar    | white         |
+| labelColor | The text color of the label  | white         |
++------------+------------------------------+---------------+
+```
+
 ### Writer
 
 Write anything in style.

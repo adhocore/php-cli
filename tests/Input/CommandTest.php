@@ -13,9 +13,11 @@ namespace Ahc\Cli\Test\Input;
 
 use Ahc\Cli\Application;
 use Ahc\Cli\Input\Command;
+use Ahc\Cli\Output\ProgressBar;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
+
 use function debug_backtrace;
 
 class CommandTest extends TestCase
@@ -270,6 +272,17 @@ class CommandTest extends TestCase
         $c->unset('verbosity');
         $this->assertCount(2, $c->allOptions());
         $this->assertArrayNotHasKey('verbosity', $c->allOptions());
+    }
+
+    public function test_progress()
+    {
+        new class($this) extends Command {
+            public function __construct($tester)
+            {
+                $this->_app = null;
+                $tester->assertInstanceOf(ProgressBar::class, $this->progress(10));
+            }
+        };
     }
 
     protected function newCommand(string $version = '0.0.1', string $desc = '', bool $allowUnknown = false, $app = null)

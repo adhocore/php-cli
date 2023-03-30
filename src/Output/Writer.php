@@ -19,6 +19,7 @@ use function str_repeat;
 use function stripos;
 use function strpos;
 use function ucfirst;
+
 use const PHP_EOL;
 use const STDERR;
 use const STDOUT;
@@ -201,6 +202,14 @@ class Writer
     public function colorizer(): Color
     {
         return $this->colorizer;
+    }
+
+    /**
+     * Get Cursor.
+     */
+    public function cursor(): Cursor
+    {
+        return $this->cursor;
     }
 
     /**
