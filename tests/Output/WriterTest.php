@@ -15,6 +15,7 @@ use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
 use Ahc\Cli\Test\CliTestCase;
 use InvalidArgumentException;
+
 use function substr_count;
 
 class WriterTest extends CliTestCase

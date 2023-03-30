@@ -19,6 +19,7 @@ use function rtrim;
 use function shell_exec;
 use function stream_get_contents;
 use function stream_select;
+
 use const DIRECTORY_SEPARATOR;
 use const PHP_EOL;
 use const STDIN;

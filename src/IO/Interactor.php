@@ -14,6 +14,7 @@ namespace Ahc\Cli\IO;
 use Ahc\Cli\Input\Reader;
 use Ahc\Cli\Output\Writer;
 use Throwable;
+
 use function array_keys;
 use function array_map;
 use function count;
