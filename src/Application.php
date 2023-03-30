@@ -18,6 +18,7 @@ use Ahc\Cli\IO\Interactor;
 use ReflectionClass;
 use ReflectionFunction;
 use Throwable;
+
 use function array_diff_key;
 use function array_fill_keys;
 use function array_keys;
@@ -282,6 +283,7 @@ class Application
         }
 
         $exitCode = 255;
+
         try {
             $command  = $this->parse($argv);
             $result   = $this->doAction($command);

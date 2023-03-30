@@ -12,6 +12,7 @@
 namespace Ahc\Cli\Input;
 
 use Ahc\Cli\Helper\InflectsString;
+
 use function strpos;
 
 /**

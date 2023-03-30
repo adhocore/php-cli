@@ -13,6 +13,7 @@ namespace Ahc\Cli\Output;
 
 use Ahc\Cli\Exception\InvalidArgumentException;
 use Ahc\Cli\Helper\InflectsString;
+
 use function array_column;
 use function array_fill_keys;
 use function array_keys;
@@ -28,6 +29,7 @@ use function str_pad;
 use function str_repeat;
 use function strlen;
 use function trim;
+
 use const PHP_EOL;
 
 class Table

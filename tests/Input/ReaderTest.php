@@ -13,6 +13,7 @@ namespace Ahc\Cli\Test\Input;
 
 use Ahc\Cli\Input\Reader;
 use PHPUnit\Framework\TestCase;
+
 use function ucwords;
 
 class ReaderTest extends TestCase

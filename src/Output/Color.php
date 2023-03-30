@@ -12,6 +12,7 @@
 namespace Ahc\Cli\Output;
 
 use Ahc\Cli\Exception\InvalidArgumentException;
+
 use function array_intersect_key;
 use function constant;
 use function defined;
@@ -25,6 +26,7 @@ use function stripos;
 use function strtolower;
 use function strtoupper;
 use function strtr;
+
 use const PHP_EOL;
 
 /**
