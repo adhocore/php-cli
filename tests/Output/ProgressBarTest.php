@@ -17,6 +17,7 @@ use Ahc\Cli\Output\Writer;
 use Ahc\Cli\Test\CliTestCase;
 use ArrayIterator;
 use IteratorAggregate;
+use Traversable;
 use UnexpectedValueException;
 
 class ProgressBarTest extends CliTestCase
@@ -66,7 +67,7 @@ class ProgressBarTest extends CliTestCase
             public $b = 2;
             public $c = 3;
 
-            public function getIterator()
+            public function getIterator(): Traversable
             {
                 return new ArrayIterator($this);
             }
