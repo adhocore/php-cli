@@ -54,7 +54,7 @@ class OutputHelperTest extends TestCase
             'Arg Header',
             '',
             'Arguments:',
-            '  [config]    ',
+            '  [config]    [default: "defaultConfig"]',
             '  <path>      The path',
             '',
             'Arg Footer',
@@ -65,14 +65,14 @@ class OutputHelperTest extends TestCase
     {
         $this->newHelper()->showOptionsHelp([
             new Option('-h --help', 'Show help'),
-            new Option('-n|--full-name <name>', 'Full name'),
+            new Option('-n|--full-name <name>', 'Full name', 'John'),
         ], 'Opt Header', 'Opt Footer');
 
         $this->assertSame([
             'Opt Header',
             '',
             'Options:',
-            '  <-n|--full-name>    Full name',
+            '  <-n|--full-name>    Full name [default: "John"]',
             '  [-h|--help]         Show help',
             '',
             'Opt Footer',
