@@ -195,13 +195,14 @@ class OutputHelper
 
         $space = 4;
         $group = $lastGroup = null;
+        $withDefault = $for === 'Options' || $for === 'Arguments';
         foreach ($this->sortItems($items, $padLen) as $item) {
             $name  = $this->getName($item);
             if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
                 $this->writer->boldYellow($group ?: '*', true);
                 $lastGroup = $group;
             }
-            $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc());
+            $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
 
             $this->writer->bold('  ' . str_pad($name, $padLen + $space));
             $this->writer->comment($desc, true);

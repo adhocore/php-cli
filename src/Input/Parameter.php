@@ -13,7 +13,10 @@ namespace Ahc\Cli\Input;
 
 use Ahc\Cli\Helper\InflectsString;
 
+use function json_encode;
+use function ltrim;
 use function strpos;
+use function sprintf;
 
 /**
  * Cli Parameter.
@@ -75,9 +78,13 @@ abstract class Parameter
     /**
      * Get description.
      */
-    public function desc(): string
+    public function desc(bool $withDefault = false): string
     {
-        return $this->desc;
+        if (!$withDefault || null === $this->default || '' === $this->default) {
+            return $this->desc;
+        }
+
+        return ltrim(sprintf('%s [default: %s]', $this->desc, json_encode($this->default)));
     }
 
     /**
