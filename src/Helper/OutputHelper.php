@@ -193,8 +193,8 @@ class OutputHelper
             return;
         }
 
-        $space = 4;
-        $group = $lastGroup = null;
+        $space       = 4;
+        $group       = $lastGroup = null;
         $withDefault = $for === 'Options' || $for === 'Arguments';
         foreach ($this->sortItems($items, $padLen) as $item) {
             $name  = $this->getName($item);
