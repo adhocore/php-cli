@@ -26,7 +26,7 @@ Framework agnostic Command Line Interface utilities and helpers for PHP. Build C
 
 **Core:** [Argv parser](#argv-parser) &middot; [Cli application](#console-app) &middot; [Shell](#shell)
 
-**IO:** [Colorizer](#color) &middot; [Cursor manipulator](#cursor) &middot; [Stream writer](#writer) &middot; [Stream reader](#reader)
+**IO:** [Colorizer](#color) &middot; [Cursor manipulator](#cursor) &middot; [Progress bar](#progress-bar) &middot; [Stream writer](#writer) &middot; [Stream reader](#reader)
 
 **Other:** [Autocompletion](#autocompletion)
 
