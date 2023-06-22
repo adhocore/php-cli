@@ -70,6 +70,7 @@ class ProgressBar
         'color'          => 'white',
         'labelColor'     => 'white',
         'labelPosition'  => 'bottom',   // position of the label according to the progress bar (one of 'top', 'bottom', 'left', 'right')
+        'showPercentage' => true,       // in spinner mode, you may not want to display the percentage of the progress because you don't know in advance how long the processing will take (during an asynchronous call for example)
     ];
 
     /**
@@ -113,6 +114,18 @@ class ProgressBar
     }
 
     /**
+     * Set the string length of the bar when at 100%.
+     *
+     * @internal use by Spinner
+     */
+    public function barWidth(int $size): self
+    {
+        $this->barStrLen = max(1, $size);
+
+        return $this;
+    }
+
+    /**
      * Set progress bar options.
      */
     public function option(string|array $key, ?string $value = null): self
@@ -128,6 +141,14 @@ class ProgressBar
         $this->options = array_merge($this->options, $key);
 
         return $this;
+    }
+
+    /**
+     * Force end of progress
+     */
+    public function finish(): void
+    {
+        $this->current = $this->total;
     }
 
     /**
@@ -310,6 +331,10 @@ class ProgressBar
      */
     protected function progressBarFormatted(string $bar, string $number, string $label): string
     {
+        if ($this->options['showPercentage'] !== true) {
+            $number = '';
+        }
+
         $progress = [];
         if ($this->options['labelPosition'] === 'left') {
             // display : ====>       Label 50%
