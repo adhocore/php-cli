@@ -505,14 +505,64 @@ $progress->option([
 ]);
 
 // Available options
-+------------+------------------------------+---------------+
-| Option     | Description                  | Default value |
-+------------+------------------------------+---------------+
-| pointer    | The progress bar head symbol | >             |
-| loader     | The loader symbol            | =             |
-| color      | The color of progress bar    | white         |
-| labelColor | The text color of the label  | white         |
-+------------+------------------------------+---------------+
++---------------+------------------------------+---------------+
+| Option        | Description                  | Default value |
++---------------+------------------------------+---------------+
+| pointer       | The progress bar head symbol | >             |
+| loader        | The loader symbol            | =             |
+| color         | The color of progress bar    | white         |
+| labelColor    | The text color of the label  | white         |
+| labelPosition | The position of the label    | bottom        |
++---------------+------------------------------+---------------+
+```
+
+### Spinner
+
+In addition to the progress bar, you can also insert a spinner to your console if you have a subtask that takes a little longer
+
+```php
+$spinner = new Ahc\Cli\Output\Spinner(100);
+for ($i = 0; $i <= 100; $i++) {
+    $spinner->advance($i);
+
+    // Simulate something happening
+    usleep(80000);
+}
+```
+
+The `advance` method works just like the progress bar method:
+
+```php
+$spinner->advance(); // Adds 1 to the current progress
+
+// Do something
+
+$spinner->advance(10); // Adds 10 to the current progress
+
+// Do something
+
+$spinner->advance(5, 'Still going.'); // Adds 5, displays a label
+```
+
+If you have the same label to display at all stages of the spinner, you can define it with the `message` method and use `advance` without the 2nd argument:
+
+```php  
+$spinner = new Ahc\Cli\Output\Spinner(100);
+$spinner->message('Loading...');
+
+$spinner->advance(); // Adds 1 to the current progress, display "Loading..."
+$spinner->advance(10); // Adds 10 to the current progress, display "Loading..."
+$spinner->advance(5, 'Still going.'); // Adds 5, display "Still going."
+```
+
+You can also modify the options of the spinner like those of the progress bar. The operation remains the same but the `pointer` and `loader` options cannot be modified.
+
+You can however modify the indicators of your spinner through the `indicators` method.
+
+```php
+$spinner = new Ahc\Cli\Output\Spinner(100);
+$spinner->option('color', 'red');
+$spinner->indicators(['-', '\\', '|', '/']);
 ```
 
 ### Writer
