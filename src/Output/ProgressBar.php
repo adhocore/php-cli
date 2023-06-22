@@ -15,6 +15,8 @@ use Ahc\Cli\Helper\Terminal;
 use UnexpectedValueException;
 
 use function count;
+use function implode;
+use function in_array;
 use function iterator_to_array;
 use function min;
 use function round;
@@ -63,10 +65,11 @@ class ProgressBar
      * Options for progress bar.
      */
     private array $options = [
-        'pointer'    => '>',
-        'loader'     => '=',
-        'color'      => 'white',
-        'labelColor' => 'white',
+        'pointer'        => '>',
+        'loader'         => '=',
+        'color'          => 'white',
+        'labelColor'     => 'white',
+        'labelPosition'  => 'bottom',   // position of the label according to the progress bar (one of 'top', 'bottom', 'left', 'right')
     ];
 
     /**
@@ -229,7 +232,7 @@ class ProgressBar
         $bar .= $this->getProgressBarStr($current, $label);
 
         // If this line has a label then set that this progress bar has a label line
-        if (strlen($label) > 0) {
+        if (strlen($label) > 0 && in_array($this->options['labelPosition'], ['bottom', 'top'], true)) {
             $this->hasLabelLine = true;
         }
 
@@ -255,10 +258,11 @@ class ProgressBar
             $label = $this->labelFormatted('');
         }
 
-        $bar   = '<' . $this->options['color'] . '>' . $bar . ' ' . $number . '</end>';
-        $label = '<' . $this->options['labelColor'] . '>' . $label . '</end>';
+        if (in_array($this->options['labelPosition'], ['left', 'right', 'top'], true)) {
+            $label = trim($label);
+        }
 
-        return trim($bar . $label);
+        return $this->progressBarFormatted($bar, $number, $label);
     }
 
     /**
@@ -266,8 +270,8 @@ class ProgressBar
      */
     protected function getBar(int $length): string
     {
-        $bar     = str_repeat($this->options['loader'], $length);
-        $padding = str_repeat(' ', $this->getBarStrLen() - $length);
+        $bar     = str_repeat($this->options['loader'], max(1, $length));
+        $padding = str_repeat(' ', max(1, $this->getBarStrLen() - $length));
 
         return "{$bar}{$this->options['pointer']}{$padding}";
     }
@@ -298,7 +302,34 @@ class ProgressBar
      */
     protected function labelFormatted(string $label): string
     {
-        return "\n" . $this->cr() . $this->cursor->eraseLine() . $label;
+        return "\n" . $label;
+    }
+
+    /**
+     * Format the output of the progress bar by placing the label in the right place (top, right, bottom or left)
+     */
+    protected function progressBarFormatted(string $bar, string $number, string $label): string
+    {
+        $progress = [];
+        if ($this->options['labelPosition'] === 'left') {
+            // display : ====>       Label 50%
+            $progress[] = '<' . $this->options['color'] . '>' . $bar . '</end> '; // bar
+            $progress[] = '<' . $this->options['labelColor'] . '>' . $label . '</end> '; // label
+            $progress[] = '<' . $this->options['color'] . '>' . $number . '</end>'; // percentage
+        } else if ($this->options['labelPosition'] === 'top') {
+            // display :Label
+            //          ====>        50%
+            $progress[] = '<' . $this->options['labelColor'] . '>' . $label . "\n" . '</end>'; // label
+            $progress[] = '<' . $this->options['color'] . '>' . $bar . ' ' . $number . '</end>'; // bar + percentage
+        } else {
+            // display (on right) : ====>       50% Label
+            // display (on bottom): ====>       50%
+            //                      Label
+            $progress[] = '<' . $this->options['color'] . '>' . $bar . ' ' . $number . '</end> '; // bar + percentage
+            $progress[] = '<' . $this->options['labelColor'] . '>' . $label . '</end>'; // label
+        }
+
+        return implode('', $progress);
     }
 
     /**
