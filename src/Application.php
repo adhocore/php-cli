@@ -179,9 +179,9 @@ class Application
      *
      * @param string $commandName The name of the default command
      *
-     * @return self The application
-     *
      * @throws InvalidArgumentException If the specified command name does not exist
+     *
+     * @return self The application
      */
     public function defaultCommand(string $commandName): self
     {
@@ -203,7 +203,6 @@ class Application
     {
         return $this->default;
     }
-
 
     /**
      * Groups commands set within the callable.

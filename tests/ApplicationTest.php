@@ -308,7 +308,7 @@ class ApplicationTest extends TestCase
 
     public function testDefaultCommand()
     {
-        $app = $this->newApp("test");
+        $app = $this->newApp('test');
 
         // Add some sample commands to the application
         $app->command('command1');
