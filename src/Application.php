@@ -175,6 +175,36 @@ class Application
     }
 
     /**
+     * Set the default command.
+     *
+     * @param string $commandName The name of the default command
+     *
+     * @throws InvalidArgumentException If the specified command name does not exist
+     *
+     * @return self The application
+     */
+    public function defaultCommand(string $commandName): self
+    {
+        if (!isset($this->commands[$commandName])) {
+            throw new InvalidArgumentException(sprintf('Command "%s" does not exist', $commandName));
+        }
+
+        $this->default = $commandName;
+
+        return $this;
+    }
+
+    /**
+     * Get the default command.
+     *
+     * @return string|null The name of the default command, or null if not set
+     */
+    public function getDefaultCommand(): ?string
+    {
+        return $this->default;
+    }
+
+    /**
      * Groups commands set within the callable.
      *
      * @param string   $group The group name
