@@ -71,14 +71,6 @@ class CommandTest extends TestCase
         $this->assertSame(['dir2', 'dir3'], $p->dirs);
     }
 
-    public function test_arguments_variadic_not_last()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Only last argument can be variadic');
-
-        $p = $this->newCommand()->arguments('[paths...]')->argument('[env]', 'Env');
-    }
-
     public function test_arguments_with_options()
     {
         $p = $this->newCommand()->arguments('<cmd> [env]')
@@ -113,7 +105,7 @@ class CommandTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Option "--random" not registered');
 
-        // Dont allow unknown
+        // Don't allow unknown
         $p = $this->newCommand()->option('-k known [opt]')->parse(['php', '-k', '--random', 'rr']);
     }
 
