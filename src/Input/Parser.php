@@ -66,8 +66,6 @@ abstract class Parser
         $this->_normalizer = new Normalizer();
         $this->_tokenizer  = new Tokenizer($argv);
 
-        // echo $this->_tokenizer;
-
         foreach ($this->_tokenizer as $token) {
 
             // Its a constant value to be assigned to an argument:
@@ -97,9 +95,6 @@ abstract class Parser
                 }
             }
         }
-
-        // var_dump($this->_values);
-        // throw new RuntimeException("Not implemented");
 
         $this->validate();
 
