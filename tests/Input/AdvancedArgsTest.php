@@ -246,7 +246,7 @@ class AdvancedArgsTest extends TestCase
 
     }
 
-    public function test_variadic_with_literal_arguments() 
+    public function test_variadic_with_literal_insane_cases() 
     {
         
         // 1. normal way:
@@ -275,12 +275,10 @@ class AdvancedArgsTest extends TestCase
         ]);
         $v = $p->values();
         $this->assertSame(
-            ["john", "bob", "jane"], 
-            $v["names"] ?? []
+            ["john", "bob", "jane"], $v["names"] ?? []
         );
         $this->assertSame(
-            ["-a", "--a1", "-b"], 
-            $v["args"] ?? []
+            ["-a", "--a1", "-b"], $v["args"] ?? []
         );
 
         // 3. crazy way but should work:
@@ -293,13 +291,29 @@ class AdvancedArgsTest extends TestCase
         ]);
         $v = $p->values();
         $this->assertSame(
-            ["john", "bob", "jane"], 
-            $v["names"] ?? []
+            ["john", "bob", "jane"], $v["names"] ?? []
         );
         $this->assertSame(
-            ["-a", "--a1", "-b"], 
-            $v["args"] ?? []
+            ["-a", "--a1", "-b"], $v["args"] ?? []
         );
+
+        // 4. Insane way but should work:
+        $p = $this->newCommand()->arguments('<names...>')
+                                ->option('--args [a...]');
+        $p->parse([
+            "cmd",
+            "john", "bob",
+            "--args", "[", "--", "-a", "--a1", "-b", "]",
+             "jane",
+        ]);
+        $v = $p->values();
+        $this->assertSame(
+            ["john", "bob", "jane"], $v["names"] ?? []
+        );
+        $this->assertSame(
+            ["-a", "--a1", "-b"], $v["args"] ?? []
+        );
+
     }
 
 
