@@ -76,7 +76,7 @@ class OutputHelper
 
         $this->writer->colors(
             "{$eClass} <red>{$e->getMessage()}</end><eol/>" .
-            "(thrown in <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end>"
+            "(thrown in <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end><eol/>"
         );
 
         // @codeCoverageIgnoreStart
@@ -86,7 +86,7 @@ class OutputHelper
         }
         // @codeCoverageIgnoreEnd
 
-        $traceStr = '<eol/><eol/><bold>Stack Trace:</end><eol/><eol/>';
+        $traceStr = '<eol/><bold>Stack Trace:</end><eol/><eol/>';
 
         foreach ($e->getTrace() as $i => $trace) {
             $trace += ['class' => '', 'type' => '', 'function' => '', 'file' => '', 'line' => '', 'args' => []];
