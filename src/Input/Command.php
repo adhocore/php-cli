@@ -12,7 +12,6 @@
 namespace Ahc\Cli\Input;
 
 use Ahc\Cli\Application as App;
-use Ahc\Cli\Exception\InvalidParameterException;
 use Ahc\Cli\Exception\RuntimeException;
 use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
@@ -53,8 +52,6 @@ class Command extends Parser implements Groupable
     protected ?string $_alias = null;
 
     private array $_events = [];
-
-    private bool $_argVariadic = false;
 
     /**
      * Constructor.
@@ -172,14 +169,6 @@ class Command extends Parser implements Groupable
     public function argument(string $raw, string $desc = '', $default = null): self
     {
         $argument = new Argument($raw, $desc, $default);
-
-        if ($this->_argVariadic) {
-            throw new InvalidParameterException('Only last argument can be variadic');
-        }
-
-        if ($argument->variadic()) {
-            $this->_argVariadic = true;
-        }
 
         $this->register($argument);
 

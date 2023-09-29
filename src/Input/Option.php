@@ -11,6 +11,7 @@
 
 namespace Ahc\Cli\Input;
 
+use Ahc\Cli\Helper\Polyfill;
 use function preg_match;
 use function preg_split;
 use function str_replace;
@@ -30,6 +31,10 @@ class Option extends Parameter
 
     protected string $long = '';
 
+    // We export those to be used while parsing:
+    public const SIGN_SHORT = '-'; 
+    public const SIGN_LONG  = '--';
+
     /**
      * {@inheritdoc}
      */
@@ -41,16 +46,35 @@ class Option extends Parameter
             $this->default = true;
         }
 
-        $parts = preg_split('/[\s,\|]+/', $raw);
+        [$this->short, $this->long] = $this->namingParts($raw);
 
-        $this->short = $this->long = $parts[0];
-        if (isset($parts[1])) {
-            $this->long = $parts[1];
-        }
-
-        $this->name = str_replace(['--', 'no-', 'with-'], '', $this->long);
+        $this->name = str_replace(
+            [self::SIGN_LONG, 'no-', 'with-'], '', 
+            $this->long
+        );
     }
 
+    /**
+     * parses a raw option declaration string
+     * and return its parts
+     * @param string $raw 
+     * @return array 2 elements, short and long name
+     */
+    protected function namingParts(string $raw): array {
+        $short = '';
+        $long  = '';
+        foreach (preg_split('/[\s,\|]+/', $raw) as $part) { 
+            if (Polyfill::str_starts_with($part, self::SIGN_LONG)) {
+                $long = $part;
+            } elseif (Polyfill::str_starts_with($part, self::SIGN_SHORT)) {
+                $short = $part;
+            }
+        }
+        return [
+            $short, 
+            $long ?: self::SIGN_LONG.ltrim($short, self::SIGN_SHORT)
+        ];
+    }
     /**
      * Get long name.
      */
