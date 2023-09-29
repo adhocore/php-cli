@@ -85,15 +85,6 @@ abstract class Parser
                 continue;
             }
 
-            // Its a literal option group:
-            if (
-                $token->isLiteral()
-            ) {
-                foreach ($token->nested as $literal) {
-                    $this->parseArgs($literal, $this->_tokenizer);
-                    continue;
-                }
-            }
         }
 
         $this->validate();
@@ -139,7 +130,7 @@ abstract class Parser
         if ($argument->variadic() && $arg->isConstant()) {
 
             // Consume all the remaining tokens
-            // If an option is found, then treat it as well
+            // If an option is found, treat it as well
             while ($queue->valid()) {
 
                 if ($queue->current()->isConstant()) {
@@ -149,15 +140,18 @@ abstract class Parser
 
                 } elseif($queue->current()->isOption()) {
 
-                    $opt = $queue->current();
-                    $queue->next();
-                    $this->parseOptions($opt, $queue, true);
+                    if ($consumed = $this->parseOptions($queue->current(), $queue, false)) {
+                        for ($i = 0; $i < $consumed; $i++) {
+                            $queue->next();
+                        }
+                    } else {
+                        $queue->next();
+                    }
                     
                 } else {
                     
                     throw new InvalidParameterException("Only constant parameters are allowed in variadic arguments");
                 }
-                
             }
             return;
         }
@@ -195,41 +189,46 @@ abstract class Parser
      *
      * @param Token      $opt
      * @param Tokenizer  $tokens
-     * @param bool       $advanced Whether to advance the token or not
      *
-     * @return void
+     * @return int Number of extra tokens consumed
      */
-    protected function parseOptions(Token $opt, Tokenizer $tokens, bool $advanced = false) : void
+    protected function parseOptions(Token $opt, Tokenizer $tokens) : int
     {   
 
         // Look ahead for next token:
-        $next    = $advanced ? $tokens->validCurrent() : $tokens->offset(1);
+        $next = $tokens->offset(1);
 
         // Get the option:
-        $option  = $this->optionFor($opt->value());
+        $option = $this->optionFor($opt->value());
+        
+        //Consumed: 
+        $consumed = 0;
 
         // Unknown option handle it:
-        if (is_null($option)) {
+        if (!$option) {
             // Single value just in case the value is a variadic group:
             $value = $next ? $next->value() : null;
-            $this->handleUnknown(
+            $used  = $this->handleUnknown(
                 $opt->value(), 
                 is_array($value) ? $value[0] ?? null : $value
             );
-            return;
+            return $used ? ++$consumed : $consumed;
         }
 
         // Early out if its just a flag
-        if (is_null($next)) {
+        if (!$next) {
             $this->setValue($option);
-            return;
+            return $consumed;
         }
 
         // If option is variadic, and next is constant, 
         // then we need to collect all the remaining args:
         if ($option->variadic() && $next->isConstant()) {
-            $advanced ?: $tokens->next();
+            $tokens->next();
             while ($tokens->valid()) {
+                
+                $consumed++;
+
                 if ($tokens->current()->isConstant()) {
                     $this->setValue($option, $tokens->current()->value());
                 } else {
@@ -239,7 +238,7 @@ abstract class Parser
                 }
                 $tokens->next();
             }
-            return;
+            return $consumed;
         }
 
         // If option is variadic, and next is a variadic group, 
@@ -256,20 +255,21 @@ abstract class Parser
                 }
             }
             // consume the next token:
-            $advanced ?: $tokens->next();
-            return;
+            $tokens->next();
+            return ++$consumed;
         }
 
         // If option is not variadic, 
         // and next is constant its a simple value assignment:
         if ($next->isConstant()) {
-            $advanced ?: $tokens->next(); // consume the next token
+            $tokens->next(); // consume the next token
             $this->setValue($option, $next->value());
-            return;
+            return ++$consumed;
         }
 
         //anything else is just a flag:
         $this->setValue($option);
+        return $consumed;
     }
 
     /**
