@@ -40,10 +40,12 @@
         "php": ">=8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^9.0",
+        "phpstan/phpstan": "^1.10"
     },
     "scripts": {
         "test": "phpunit",
+        "testdox": "phpunit --testdox --colors=always",
         "test:cov": "phpunit --coverage-text --coverage-clover coverage.xml --coverage-html vendor/cov",
         "cs:sniff": "tools/phpcs",
         "cs:fix": "tools/phpcbf"
