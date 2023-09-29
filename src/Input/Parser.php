@@ -11,21 +11,19 @@
 
 namespace Ahc\Cli\Input;
 
-use Ahc\Cli\Exception\InvalidParameterException;
-use Ahc\Cli\Exception\RuntimeException;
 use Ahc\Cli\Helper\Normalizer;
-use InvalidArgumentException;
+use Ahc\Cli\Input\Tokenizer;
+use Ahc\Cli\Exception\InvalidParameterException;
+use Ahc\Cli\Exception\InvalidArgumentException;
+use Ahc\Cli\Exception\RuntimeException;
 
 use function array_diff_key;
 use function array_filter;
 use function array_key_exists;
-use function array_merge;
 use function array_shift;
-use function count;
 use function in_array;
-use function reset;
+use function is_null;
 use function sprintf;
-use function substr;
 
 /**
  * Argv parser for the cli.
@@ -37,10 +35,10 @@ use function substr;
  */
 abstract class Parser
 {
-    /** @var string|null The last seen variadic option name */
-    protected ?string $_lastVariadic = null;
 
     protected Normalizer $_normalizer;
+
+    protected Tokenizer $_tokenizer;
 
     private array $_options = [];
 
@@ -54,31 +52,54 @@ abstract class Parser
      *
      * @param array $argv The first item is ignored.
      *
-     * @throws \RuntimeException When argument is missing or invalid.
+     * @throws RuntimeException When unknown argument is given and not handled.
+     * @throws InvalidParameterException When parameter is invalid and cannot be parsed.
+     * @throws InvalidArgumentException When argument is invalid and cannot be parsed.
      *
      * @return self
      */
     public function parse(array $argv): self
     {
-        $this->_normalizer = new Normalizer;
-
+        // Ignore the first arg (command name)
         array_shift($argv);
 
-        $argv    = $this->_normalizer->normalizeArgs($argv);
-        $count   = count($argv);
-        $literal = false;
+        $this->_normalizer = new Normalizer();
+        $this->_tokenizer  = new Tokenizer($argv);
 
-        for ($i = 0; $i < $count; $i++) {
-            [$arg, $nextArg] = [$argv[$i], $argv[$i + 1] ?? null];
+        // echo $this->_tokenizer;
 
-            if ($arg === '--') {
-                $literal = true;
-            } elseif ($arg[0] !== '-' || $literal) {
-                $this->parseArgs($arg);
-            } else {
-                $i += (int) $this->parseOptions($arg, $nextArg);
+        foreach ($this->_tokenizer as $token) {
+
+            // Its a constant value to be assigned to an argument:
+            if (
+                $token->isConstant() ||
+                $token->isVariadic()
+            ) {
+                $this->parseArgs($token, $this->_tokenizer);
+                continue;
+            }
+
+            // Its an option parse it and its value/s:
+            if (
+                $token->isOption()
+            ) {
+                $this->parseOptions($token, $this->_tokenizer);
+                continue;
+            }
+
+            // Its a literal option group:
+            if (
+                $token->isLiteral()
+            ) {
+                foreach ($token->nested as $literal) {
+                    $this->parseArgs($literal, $this->_tokenizer);
+                    continue;
+                }
             }
         }
+
+        // var_dump($this->_values);
+        // throw new RuntimeException("Not implemented");
 
         $this->validate();
 
@@ -86,76 +107,204 @@ abstract class Parser
     }
 
     /**
-     * Parse single arg.
+     * Parse a single arg.
      *
-     * @param string $arg
+     * @param Token $arg The current token
+     * @param Tokenizer $queue The queue of tokens to be consumed
      *
-     * @return mixed
+     * @return void
      */
-    protected function parseArgs(string $arg)
+    protected function parseArgs(Token $arg, Tokenizer $queue) : void
     {
-        if ($this->_lastVariadic) {
-            return $this->set($this->_lastVariadic, $arg, true);
+        // Handle this argument:
+        $argument = array_shift($this->_arguments);
+        
+        //No argument defined, so its an indexed arg:
+        if (is_null($argument)) {
+
+            //Its a single constant value arg:
+            if ($arg->isConstant()) {
+
+                $this->set(null, $arg->value());
+
+            } else {
+                //Its a variadic arg, so we need to collect all the remaining args:
+                foreach ($arg->nested as $token) {
+                    if ($token->isConstant()) {
+                        $this->set(null, $token->value(), true);
+                    } else {
+                        throw new InvalidParameterException("Only constant parameters are allowed in variadic arguments");
+                    }
+                }
+            }
+            return;
         }
 
-        if (!$argument = reset($this->_arguments)) {
-            return $this->set(null, $arg);
+        // Its variadic, so we need to collect all the remaining args:
+        if ($argument->variadic() && $arg->isConstant()) {
+
+            // Consume all the remaining tokens
+            // If an option is found, then treat it as well
+            while ($queue->valid()) {
+
+                if ($queue->current()->isConstant()) {
+                    
+                    $this->setValue($argument, $queue->current()->value());
+                    $queue->next();
+
+                } elseif($queue->current()->isOption()) {
+
+                    $opt = $queue->current();
+                    $queue->next();
+                    $this->parseOptions($opt, $queue, true);
+                    
+                } else {
+                    
+                    throw new InvalidParameterException("Only constant parameters are allowed in variadic arguments");
+                }
+                
+            }
+            return;
         }
 
-        $this->setValue($argument, $arg);
+        // Its variadic, and we have a variadic grouped arg:
+        if ($argument->variadic() && $arg->isVariadic()) {
 
-        // Otherwise we will always collect same arguments again!
-        if (!$argument->variadic()) {
-            array_shift($this->_arguments);
+            //Consume all the nested tokens:
+            foreach ($arg->nested as $token) {
+                if ($token->isConstant()) {
+                    $this->setValue($argument, $token->value());
+                } else {
+                    throw new InvalidParameterException("Only constant parameters are allowed in variadic arguments");
+                }
+            }
+            return;
+        }
+        
+        // Its not variadic, and we have a constant arg:
+        if ($arg->isConstant()) {
+            $this->setValue($argument, $arg->value());
+            return;
+        }
+
+        // Its not variadic, and we have a variadic arg:
+        if ($arg->isVariadic()) {
+            throw new InvalidArgumentException(
+                sprintf("Argument '%s' is not variadic", $argument->name())
+            );
         }
     }
 
     /**
      * Parse an option, emit its event and set value.
      *
-     * @param string      $arg
-     * @param string|null $nextArg
+     * @param Token      $opt
+     * @param Tokenizer  $tokens
+     * @param bool       $advanced Whether to advance the token or not
      *
-     * @return bool Whether to eat next arg.
+     * @return void
      */
-    protected function parseOptions(string $arg, string $nextArg = null): bool
-    {
-        $value = substr($nextArg ?? '', 0, 1) === '-' ? null : $nextArg;
+    protected function parseOptions(Token $opt, Tokenizer $tokens, bool $advanced = false) : void
+    {   
 
-        if (null === $option  = $this->optionFor($arg)) {
-            return $this->handleUnknown($arg, $value);
+        // Look ahead for next token:
+        $next    = $advanced ? $tokens->validCurrent() : $tokens->offset(1);
+
+        // Get the option:
+        $option  = $this->optionFor($opt->value());
+
+        // Unknown option handle it:
+        if (is_null($option)) {
+            // Single value just in case the value is a variadic group:
+            $value = $next ? $next->value() : null;
+            $this->handleUnknown(
+                $opt->value(), 
+                is_array($value) ? $value[0] ?? null : $value
+            );
+            return;
         }
 
-        $this->_lastVariadic = $option->variadic() ? $option->attributeName() : null;
+        // Early out if its just a flag
+        if (is_null($next)) {
+            $this->setValue($option);
+            return;
+        }
 
-        return false === $this->emit($option->attributeName(), $value) ? false : $this->setValue($option, $value);
+        // If option is variadic, and next is constant, 
+        // then we need to collect all the remaining args:
+        if ($option->variadic() && $next->isConstant()) {
+            $advanced ?: $tokens->next();
+            while ($tokens->valid()) {
+                if ($tokens->current()->isConstant()) {
+                    $this->setValue($option, $tokens->current()->value());
+                } else {
+                    throw new InvalidParameterException(
+                        "Only constants are allowed in variadic arguments"
+                    );
+                }
+                $tokens->next();
+            }
+            return;
+        }
+
+        // If option is variadic, and next is a variadic group, 
+        // then we need to collect all the nested values:
+        if ($option->variadic() && $next->isVariadic()) {
+
+            foreach ($next->nested as $token) {
+                if ($token->isConstant()) {
+                    $this->setValue($option, $token->value());
+                } else {
+                    throw new InvalidParameterException(
+                        "Only constants are allowed in variadic arguments"
+                    );
+                }
+            }
+            // consume the next token:
+            $advanced ?: $tokens->next();
+            return;
+        }
+
+        // If option is not variadic, 
+        // and next is constant its a simple value assignment:
+        if ($next->isConstant()) {
+            $advanced ?: $tokens->next(); // consume the next token
+            $this->setValue($option, $next->value());
+            return;
+        }
+
+        //anything else is just a flag:
+        $this->setValue($option);
     }
 
     /**
      * Get matching option by arg (name) or null.
+     * 
+     * @param string $name The name of the option
+     * 
+     * @return Option|null
      */
-    protected function optionFor(string $arg): ?Option
+    protected function optionFor(string $name): ?Option
     {
         foreach ($this->_options as $option) {
-            if ($option->is($arg)) {
+            if ($option->is($name)) {
                 return $option;
             }
         }
-
         return null;
     }
 
     /**
      * Handle Unknown option.
      *
-     * @param string      $arg   Option name
-     * @param string|null $value Value
+     * @param string $arg Option name
+     * @param ?string $value Option value
      *
-     * @throws \RuntimeException When given arg is not registered and allow unkown flag is not set.
+     * @throws RuntimeException When given arg is not registered and allow unknown flag is not set.
      *
      * @return mixed If true it will indicate that value has been eaten.
      */
-    abstract protected function handleUnknown(string $arg, string $value = null): mixed;
+    abstract protected function handleUnknown(string $arg, ?string $value = null): mixed;
 
     /**
      * Emit the event with value.
@@ -165,7 +314,7 @@ abstract class Parser
      *
      * @return mixed
      */
-    abstract protected function emit(string $event, $value = null): mixed;
+    abstract protected function emit(string $event, mixed $value = null): mixed;
 
     /**
      * Sets value of an option.
@@ -173,29 +322,34 @@ abstract class Parser
      * @param Parameter   $parameter
      * @param string|null $value
      *
-     * @return bool Indicating whether it has eaten adjoining arg to its right.
+     * @return bool Indicating whether it has set a value or not.
      */
-    protected function setValue(Parameter $parameter, string $value = null): bool
+    protected function setValue(Parameter $parameter, ?string $value = null): bool
     {
         $name  = $parameter->attributeName();
         $value = $this->_normalizer->normalizeValue($parameter, $value);
-
-        return $this->set($name, $value, $parameter->variadic());
+        $emit  = $this->emit($parameter->attributeName(), $value) !== false;
+        return $emit ? $this->set($name, $value, $parameter->variadic()) : false;
     }
 
     /**
      * Set a raw value.
+     * 
+     * @param string|null $key
+     * @param mixed $value
+     * @param bool $variadic 
+     * 
+     * @return bool Indicating whether it has set a value or not.
      */
-    protected function set($key, $value, bool $variadic = false): bool
+    protected function set(?string $key, mixed $value, bool $variadic = false): bool
     {
         if (null === $key) {
             $this->_values[] = $value;
         } elseif ($variadic) {
-            $this->_values[$key] = array_merge($this->_values[$key], (array) $value);
+            $this->_values[$key][] = $value;
         } else {
             $this->_values[$key] = $value;
         }
-
         return !in_array($value, [true, false, null], true);
     }
 
@@ -229,6 +383,10 @@ abstract class Parser
 
     /**
      * Register a new argument/option.
+     * 
+     * @param Parameter $param
+     * 
+     * @return void
      */
     protected function register(Parameter $param): void
     {
@@ -246,6 +404,10 @@ abstract class Parser
 
     /**
      * Unset a registered argument/option.
+     * 
+     * @param string $name
+     * 
+     * @return self
      */
     public function unset(string $name): self
     {
@@ -259,7 +421,7 @@ abstract class Parser
      *
      * @param Parameter $param
      *
-     * @throws InvalidArgumentException If given param name is already registered.
+     * @throws InvalidParameterException If given param name is already registered.
      */
     protected function ifAlreadyRegistered(Parameter $param): void
     {
@@ -273,8 +435,12 @@ abstract class Parser
 
     /**
      * Check if either argument/option with given name is registered.
+     * 
+     * @param int|string $attribute
+     * 
+     * @return bool
      */
-    public function registered($attribute): bool
+    public function registered(int|string $attribute): bool
     {
         return array_key_exists($attribute, $this->_values);
     }
@@ -301,6 +467,10 @@ abstract class Parser
 
     /**
      * Magic getter for specific value by its key.
+     * 
+     * @param string $key
+     * 
+     * @return mixed
      */
     public function __get(string $key): mixed
     {
@@ -309,6 +479,8 @@ abstract class Parser
 
     /**
      * Get the command arguments i.e which is not an option.
+     * 
+     * @return array
      */
     public function args(): array
     {
@@ -317,6 +489,10 @@ abstract class Parser
 
     /**
      * Get values indexed by camelized attribute name.
+     * 
+     * @param bool $withDefaults Whether to include default values or not
+     * 
+     * @return array
      */
     public function values(bool $withDefaults = true): array
     {
@@ -329,4 +505,5 @@ abstract class Parser
 
         return $values;
     }
+
 }
