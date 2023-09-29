@@ -185,7 +185,7 @@ class InitCommand extends Ahc\Cli\Input\Command
     }
 
     // This method is auto called before `self::execute()` and receives `Interactor $io` instance
-    public function interact(Ahc\Cli\IO\Interactor $io)
+    public function interact(Ahc\Cli\IO\Interactor $io) : void
     {
         // Collect missing opts/args
         if (!$this->apple) {
@@ -216,7 +216,21 @@ class InitCommand extends Ahc\Cli\Input\Command
 
 class OtherCommand extends Ahc\Cli\Input\Command
 {
-    // ...
+    public function __construct()
+    {
+        parent::__construct('other', 'Other something');
+    }
+
+    public function execute()
+    {
+        $io = $this->app()->io();
+
+        $io->write('Other command');        
+
+        // more codes ...
+
+        // If you return integer from here, that will be taken as exit error code
+    }
 }
 
 // Init App with name and version
