@@ -60,7 +60,7 @@ class Application
     /** @var callable The callable to perform exit */
     protected $onExit;
 
-    /** @var callable The callable to catch exception, receives exception & exit code, may rethrow exception or may exit program */
+    /** @var null|callable The callable to catch exception, receives exception & exit code, may rethrow exception or may exit program */
     protected $onException = null;
 
     public function __construct(protected string $name, protected string $version = '0.0.1', callable $onExit = null)

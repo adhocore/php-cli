@@ -14,7 +14,6 @@ namespace Ahc\Cli\Helper;
 use Ahc\Cli\Exception;
 use Ahc\Cli\Input\Argument;
 use Ahc\Cli\Input\Command;
-use Ahc\Cli\Input\Groupable;
 use Ahc\Cli\Input\Option;
 use Ahc\Cli\Input\Parameter;
 use Ahc\Cli\Output\Writer;
@@ -279,8 +278,11 @@ class OutputHelper
         $max = max(array_map(fn ($item) => strlen($this->getName($item)), $items));
 
         uasort($items, static function ($a, $b) {
-            $aName = $a instanceof Groupable ? $a->group() . $a->name() : $a->name();
-            $bName = $b instanceof Groupable ? $b->group() . $b->name() : $b->name();
+            // Fix for:
+            // Was groupable, but its problematic since groupable does not have name.
+            // Only commands have groupable. So we need to check instanceof Command.
+            $aName = $a instanceof Command ? $a->group() . $a->name() : $a->name();
+            $bName = $b instanceof Command ? $b->group() . $b->name() : $b->name();
 
             return $aName <=> $bName;
         });
