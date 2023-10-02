@@ -63,7 +63,7 @@ class AdvancedArgsTest extends TestCase
         $v = $p->parse([
             'cmd',
             '-10',                   // Normal negative number
-            '[', '-200', '400', ']', //inline variadic group with negative numbers
+            '[', '-200', '400', ']', // inline variadic group with negative numbers
             '-0.345',                // Negative float
             '--trim-by', '-3',       // Negative option value
         ])->values();
@@ -110,7 +110,7 @@ class AdvancedArgsTest extends TestCase
 
     public function test_last_variadic_without_boundaries_recognition()
     {
-        //This is a valid case, but not recommended.
+        // This is a valid case, but not recommended.
         $p = $this->newCommand()
             ->arguments('<path> [paths...]')
             ->option('-f --force', 'Force add ignored file', 'boolval', false);
@@ -127,7 +127,7 @@ class AdvancedArgsTest extends TestCase
         $this->assertSame(["path1", "path2"], $v["paths"] ?? []);
         $this->assertTrue($v["force"] ?? false, "");
 
-        //Even this is valid, but not recommended.
+        // Even this is valid, but not recommended.
         $p = $this->newCommand()
             ->arguments('<path> [paths...]')
             ->option('-f --force', 'Force add ignored file', 'boolval', false)
@@ -282,7 +282,7 @@ class AdvancedArgsTest extends TestCase
         $p = new Command('cmd', $desc, $allowUnknown, $app);
 
         return $p->version($version . debug_backtrace()[1]['function'])->onExit(function () {
-            
+
             return false;
         });
     }

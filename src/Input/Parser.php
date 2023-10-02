@@ -95,13 +95,13 @@ abstract class Parser
         // Handle this argument:
         $argument = array_shift($this->_arguments);
         
-        //No argument defined, so its an indexed arg:
+        // No argument defined, so its an indexed arg:
         if (is_null($argument)) {
-            //Its a single constant value arg:
+            // Its a single constant value arg:
             if ($arg->isConstant()) {
                 $this->set(null, $arg->value());
             } else {
-                //Its a variadic arg, so we need to collect all the remaining args:
+                // Its a variadic arg, so we need to collect all the remaining args:
                 foreach ($arg->nested as $token) {
                     if ($token->isConstant()) {
                         $this->set(null, $token->value(), true);
@@ -144,7 +144,7 @@ abstract class Parser
 
         // Its variadic, and we have a variadic grouped arg:
         if ($argument->variadic() && $arg->isVariadic()) {
-            //Consume all the nested tokens:
+            // Consume all the nested tokens:
             foreach ($arg->nested as $token) {
                 if ($token->isConstant()) {
                     $this->setValue($argument, $token->value());
@@ -189,7 +189,7 @@ abstract class Parser
         // Get the option:
         $option = $this->optionFor($opt->value());
 
-        //Consumed:
+        // Consumed:
         $consumed = 0;
 
         // Unknown option handle it:
@@ -254,7 +254,7 @@ abstract class Parser
             return ++$consumed;
         }
 
-        //anything else its just a flag:
+        // anything else its just a flag:
         $this->setValue($option);
 
         return $consumed;
