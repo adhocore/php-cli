@@ -14,16 +14,16 @@ namespace Ahc\Cli\Input;
 use Ahc\Cli\Input\Token;
 use \Iterator;
 
-use function \explode;
-use function \array_map;
-use function \array_push;
-use function \ltrim;
-use function \rtrim;
-use function \preg_match;
-use function \preg_quote;
-use function \sprintf;
-use function \str_split;
-use function \strlen;
+use function explode;
+use function array_map;
+use function array_push;
+use function ltrim;
+use function rtrim;
+use function preg_match;
+use function preg_quote;
+use function sprintf;
+use function str_split;
+use function strlen;
 
 /**
  * Tokenizer.
@@ -362,7 +362,7 @@ class Tokenizer implements Iterator
     }
 
     /**
-     * Get the current token - Iterator interface.
+     * Get the current token.
      *
      * @return Token
      */
@@ -380,15 +380,11 @@ class Tokenizer implements Iterator
      */
     public function offset(int $offset): ?Token
     {
-        if (isset($this->tokens[$this->index + $offset])) {
-            return $this->tokens[$this->index + $offset];
-        }
-
-        return null;
+        return $this->tokens[$this->index + $offset] ?? null;
     }
 
     /**
-     * Move the pointer to the next token - Iterator interface.
+     * Move the pointer to the next token.
      *
      * @return void
      */
@@ -398,7 +394,7 @@ class Tokenizer implements Iterator
     }
 
     /**
-     * Get the current token index - Iterator interface.
+     * Get the current token index.
      *
      * @return int
      */
@@ -408,7 +404,7 @@ class Tokenizer implements Iterator
     }
 
     /**
-     * Check if the current token is valid - Iterator interface.
+     * Check if the current token is valid.
      *
      * @return bool
      */
@@ -418,7 +414,7 @@ class Tokenizer implements Iterator
     }
 
     /**
-     * Rewind the pointer to the first token - Iterator interface.
+     * Rewind the pointer to the first token.
      *
      * @return void
      */
@@ -434,11 +430,7 @@ class Tokenizer implements Iterator
      */
     public function validCurrent(): ?Token
     {
-        if ($this->valid()) {
-            return $this->current();
-        }
-
-        return null;
+        return $this->valid() ? $this->current() : null;
     }
 
     /**
@@ -449,13 +441,13 @@ class Tokenizer implements Iterator
         $str = PHP_EOL;
         foreach ($this->tokens as $token) {
             $str .= " - ".$token . PHP_EOL;
-            if (!empty($token->nested)) {
+            if ($token->nested) {
                 foreach ($token->nested as $nested) {
                     $str .= "     - " . $nested . PHP_EOL;
                 }
             }
         }
-        
+
         return $str;
     }
 }
