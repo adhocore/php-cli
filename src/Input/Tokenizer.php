@@ -124,6 +124,7 @@ class Tokenizer implements Iterator
     {
         // Early return for non-option args its a constant:
         if (!$this->isOption($arg)) {
+
             return true;
         }
         // If its a single hyphen, maybe its a negative number:
@@ -132,8 +133,10 @@ class Tokenizer implements Iterator
             &&
             ($arg === (string)(int)$arg || $arg === (string)(float)$arg)
         ) {
+
             return true;
         }
+
         return false;
     }
 
@@ -299,16 +302,19 @@ class Tokenizer implements Iterator
             } else {
                 $tokens[] = new Token(Token::TYPE_CONSTANT, $arg);
             }
+
             return $tokens;
         }
 
         if ($this->isLiteralSymbol($arg)) {
             $tokens[] = new Token(Token::TYPE_LITERAL, $arg);
+
             return $tokens;
         }
 
         if ($this->isShortOption($arg)) {
             $tokens[] = new Token(Token::TYPE_SHORT, $arg);
+
             return $tokens;
         }
 
@@ -329,11 +335,13 @@ class Tokenizer implements Iterator
                 $t = $this->tokenize($parts[1]);
                 array_push($tokens, ...$t);
             }
+
             return $tokens;
         }
 
         if ($this->isLongOption($arg)) {
             $tokens[] = new Token(Token::TYPE_LONG, $arg);
+
             return $tokens;
         }
 
@@ -348,6 +356,7 @@ class Tokenizer implements Iterator
 
             return $tokens;
         }
+
         // Unclassified, treat as constant:
         return [new Token(Token::TYPE_CONSTANT, $arg)];
     }
@@ -374,6 +383,7 @@ class Tokenizer implements Iterator
         if (isset($this->tokens[$this->index + $offset])) {
             return $this->tokens[$this->index + $offset];
         }
+
         return null;
     }
 
@@ -427,6 +437,7 @@ class Tokenizer implements Iterator
         if ($this->valid()) {
             return $this->current();
         }
+
         return null;
     }
 
@@ -444,6 +455,7 @@ class Tokenizer implements Iterator
                 }
             }
         }
+        
         return $str;
     }
 }

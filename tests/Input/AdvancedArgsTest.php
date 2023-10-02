@@ -282,6 +282,7 @@ class AdvancedArgsTest extends TestCase
         $p = new Command('cmd', $desc, $allowUnknown, $app);
 
         return $p->version($version . debug_backtrace()[1]['function'])->onExit(function () {
+            
             return false;
         });
     }

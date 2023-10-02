@@ -116,6 +116,7 @@ abstract class Parser
                     }
                 }
             }
+
             return;
         }
 
@@ -141,6 +142,7 @@ abstract class Parser
                     );
                 }
             }
+
             return;
         }
 
@@ -156,12 +158,14 @@ abstract class Parser
                     );
                 }
             }
+
             return;
         }
 
         // Its not variadic, and we have a constant arg:
         if ($arg->isConstant()) {
             $this->setValue($argument, $arg->value());
+
             return;
         }
 
@@ -200,12 +204,14 @@ abstract class Parser
                 $opt->value(),
                 is_array($value) ? $value[0] ?? null : $value
             );
+
             return $used ? ++$consumed : $consumed;
         }
 
         // Early out if its just a flag
         if (!$next) {
             $this->setValue($option);
+
             return $consumed;
         }
 
@@ -223,6 +229,7 @@ abstract class Parser
                 }
                 $tokens->next();
             }
+
             return $consumed;
         }
 
@@ -239,6 +246,7 @@ abstract class Parser
             }
             // consume the next token:
             $tokens->next();
+
             return ++$consumed;
         }
 
@@ -246,11 +254,13 @@ abstract class Parser
         if ($next->isConstant()) {
             $tokens->next(); // consume the next token
             $this->setValue($option, $next->value());
+
             return ++$consumed;
         }
 
         //anything else its just a flag:
         $this->setValue($option);
+
         return $consumed;
     }
 
@@ -265,9 +275,11 @@ abstract class Parser
     {
         foreach ($this->_options as $option) {
             if ($option->is($name)) {
+
                 return $option;
             }
         }
+
         return null;
     }
 
@@ -305,6 +317,7 @@ abstract class Parser
         $name  = $parameter->attributeName();
         $value = $this->_normalizer->normalizeValue($parameter, $value);
         $emit  = $this->emit($parameter->attributeName(), $value) !== false;
+        
         return $emit ? $this->set($name, $value, $parameter->variadic()) : false;
     }
 
@@ -326,7 +339,7 @@ abstract class Parser
         } else {
             $this->_values[$key] = $value;
         }
-        
+
         return !in_array($value, [true, false, null], true);
     }
 

@@ -71,6 +71,7 @@ class Option extends Parameter
                 $short = $part;
             }
         }
+        
         return [
             $short,
             $long ?: self::SIGN_LONG.ltrim($short, self::SIGN_SHORT)

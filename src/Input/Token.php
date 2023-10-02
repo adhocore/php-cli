@@ -68,6 +68,7 @@ class Token
     public function addNested(Token $token): self
     {
         $this->nested[] = $token;
+
         return $this;
     }
 
@@ -111,6 +112,7 @@ class Token
         if ($side === 'close') {
             return $this->type(self::TYPE_VARIADIC) && $this->value === self::TOKEN_VARIADIC_C;
         }
+        
         return $this->type(self::TYPE_VARIADIC);
     }
 
