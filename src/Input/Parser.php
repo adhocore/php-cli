@@ -66,19 +66,15 @@ abstract class Parser
         $this->_tokenizer  = new Tokenizer($argv);
 
         foreach ($this->_tokenizer as $token) {
-
             // Its a constant value to be assigned to an argument:
             if ($token->isConstant() || $token->isVariadic()) {
                 $this->parseArgs($token, $this->_tokenizer);
                 continue;
             }
-
             // Its an option parse it and its value/s:
             if ($token->isOption()) {
                 $this->parseOptions($token, $this->_tokenizer);
-                continue;
             }
-
         }
 
         $this->validate();
@@ -317,7 +313,7 @@ abstract class Parser
         $name  = $parameter->attributeName();
         $value = $this->_normalizer->normalizeValue($parameter, $value);
         $emit  = $this->emit($parameter->attributeName(), $value) !== false;
-        
+
         return $emit ? $this->set($name, $value, $parameter->variadic()) : false;
     }
 
