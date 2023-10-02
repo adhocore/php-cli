@@ -25,13 +25,12 @@ use Ahc\Cli\Input\Parameter;
  */
 class Normalizer
 {
-
     /**
      * Normalizes value as per context and runs thorugh filter if possible.
-     * 
+     *
      * @param Parameter $parameter
      * @param string|null $value
-     * 
+     *
      * @return mixed
      */
     public function normalizeValue(Parameter $parameter, ?string $value = null): mixed
@@ -46,5 +45,4 @@ class Normalizer
 
         return $parameter->filter($value);
     }
-    
 }

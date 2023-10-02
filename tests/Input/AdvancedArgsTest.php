@@ -20,7 +20,6 @@ use function \debug_backtrace;
 use function \ob_start;
 use function \ob_get_clean;
 
-
 class AdvancedArgsTest extends TestCase
 {
 
@@ -45,22 +44,14 @@ class AdvancedArgsTest extends TestCase
                 '[400', '401', ']'
             ])->values();
 
-        $this->assertSame("100", $v['first'] ?? "", 
-            "first value is not 100");
-        $this->assertSame(["test", "me"], $v['second'] ?? [], 
-            "second value is not [test, me]");
-        $this->assertSame("300", $v['third'] ?? "", 
-            "third value is not 300");
-        $this->assertSame(["john", "jane", "joe"], $v['ignore'] ?? [], 
-            "ignore value is not [john, jane, joe]");
-        $this->assertSame(["kathmandu", "pokhara"], $v['city'] ?? [], 
-            "city value is not [kathmandu, pokhara]");
-        $this->assertSame(["nepal", "india"], $v['country'] ?? [], 
-            "country value is not [nepal, india]");
-        $this->assertSame(["NY", "CA"], $v['states'] ?? [], 
-            "states value is not [NY, CA]");
-        $this->assertSame(["400", "401"], $v['fourth'] ?? [], 
-            "fourth value is not [400, 401]");
+        $this->assertSame("100", $v['first'] ?? "", "first value is not 100");
+        $this->assertSame(["test", "me"], $v['second'] ?? [], "second value is not [test, me]");
+        $this->assertSame("300", $v['third'] ?? "", "third value is not 300");
+        $this->assertSame(["john", "jane", "joe"], $v['ignore'] ?? [], "ignore value is not [john, jane, joe]");
+        $this->assertSame(["kathmandu", "pokhara"], $v['city'] ?? [], "city value is not [kathmandu, pokhara]");
+        $this->assertSame(["nepal", "india"], $v['country'] ?? [], "country value is not [nepal, india]");
+        $this->assertSame(["NY", "CA"], $v['states'] ?? [], "states value is not [NY, CA]");
+        $this->assertSame(["400", "401"], $v['fourth'] ?? [], "fourth value is not [400, 401]");
     }
 
     public function test_negative_values_recognition()
@@ -84,7 +75,6 @@ class AdvancedArgsTest extends TestCase
         $this->assertSame(["-200", "400"], $v['limits'], "limit value is not -200, 400");
         $this->assertSame('-0.345', $v['percision'], "percision value is not -0.345");
         $this->assertSame(-3, $v['trimBy'], "percision value is not -3");
-
     }
 
     public function test_complex_options_and_variadic()
@@ -96,7 +86,7 @@ class AdvancedArgsTest extends TestCase
             ->option('-a --all', 'Replace all')
             ->option('-t --test <required>', 'Tests')
             ->option('-n --names [name...]', 'Names');
-        
+
         $v = $p->parse([
             'cmd',
             'string value long',
@@ -108,28 +98,18 @@ class AdvancedArgsTest extends TestCase
             '300'
         ])->values();
 
-        $this->assertSame("string value long", $v['first'] ?? "", 
-            "first value is not string value long");
-        $this->assertSame(["word1", "word2"], $v['second'] ?? [],
-            "second value is not [word1, word2]");
-        $this->assertSame(["john", "jane", "joe"], $v['ignore'] ?? [],
-            "ignore value is not [john, jane, joe]");
-        $this->assertSame(true, $v['replace'] ?? false,
-            "replace value is not true");
-        $this->assertSame(true, $v['all'] ?? false,
-            "all value is not true");
-        $this->assertSame("match", $v['test'] ?? "",
-            "test value is not 'match'");
-        $this->assertSame(["john", "jane"], $v['names'] ?? [],
-            "names value is not [john, jane]");
-        $this->assertSame("300", $v['third'] ?? "",
-            "third value is not 300");
+        $this->assertSame("string value long", $v['first'] ?? "", "first value is not string value long");
+        $this->assertSame(["word1", "word2"], $v['second'] ?? [], "second value is not [word1, word2]");
+        $this->assertSame(["john", "jane", "joe"], $v['ignore'] ?? [], "ignore value is not [john, jane, joe]");
+        $this->assertSame(true, $v['replace'] ?? false, "replace value is not true");
+        $this->assertSame(true, $v['all'] ?? false, "all value is not true");
+        $this->assertSame("match", $v['test'] ?? "", "test value is not 'match'");
+        $this->assertSame(["john", "jane"], $v['names'] ?? [], "names value is not [john, jane]");
+        $this->assertSame("300", $v['third'] ?? "", "third value is not 300");
     }
-
 
     public function test_last_variadic_without_boundaries_recognition()
     {
-
         //This is a valid case, but not recommended.
         $p = $this->newCommand()
             ->arguments('<path> [paths...]')
@@ -137,12 +117,12 @@ class AdvancedArgsTest extends TestCase
 
         $v = $p->parse([
             'cmd',
-            'path normal', 
+            'path normal',
             'path1', 
             'path2', 
-            '-f'       // Negative option value
+            '-f' // Negative option value
         ])->values();
-        
+
         $this->assertSame("path normal", $v["path"] ?? []);
         $this->assertSame(["path1", "path2"], $v["paths"] ?? []);
         $this->assertTrue($v["force"] ?? false, "");
@@ -155,9 +135,9 @@ class AdvancedArgsTest extends TestCase
 
         $v = $p->parse([
             'cmd',
-            'path normal', 
-            'path1', 
-            'path2',  
+            'path normal',
+            'path1',
+            'path2',
             '-f',
             '-m',
             'm1', 'm2', 'm3'
@@ -167,7 +147,6 @@ class AdvancedArgsTest extends TestCase
         $this->assertSame(["path1", "path2"], $v["paths"] ?? []);
         $this->assertTrue($v["force"] ?? false);
         $this->assertSame(["m1", "m2", "m3"], $v["more"] ?? []);
-        
     }
 
     public function test_event_with_variadic()
@@ -185,13 +164,15 @@ class AdvancedArgsTest extends TestCase
 
         $this->assertSame($expected, ob_get_clean());
 
+        $p = $this->newCommand()->option('--hello [names...]')->on(function ($value) {
+            echo 'greeting '.$value.PHP_EOL;
+        });
+
         ob_start();
         $p->parse(['php', '--hello', "[", "john", "bob", "]"]);
 
         $this->assertSame($expected, ob_get_clean());
-
     }
-
 
     public function test_variadic_group_contains_non_constants()
     {
@@ -219,7 +200,6 @@ class AdvancedArgsTest extends TestCase
         ]);
     }
 
-
     public function test_variadic_is_added_as_indexed()
     {
         // This one is valid, and john is added as to --hello:
@@ -239,16 +219,14 @@ class AdvancedArgsTest extends TestCase
         $v = $p->values();
         $this->assertTrue($v["hello"] ?? false);
         $this->assertSame(
-            ["john", "bob"], 
+            ["john", "bob"],
             [$v[0] ?? "", $v[1] ?? ""]
         );
         $this->assertSame("greet", $v["action"] ?? "");
-
     }
 
-    public function test_variadic_with_literal_insane_cases() 
+    public function test_variadic_with_literal_insane_cases()
     {
-        
         // 1. normal way:
         $p = $this->newCommand()->arguments('<names...>')
                                 ->option('--args [a...]');
@@ -258,12 +236,8 @@ class AdvancedArgsTest extends TestCase
             "--args", "a", "a1", "b",
         ]);
         $v = $p->values();
-        $this->assertSame(
-            ["john", "bob", "jane"], $v["names"] ?? []
-        );
-        $this->assertSame(
-            ["a", "a1", "b"], $v["args"] ?? []
-        );
+        $this->assertSame(["john", "bob", "jane"], $v["names"] ?? []);
+        $this->assertSame(["a", "a1", "b"], $v["args"] ?? []);
 
         // 2. crazy way but should work:
         $p = $this->newCommand()->arguments('<names...>')
@@ -274,28 +248,20 @@ class AdvancedArgsTest extends TestCase
             "--args", "--", "-a", "--a1", "-b",
         ]);
         $v = $p->values();
-        $this->assertSame(
-            ["john", "bob", "jane"], $v["names"] ?? []
-        );
-        $this->assertSame(
-            ["-a", "--a1", "-b"], $v["args"] ?? []
-        );
+        $this->assertSame(["john", "bob", "jane"], $v["names"] ?? []);
+        $this->assertSame(["-a", "--a1", "-b"], $v["args"] ?? []);
 
         // 3. crazy way but should work:
         $p = $this->newCommand()->arguments('<names...>')
-                                ->option('--args [a...]'); 
+                                ->option('--args [a...]');
         $p->parse([
             "cmd",
             "--args", "[", "--", "-a", "--a1", "-b", "]",
             "[", "john", "bob", "jane","]",
         ]);
         $v = $p->values();
-        $this->assertSame(
-            ["john", "bob", "jane"], $v["names"] ?? []
-        );
-        $this->assertSame(
-            ["-a", "--a1", "-b"], $v["args"] ?? []
-        );
+        $this->assertSame(["john", "bob", "jane"], $v["names"] ?? []);
+        $this->assertSame(["-a", "--a1", "-b"], $v["args"] ?? []);
 
         // 4. Insane way but should work:
         $p = $this->newCommand()->arguments('<names...>')
@@ -307,15 +273,9 @@ class AdvancedArgsTest extends TestCase
              "jane",
         ]);
         $v = $p->values();
-        $this->assertSame(
-            ["john", "bob", "jane"], $v["names"] ?? []
-        );
-        $this->assertSame(
-            ["-a", "--a1", "-b"], $v["args"] ?? []
-        );
-
+        $this->assertSame(["john", "bob", "jane"], $v["names"] ?? []);
+        $this->assertSame(["-a", "--a1", "-b"], $v["args"] ?? []);
     }
-
 
     protected function newCommand(string $version = '0.0.1', string $desc = '', bool $allowUnknown = false, $app = null)
     {

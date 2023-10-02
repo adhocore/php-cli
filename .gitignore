@@ -4,6 +4,7 @@
 /.idea/
 /vendor/
 /tools/
+/.vscode/
 
 composer.lock
 *.local.*

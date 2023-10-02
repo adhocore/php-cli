@@ -11,11 +11,10 @@
 
 namespace Ahc\Cli\Input;
 
-use Ahc\Cli\Helper\Polyfill;
-use function preg_match;
-use function preg_split;
-use function str_replace;
-use function strpos;
+use function \preg_match;
+use function \preg_split;
+use function \str_replace;
+use function \strpos;
 
 /**
  * Cli Option.
@@ -31,8 +30,7 @@ class Option extends Parameter
 
     protected string $long = '';
 
-    // We export those to be used while parsing:
-    public const SIGN_SHORT = '-'; 
+    public const SIGN_SHORT = '-';
     public const SIGN_LONG  = '--';
 
     /**
@@ -49,34 +47,39 @@ class Option extends Parameter
         [$this->short, $this->long] = $this->namingParts($raw);
 
         $this->name = str_replace(
-            [self::SIGN_LONG, 'no-', 'with-'], '', 
+            [self::SIGN_LONG, 'no-', 'with-'], 
+            '',
             $this->long
         );
     }
 
     /**
-     * parses a raw option declaration string
-     * and return its parts
-     * @param string $raw 
-     * @return array 2 elements, short and long name
+     * parses a raw option declaration string and return its parts
+     *
+     * @param string $raw
+     *
+     * @return array [string:short, string:long]
      */
-    protected function namingParts(string $raw): array {
+    protected function namingParts(string $raw): array
+    {
         $short = '';
         $long  = '';
         foreach (preg_split('/[\s,\|]+/', $raw) as $part) { 
-            if (Polyfill::str_starts_with($part, self::SIGN_LONG)) {
+            if (str_starts_with($part, self::SIGN_LONG)) {
                 $long = $part;
-            } elseif (Polyfill::str_starts_with($part, self::SIGN_SHORT)) {
+            } elseif (str_starts_with($part, self::SIGN_SHORT)) {
                 $short = $part;
             }
         }
         return [
-            $short, 
+            $short,
             $long ?: self::SIGN_LONG.ltrim($short, self::SIGN_SHORT)
         ];
     }
     /**
      * Get long name.
+     *
+     * @return string
      */
     public function long(): string
     {
@@ -85,6 +88,8 @@ class Option extends Parameter
 
     /**
      * Get short name.
+     *
+     * @return string
      */
     public function short(): string
     {
@@ -93,6 +98,10 @@ class Option extends Parameter
 
     /**
      * Test if this option matches given arg.
+     *
+     * @param string $arg
+     *
+     * @return bool
      */
     public function is(string $arg): bool
     {
@@ -101,6 +110,8 @@ class Option extends Parameter
 
     /**
      * Check if the option is boolean type.
+     *
+     * @return bool
      */
     public function bool(): bool
     {
