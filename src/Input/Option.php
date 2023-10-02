@@ -11,10 +11,10 @@
 
 namespace Ahc\Cli\Input;
 
-use function \preg_match;
-use function \preg_split;
-use function \str_replace;
-use function \strpos;
+use function preg_match;
+use function preg_split;
+use function str_replace;
+use function strpos;
 
 /**
  * Cli Option.
@@ -71,7 +71,7 @@ class Option extends Parameter
                 $short = $part;
             }
         }
-        
+
         return [
             $short,
             $long ?: self::SIGN_LONG.ltrim($short, self::SIGN_SHORT)

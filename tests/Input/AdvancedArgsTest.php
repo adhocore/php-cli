@@ -16,9 +16,9 @@ use PHPUnit\Framework\TestCase;
 use Ahc\Cli\Exception\InvalidArgumentException;
 use Ahc\Cli\Exception\InvalidParameterException;
 
-use function \debug_backtrace;
-use function \ob_start;
-use function \ob_get_clean;
+use function debug_backtrace;
+use function ob_start;
+use function ob_get_clean;
 
 class AdvancedArgsTest extends TestCase
 {

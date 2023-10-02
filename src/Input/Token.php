@@ -13,8 +13,8 @@ namespace Ahc\Cli\Input;
 
 use Ahc\Cli\Input\Option;
 
-use function \array_map;
-use function \is_null;
+use function array_map;
+use function is_null;
 
 /**
  * Token.
@@ -112,7 +112,7 @@ class Token
         if ($side === 'close') {
             return $this->type(self::TYPE_VARIADIC) && $this->value === self::TOKEN_VARIADIC_C;
         }
-        
+
         return $this->type(self::TYPE_VARIADIC);
     }
 

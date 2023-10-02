@@ -17,13 +17,13 @@ use Ahc\Cli\Exception\InvalidParameterException;
 use Ahc\Cli\Exception\InvalidArgumentException;
 use Ahc\Cli\Exception\RuntimeException;
 
-use function \array_diff_key;
-use function \array_filter;
-use function \array_key_exists;
-use function \array_shift;
-use function \in_array;
-use function \is_null;
-use function \sprintf;
+use function array_diff_key;
+use function array_filter;
+use function array_key_exists;
+use function array_shift;
+use function in_array;
+use function is_null;
+use function sprintf;
 
 /**
  * Argv parser for the cli.
