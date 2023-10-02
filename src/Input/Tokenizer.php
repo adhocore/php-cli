@@ -62,10 +62,8 @@ class Tokenizer implements Iterator
                 // Or a literal token with variadic close, Which is a special case:
                 ($variadic && ($arg[0] ?? '') === Token::TOKEN_VARIADIC_C)
             ) {
-
                 $tokens = $this->tokenize($arg);
                 $literal = false;
-
             } else {
                 // Literal token treat all as constant:
                 $tokens[] = new Token(Token::TYPE_CONSTANT, $arg);
@@ -124,7 +122,6 @@ class Tokenizer implements Iterator
     {
         // Early return for non-option args its a constant:
         if (!$this->isOption($arg)) {
-
             return true;
         }
         // If its a single hyphen, maybe its a negative number:
@@ -133,7 +130,6 @@ class Tokenizer implements Iterator
             &&
             ($arg === (string)(int)$arg || $arg === (string)(float)$arg)
         ) {
-
             return true;
         }
 

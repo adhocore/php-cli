@@ -47,7 +47,7 @@ class Option extends Parameter
         [$this->short, $this->long] = $this->namingParts($raw);
 
         $this->name = str_replace(
-            [self::SIGN_LONG, 'no-', 'with-'], 
+            [self::SIGN_LONG, 'no-', 'with-'],
             '',
             $this->long
         );
@@ -64,7 +64,8 @@ class Option extends Parameter
     {
         $short = '';
         $long  = '';
-        foreach (preg_split('/[\s,\|]+/', $raw) as $part) { 
+
+        foreach (preg_split('/[\s,\|]+/', $raw) as $part) {
             if (str_starts_with($part, self::SIGN_LONG)) {
                 $long = $part;
             } elseif (str_starts_with($part, self::SIGN_SHORT)) {

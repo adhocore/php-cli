@@ -42,7 +42,6 @@ class Token
     public const TYPE_VARIADIC      = 'variadic';
 
     private string $type;
-
     private string $value;
 
     /** @var Token[] */
@@ -77,7 +76,7 @@ class Token
      *
      * @param string|null $type the type to check
      *
-     * @return bool|string if $type is null returns the type of the token, 
+     * @return bool|string if $type is null returns the type of the token,
      *                     otherwise returns true if the type matches
      */
     public function type(?string $type = null): bool|string
