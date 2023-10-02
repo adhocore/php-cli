@@ -118,8 +118,7 @@ abstract class Parser
 
         // Its variadic, so we need to collect all the remaining args:
         if ($argument->variadic() && $arg->isConstant()) {
-            // Consume all the remaining tokens
-            // If an option is found, treat it as well
+            // Consume all the remaining tokens If an option is found, treat it as well
             while ($queue->valid()) {
                 if ($queue->current()->isConstant()) {
                     $this->setValue($argument, $queue->current()->value());
@@ -183,13 +182,9 @@ abstract class Parser
      */
     protected function parseOptions(Token $opt, Tokenizer $tokens): int
     {
-        // Look ahead for next token:
+        
         $next = $tokens->offset(1);
-
-        // Get the option:
         $option = $this->optionFor($opt->value());
-
-        // Consumed:
         $consumed = 0;
 
         // Unknown option handle it:
