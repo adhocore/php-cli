@@ -249,8 +249,8 @@ class ProgressBar
 
         if ($label) {
             $label = $this->labelFormatted($label);
-            // If this line doesn't have a label, but we've had one before,
-            // then ensure the label line is cleared
+        // If this line doesn't have a label, but we've had one before,
+        // then ensure the label line is cleared
         } elseif ($this->hasLabelLine) {
             $label = $this->labelFormatted('');
         }
