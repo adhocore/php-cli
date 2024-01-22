@@ -54,8 +54,8 @@ class OutputHelperTest extends TestCase
             'Arg Header',
             '',
             'Arguments:',
-            '  [config]    [default: "defaultConfig"]',
             '  <path>      The path',
+            '  [config]    [default: "defaultConfig"]',
             '',
             'Arg Footer',
         ], $this->output());
