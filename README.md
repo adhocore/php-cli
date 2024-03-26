@@ -583,35 +583,54 @@ $writer->table([
 ]);
 ```
 
+#### Two columns detail (Display setting)
+
+If you want to display certain configurations (from your .env file for example) a bit like Laravel does (via the php artisan `about` command) you can use the `twoColumnDetail` method.
+
+```php
+$writer->twoColumnDetail('Environment');
+$writer->twoColumnDetail('PHP Version', PHP_VERSION);
+$writer->twoColumnDetail('App Version', '1.0.0');
+$writer->twoColumnDetail('Locale', 'en');
+```
+
 Gives something like:
 
 ```
-+--------+------+------+
-| A      | B C  | C D  |
-+--------+------+------+
-| apple  | ball | cat  |
-| applet | bee  | cute |
-+--------+------+------+
+Environment ........................................
+PHP Version .................................. 8.1.4
+App Version .................................. 1.0.0
+Locale .......................................... en
 ```
 
-> Designing table look and feel
-
-Just pass 2nd param `$styles`:
+You can use the `sep` parameter to define the separator to use.
 
 ```php
-$writer->table([
-    ['a' => 'apple', 'b-c' => 'ball', 'c_d' => 'cat'],
-    ['a' => 'applet', 'b-c' => 'bee', 'c_d' => 'cute'],
-], [
-    // for => styleName (anything that you would call in $writer instance)
-    'head' => 'boldGreen', // For the table heading
-    'odd'  => 'bold',      // For the odd rows (1st row is odd, then 3, 5 etc)
-    'even' => 'comment',   // For the even rows (2nd row is even, then 4, 6 etc)
-]);
-
-// 'head', 'odd', 'even' are all the styles for now
-// In future we may support styling a column by its name!
+$writer->twoColumnDetail('Environment', '', ['sep' => '-']);
+$writer->twoColumnDetail('PHP Version', PHP_VERSION);
 ```
+
+Gives something like:
+
+```
+Environment ----------------------------------------
+PHP Version .................................. 8.1.4
+```
+
+In addition, the text color, the background color and the thickness of the two texts can be defined via the 3rd argument of this method.
+
+```php
+$writer->twoColumnDetail('Cache Enable', 'true', [
+    'first' => ['fg' => Ahc\Cli\Output\Color::CYAN], // style of the key
+    'second' => ['fg' => Ahc\Cli\Output\Color::GREEN], // style of the value
+]);
+$writer->twoColumnDetail('Debug Mode', 'false', [
+    'first' => ['fg' => Ahc\Cli\Output\Color::CYAN], // style of the key
+    'second' => ['fg' => Ahc\Cli\Output\Color::RED], // style of the value
+]);
+```
+
+For more details regarding the different color options, see [Custom style](#custom-style)
 
 #### Reader
 
