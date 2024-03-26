@@ -96,7 +96,7 @@ class ProgressBar
 
         $this->writer   = $writer ?: new Writer();
         $this->cursor   = $this->writer->cursor();
-        $this->terminal = new Terminal();
+        $this->terminal = $this->writer->terminal();
     }
 
     /**

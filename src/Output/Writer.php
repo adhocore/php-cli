@@ -11,12 +11,16 @@
 
 namespace Ahc\Cli\Output;
 
+use Ahc\Cli\Helper\Arr;
+use Ahc\Cli\Helper\Terminal;
+
 use function fopen;
 use function fwrite;
 use function max;
 use function method_exists;
 use function str_repeat;
 use function stripos;
+use function strlen;
 use function strpos;
 use function ucfirst;
 
@@ -183,6 +187,8 @@ class Writer
 
     protected Cursor $cursor;
 
+    protected Terminal $terminal;
+
     public function __construct(string $path = null, Color $colorizer = null)
     {
         if ($path) {
@@ -194,6 +200,7 @@ class Writer
 
         $this->cursor    = new Cursor;
         $this->colorizer = $colorizer ?? new Color;
+        $this->terminal  = new Terminal();
     }
 
     /**
@@ -210,6 +217,14 @@ class Writer
     public function cursor(): Cursor
     {
         return $this->cursor;
+    }
+
+    /**
+     * Get Terminal.
+     */
+    public function terminal(): Terminal
+    {
+        return $this->terminal;
     }
 
     /**
@@ -286,6 +301,42 @@ class Writer
         $table = (new Table)->render($rows, $styles);
 
         return $this->colors($table);
+    }
+
+    /**
+     * writes a key/value set to two columns in a row
+     *
+     * @example PHP Version ............................................................. 8.1.4
+     *
+     * @param string $first The text to write in left side
+     * @param string|null $second The text to write in right side
+     * @param array $options Options to use when writing Eg: ['fg' => Color::GREEB, 'bold' => 1, 'sep' => '-']
+     *
+     * @return self
+     */
+    public function twoColumnDetail(string $first, ?string $second = null, array $options = []): self
+    {
+        $options = Arr::merge([
+            'first'  => ['bg' => null, 'fg' => Color::WHITE, 'bold' => 0],
+            'second' => ['bg' => null, 'fg' => Color::WHITE, 'bold' => 1],
+            'sep'    => '.',
+        ], $options);
+
+        $second   = (string) $second;
+
+        $dashWidth  = $this->terminal->width() - (strlen($first) + strlen($second));
+        // remove left and right margins because we're going to add 1 space on each side (after/before the text).
+        // if we don't have a second element, we just remove the left margin
+        $dashWidth -= $second === '' ? 1 : 2;
+
+        $first = $this->colorizer->line($first, $options['first']);
+        if ($second !== '') {
+            $second = $this->colorizer->line($second, $options['second']);
+        }
+
+        $this->write($first . ' ' . str_repeat((string) $options['sep'], $dashWidth) . ' ' . $second);
+
+        return $this->eol();
     }
 
     /**

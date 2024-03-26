@@ -11,6 +11,7 @@
 
 namespace Ahc\Cli\Test\Output;
 
+use Ahc\Cli\Helper\Terminal;
 use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Writer;
 use Ahc\Cli\Test\CliTestCase;
@@ -110,5 +111,25 @@ class WriterTest extends CliTestCase
     public function test_colorizer()
     {
         $this->assertInstanceOf(Color::class, (new Writer)->colorizer());
+    }
+
+    public function test_terminal()
+    {
+        $this->assertInstanceOf(Terminal::class, (new Writer)->terminal());
+    }
+
+    public function test_two_column_detail()
+    {
+        $w = new Writer(static::$ou);
+
+        $w->twoColumnDetail('PHP Version', PHP_VERSION, [
+            'sep' => '-'
+        ]);
+
+        $buffer = trim($this->buffer());
+
+        $this->assertStringContainsString("PHP Version", $buffer);
+        $this->assertStringContainsString('---', $buffer);
+        $this->assertStringContainsString(PHP_VERSION, $buffer);
     }
 }
