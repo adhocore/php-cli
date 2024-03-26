@@ -197,7 +197,7 @@ class OutputHelper
         $group = $lastGroup = null;
 
         $withDefault = $for === 'Options' || $for === 'Arguments';
-        foreach ($this->sortItems($items, $padLen) as $item) {
+        foreach ($this->sortItems($items, $padLen, $for) as $item) {
             $name  = $this->getName($item);
             if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
                 $this->writer->boldYellow($group ?: '*', true);
@@ -271,12 +271,17 @@ class OutputHelper
      *
      * @param Parameter[]|Command[] $items
      * @param int                   $max
+     * @param string                $for
      *
      * @return array
      */
-    protected function sortItems(array $items, &$max = 0): array
+    protected function sortItems(array $items, &$max = 0, string $for = ''): array
     {
         $max = max(array_map(fn ($item) => strlen($this->getName($item)), $items));
+
+        if ($for === 'Arguments') { // Arguments are positional so must not be sorted
+            return $items;
+        }
 
         uasort($items, static function ($a, $b) {
             $aName = $a instanceof Groupable ? $a->group() . $a->name() : $a->name();

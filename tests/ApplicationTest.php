@@ -305,4 +305,21 @@ class ApplicationTest extends TestCase
 
         return $app->io(new Interactor(static::$in, static::$ou));
     }
+
+    public function testDefaultCommand()
+    {
+        $app = $this->newApp('test');
+
+        // Add some sample commands to the application
+        $app->command('command1');
+        $app->command('command2');
+
+        // Test setting a valid default command
+        $app->defaultCommand('command1');
+        $this->assertEquals('command1', $app->getDefaultCommand());
+
+        // Test setting an invalid default command
+        $this->expectException(InvalidArgumentException::class);
+        $app->defaultCommand('invalid_command');
+    }
 }
