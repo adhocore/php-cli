@@ -505,14 +505,16 @@ $progress->option([
 ]);
 
 // Available options
-+------------+------------------------------+---------------+
-| Option     | Description                  | Default value |
-+------------+------------------------------+---------------+
-| pointer    | The progress bar head symbol | >             |
-| loader     | The loader symbol            | =             |
-| color      | The color of progress bar    | white         |
-| labelColor | The text color of the label  | white         |
-+------------+------------------------------+---------------+
++---------------+------------------------------------------------------+---------------+
+| Option        | Description                                          | Default value |
++===============+======================================================+===============+
+| pointer       | The progress bar head symbol                         | >             |
+| loader        | The loader symbol                                    | =             |
+| color         | The color of progress bar                            | white         |
+| labelColor    | The text color of the label                          | white         |
+| labelPosition | The position of the label (top, bottom, left, right) | bottom        |
++---------------+------------------------------------------------------+---------------+
+
 ```
 
 ### Writer
