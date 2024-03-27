@@ -225,7 +225,7 @@ class OtherCommand extends Ahc\Cli\Input\Command
     {
         $io = $this->app()->io();
 
-        $io->write('Other command');        
+        $io->write('Other command');
 
         // more codes ...
 
@@ -581,6 +581,36 @@ $writer->table([
     ['a' => 'apple', 'b-c' => 'ball', 'c_d' => 'cat'],
     ['a' => 'applet', 'b-c' => 'bee', 'c_d' => 'cute'],
 ]);
+```
+
+Gives something like:
+
+```
++--------+------+------+
+| A      | B C  | C D  |
++--------+------+------+
+| apple  | ball | cat  |
+| applet | bee  | cute |
++--------+------+------+
+```
+
+> Designing table look and feel
+
+Just pass 2nd param `$styles`:
+
+```php
+$writer->table([
+    ['a' => 'apple', 'b-c' => 'ball', 'c_d' => 'cat'],
+    ['a' => 'applet', 'b-c' => 'bee', 'c_d' => 'cute'],
+], [
+    // for => styleName (anything that you would call in $writer instance)
+    'head' => 'boldGreen', // For the table heading
+    'odd'  => 'bold',      // For the odd rows (1st row is odd, then 3, 5 etc)
+    'even' => 'comment',   // For the even rows (2nd row is even, then 4, 6 etc)
+]);
+
+// 'head', 'odd', 'even' are all the styles for now
+// In future we may support styling a column by its name!
 ```
 
 #### Two columns detail (Display setting)
