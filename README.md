@@ -613,15 +613,15 @@ $writer->table([
 // In future we may support styling a column by its name!
 ```
 
-#### Two columns detail (Display setting)
+#### Justify content (Display setting)
 
-If you want to display certain configurations (from your .env file for example) a bit like Laravel does (via the php artisan `about` command) you can use the `twoColumnDetail` method.
+If you want to display certain configurations (from your .env file for example) a bit like Laravel does (via the `php artisan about` command) you can use the `justify` method.
 
 ```php
-$writer->twoColumnDetail('Environment');
-$writer->twoColumnDetail('PHP Version', PHP_VERSION);
-$writer->twoColumnDetail('App Version', '1.0.0');
-$writer->twoColumnDetail('Locale', 'en');
+$writer->justify('Environment');
+$writer->justify('PHP Version', PHP_VERSION);
+$writer->justify('App Version', '1.0.0');
+$writer->justify('Locale', 'en');
 ```
 
 Gives something like:
@@ -636,8 +636,8 @@ Locale .......................................... en
 You can use the `sep` parameter to define the separator to use.
 
 ```php
-$writer->twoColumnDetail('Environment', '', ['sep' => '-']);
-$writer->twoColumnDetail('PHP Version', PHP_VERSION);
+$writer->justify('Environment', '', ['sep' => '-']);
+$writer->justify('PHP Version', PHP_VERSION);
 ```
 
 Gives something like:
@@ -650,11 +650,11 @@ PHP Version .................................. 8.1.4
 In addition, the text color, the background color and the thickness of the two texts can be defined via the 3rd argument of this method.
 
 ```php
-$writer->twoColumnDetail('Cache Enable', 'true', [
+$writer->justify('Cache Enable', 'true', [
     'first' => ['fg' => Ahc\Cli\Output\Color::CYAN], // style of the key
     'second' => ['fg' => Ahc\Cli\Output\Color::GREEN], // style of the value
 ]);
-$writer->twoColumnDetail('Debug Mode', 'false', [
+$writer->justify('Debug Mode', 'false', [
     'first' => ['fg' => Ahc\Cli\Output\Color::CYAN], // style of the key
     'second' => ['fg' => Ahc\Cli\Output\Color::RED], // style of the value
 ]);
