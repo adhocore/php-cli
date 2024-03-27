@@ -338,20 +338,20 @@ class ProgressBar
         $progress = [];
         if ($this->options['labelPosition'] === 'left') {
             // display : ====>       Label 50%
-            $progress[] = '<' . $this->options['color'] . '>' . $bar . '</end> '; // bar
-            $progress[] = '<' . $this->options['labelColor'] . '>' . $label . '</end> '; // label
-            $progress[] = '<' . $this->options['color'] . '>' . $number . '</end>'; // percentage
+            $progress[] = '<' . $this->options['color'] . '>' . $bar . '</end> ';
+            $progress[] = '<' . $this->options['labelColor'] . '>' . $label . '</end> ';
+            $progress[] = '<' . $this->options['color'] . '>' . $number . '</end>';
         } else if ($this->options['labelPosition'] === 'top') {
             // display :Label
             //          ====>        50%
-            $progress[] = '<' . $this->options['labelColor'] . '>' . $label . "\n" . '</end>'; // label
+            $progress[] = '<' . $this->options['labelColor'] . '>' . $label . "\n" . '</end>';
             $progress[] = '<' . $this->options['color'] . '>' . $bar . ' ' . $number . '</end>'; // bar + percentage
         } else {
             // display (on right) : ====>       50% Label
             // display (on bottom): ====>       50%
             //                      Label
             $progress[] = '<' . $this->options['color'] . '>' . $bar . ' ' . $number . '</end> '; // bar + percentage
-            $progress[] = '<' . $this->options['labelColor'] . '>' . $label . '</end>'; // label
+            $progress[] = '<' . $this->options['labelColor'] . '>' . $label . '</end>';
         }
 
         return implode('', $progress);
