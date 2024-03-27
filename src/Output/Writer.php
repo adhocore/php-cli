@@ -313,7 +313,7 @@ class Writer
      *
      * @return self
      */
-    public function twoColumnDetail(string $first, ?string $second = null, array $options = []): self
+    public function justify(string $first, ?string $second = null, array $options = []): self
     {
         $options = [
             'first'  => ($options['first'] ?? []) + ['bg' => null, 'fg' => Color::WHITE, 'bold' => 0],

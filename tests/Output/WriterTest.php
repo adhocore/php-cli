@@ -118,11 +118,11 @@ class WriterTest extends CliTestCase
         $this->assertInstanceOf(Terminal::class, (new Writer)->terminal());
     }
 
-    public function test_two_column_detail()
+    public function test_justify()
     {
         $w = new Writer(static::$ou);
 
-        $w->twoColumnDetail('PHP Version', PHP_VERSION, [
+        $w->justify('PHP Version', PHP_VERSION, [
             'sep' => '-'
         ]);
 
