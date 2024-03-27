@@ -11,7 +11,6 @@
 
 namespace Ahc\Cli\Output;
 
-use Ahc\Cli\Helper\Arr;
 use Ahc\Cli\Helper\Terminal;
 
 use function fopen;
@@ -310,17 +309,17 @@ class Writer
      *
      * @param string $first The text to write in left side
      * @param string|null $second The text to write in right side
-     * @param array $options Options to use when writing Eg: ['fg' => Color::GREEB, 'bold' => 1, 'sep' => '-']
+     * @param array $options Options to use when writing Eg: ['fg' => Color::GREEN, 'bold' => 1, 'sep' => '-']
      *
      * @return self
      */
     public function twoColumnDetail(string $first, ?string $second = null, array $options = []): self
     {
-        $options = Arr::merge([
-            'first'  => ['bg' => null, 'fg' => Color::WHITE, 'bold' => 0],
-            'second' => ['bg' => null, 'fg' => Color::WHITE, 'bold' => 1],
-            'sep'    => '.',
-        ], $options);
+        $options = [
+            'first'  => ($options['first'] ?? []) + ['bg' => null, 'fg' => Color::WHITE, 'bold' => 0],
+            'second' => ($options['second'] ?? []) + ['bg' => null, 'fg' => Color::WHITE, 'bold' => 1],
+            'sep'    => $options['sep'] ?? '.',
+        ];
 
         $second   = (string) $second;
 
