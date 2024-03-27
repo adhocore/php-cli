@@ -69,7 +69,7 @@ class ProgressBar
         'loader'         => '=',
         'color'          => 'white',
         'labelColor'     => 'white',
-        'labelPosition'  => 'bottom',   // position of the label according to the progress bar (one of 'top', 'bottom', 'left', 'right')
+        'labelPosition'  => 'bottom',
         'showPercentage' => true,       // in spinner mode, you may not want to display the percentage of the progress because you don't know in advance how long the processing will take (during an asynchronous call for example)
     ];
 
@@ -331,7 +331,7 @@ class ProgressBar
      */
     protected function progressBarFormatted(string $bar, string $number, string $label): string
     {
-        if ($this->options['showPercentage'] !== true) {
+        if (! $this->options['showPercentage']) {
             $number = '';
         }
 
