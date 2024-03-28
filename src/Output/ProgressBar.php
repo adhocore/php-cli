@@ -70,7 +70,8 @@ class ProgressBar
         'color'          => 'white',
         'labelColor'     => 'white',
         'labelPosition'  => 'bottom',
-        'showPercentage' => true,       // in spinner mode, you may not want to display the percentage of the progress because you don't know in advance how long the processing will take (during an asynchronous call for example)
+        // in spinner/async mode, you may hide the progress percentage as you won't know in advance how long it will take
+        'showPercentage' => true,
     ];
 
     /**
