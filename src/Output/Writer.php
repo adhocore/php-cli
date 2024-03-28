@@ -303,13 +303,13 @@ class Writer
     }
 
     /**
-     * writes a key/value set to two columns in a row
+     * writes a key/value set to two columns in a row.
      *
      * @example PHP Version ............................................................. 8.1.4
      *
-     * @param string $first The text to write in left side
-     * @param string|null $second The text to write in right side
-     * @param array $options Options to use when writing Eg: ['fg' => Color::GREEN, 'bold' => 1, 'sep' => '-']
+     * @param string      $first   The text to write in left side
+     * @param string|null $second  The text to write in right side
+     * @param array       $options Options to use when writing Eg: ['fg' => Color::GREEN, 'bold' => 1, 'sep' => '-']
      *
      * @return self
      */
