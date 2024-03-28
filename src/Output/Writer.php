@@ -321,9 +321,8 @@ class Writer
             'sep'    => $options['sep'] ?? '.',
         ];
 
-        $second   = (string) $second;
-
-        $dashWidth  = $this->terminal->width() - (strlen($first) + strlen($second));
+        $second    = (string) $second;
+        $dashWidth = $this->terminal->width() - (strlen($first) + strlen($second));
         // remove left and right margins because we're going to add 1 space on each side (after/before the text).
         // if we don't have a second element, we just remove the left margin
         $dashWidth -= $second === '' ? 1 : 2;
@@ -333,7 +332,8 @@ class Writer
             $second = $this->colorizer->line($second, $options['second']);
         }
 
-        $this->write($first . ' ' . str_repeat((string) $options['sep'], $dashWidth) . ' ' . $second);
+        $sep = $dashWidth >= 0 ? str_repeat((string) $options['sep'], $dashWidth) : '';
+        $this->write($first . ' ' . $sep . ' ' . $second);
 
         return $this->eol();
     }

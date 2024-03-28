@@ -34,7 +34,7 @@ class ProgressBarTest extends CliTestCase
             }
         }
 
-        $this->assertBufferContains('===========================================> 100%');
+        $this->assertBufferContains('==========================================>  100%');
         $this->assertBufferContains('10 x label');
 
         $this->expectException(UnexpectedValueException::class);
@@ -51,7 +51,7 @@ class ProgressBarTest extends CliTestCase
             $progress->advance(1, $label);
         }
 
-        $this->assertBufferContains('###########################################~ 100%');
+        $this->assertBufferContains('##########################################~  100%');
         $this->assertBufferContains('#1 label');
 
         $this->expectException(UnexpectedValueException::class);
@@ -73,7 +73,7 @@ class ProgressBarTest extends CliTestCase
             }
         }, fn ($v, $k) => "$k: $v");
 
-        $this->assertBufferContains('===========================================> 100%');
+        $this->assertBufferContains('==========================================>  100%');
         $this->assertBufferContains('c: 3');
         $this->assertNotNull((new Terminal)->height());
 
