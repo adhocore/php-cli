@@ -123,12 +123,12 @@ class WriterTest extends CliTestCase
         $w = new Writer(static::$ou);
 
         $w->justify('PHP Version', PHP_VERSION, [
-            'sep' => '-'
+            'sep' => '-',
         ]);
 
         $buffer = trim($this->buffer());
 
-        $this->assertStringContainsString("PHP Version", $buffer);
+        $this->assertStringContainsString('PHP Version', $buffer);
         $this->assertStringContainsString('---', $buffer);
         $this->assertStringContainsString(PHP_VERSION, $buffer);
     }

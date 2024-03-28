@@ -145,7 +145,7 @@ class ProgressBar
     }
 
     /**
-     * Force end of progress
+     * Force end of progress.
      */
     public function finish(): void
     {
@@ -328,11 +328,11 @@ class ProgressBar
     }
 
     /**
-     * Format the output of the progress bar by placing the label in the right place (top, right, bottom or left)
+     * Format the output of the progress bar by placing the label in the right place (top, right, bottom or left).
      */
     protected function progressBarFormatted(string $bar, string $number, string $label): string
     {
-        if (! $this->options['showPercentage']) {
+        if (!$this->options['showPercentage']) {
             $number = '';
         }
 
@@ -342,7 +342,7 @@ class ProgressBar
             $progress[] = '<' . $this->options['color'] . '>' . $bar . '</end> ';
             $progress[] = '<' . $this->options['labelColor'] . '>' . $label . '</end> ';
             $progress[] = '<' . $this->options['color'] . '>' . $number . '</end>';
-        } else if ($this->options['labelPosition'] === 'top') {
+        } elseif ($this->options['labelPosition'] === 'top') {
             // display :Label
             //          ====>        50%
             $progress[] = '<' . $this->options['labelColor'] . '>' . $label . "\n" . '</end>';
