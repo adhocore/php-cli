@@ -22,6 +22,7 @@ class ApplicationTest extends TestCase
 {
     protected static $in = __DIR__ . '/input.test';
     protected static $ou = __DIR__ . '/output.test';
+    private bool $actionCalled;
 
     public function setUp(): void
     {
