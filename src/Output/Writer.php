@@ -188,7 +188,7 @@ class Writer
 
     protected Terminal $terminal;
 
-    public function __construct(string $path = null, Color $colorizer = null)
+    public function __construct(?string $path = null, ?Color $colorizer = null)
     {
         if ($path) {
             $path = fopen($path, 'w');

@@ -63,7 +63,7 @@ class OutputHelper
     /** @var int Max width of command name */
     protected int $maxCmdName = 0;
 
-    public function __construct(Writer $writer = null)
+    public function __construct(?Writer $writer = null)
     {
         $this->writer = $writer ?? new Writer;
     }

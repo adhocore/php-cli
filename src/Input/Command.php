@@ -145,7 +145,7 @@ class Command extends Parser implements Groupable
     /**
      * Bind command to the app.
      */
-    public function bind(App $app = null): self
+    public function bind(?App $app = null): self
     {
         $this->_app = $app;
 
@@ -189,7 +189,7 @@ class Command extends Parser implements Groupable
     /**
      * Registers new option.
      */
-    public function option(string $raw, string $desc = '', callable $filter = null, $default = null): self
+    public function option(string $raw, string $desc = '', ?callable $filter = null, $default = null): self
     {
         $option = new Option($raw, $desc, $default, $filter);
 
@@ -217,7 +217,7 @@ class Command extends Parser implements Groupable
      *
      * @return string|self
      */
-    public function usage(string $usage = null)
+    public function usage(?string $usage = null)
     {
         if (func_num_args() === 0) {
             return $this->_usage;
@@ -235,7 +235,7 @@ class Command extends Parser implements Groupable
      *
      * @return string|self
      */
-    public function alias(string $alias = null)
+    public function alias(?string $alias = null)
     {
         if (func_num_args() === 0) {
             return $this->_alias;
@@ -249,7 +249,7 @@ class Command extends Parser implements Groupable
     /**
      * Sets event handler for last (or given) option.
      */
-    public function on(callable $fn, string $option = null): self
+    public function on(callable $fn, ?string $option = null): self
     {
         $names = array_keys($this->allOptions());
 
@@ -271,7 +271,7 @@ class Command extends Parser implements Groupable
     /**
      * {@inheritdoc}
      */
-    protected function handleUnknown(string $arg, string $value = null): mixed
+    protected function handleUnknown(string $arg, ?string $value = null): mixed
     {
         if ($this->_allowUnknown) {
             return $this->set($this->toCamelCase($arg), $value);
@@ -338,7 +338,7 @@ class Command extends Parser implements Groupable
     /**
      * Tap return given object or if that is null then app instance. This aids for chaining.
      */
-    public function tap(object $object = null)
+    public function tap(?object $object = null)
     {
         return $object ?? $this->_app;
     }
@@ -358,7 +358,7 @@ class Command extends Parser implements Groupable
      *
      * @return callable|self If $action provided then self, otherwise the preset action.
      */
-    public function action(callable $action = null)
+    public function action(?callable $action = null)
     {
         if (func_num_args() === 0) {
             return $this->_action;
@@ -388,7 +388,7 @@ class Command extends Parser implements Groupable
     /**
      * Get ProgressBar instance.
      */
-    protected function progress(int $total = null): ProgressBar
+    protected function progress(?int $total = null): ProgressBar
     {
         return new ProgressBar($total, $this->writer());
     }

@@ -188,9 +188,9 @@ class Shell
     // @codeCoverageIgnoreEnd
 
     public function setOptions(
-        string $cwd = null,
+        ?string $cwd = null,
         ?array $env = null,
-        float $timeout = null,
+        ?float $timeout = null,
         array $otherOptions = []
     ): self {
         $this->cwd            = $cwd;

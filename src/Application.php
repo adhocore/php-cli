@@ -63,7 +63,7 @@ class Application
     /** @var callable The callable to catch exception, receives exception & exit code, may rethrow exception or may exit program */
     protected $onException = null;
 
-    public function __construct(protected string $name, protected string $version = '0.0.1', callable $onExit = null)
+    public function __construct(protected string $name, protected string $version = '0.0.1', ?callable $onExit = null)
     {
         $this->onExit = $onExit ?? static fn (int $exitCode = 0) => exit($exitCode);
 
@@ -115,7 +115,7 @@ class Application
      *
      * @return string|self
      */
-    public function logo(string $logo = null)
+    public function logo(?string $logo = null)
     {
         if (func_num_args() === 0) {
             return $this->logo;
@@ -247,7 +247,7 @@ class Application
      *
      * @return Interactor|self
      */
-    public function io(Interactor $io = null)
+    public function io(?Interactor $io = null)
     {
         if ($io || !$this->io) {
             $this->io = $io ?? new Interactor;
