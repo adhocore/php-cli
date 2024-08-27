@@ -188,7 +188,7 @@ class Interactor
      * @param string|null $input  Input stream path.
      * @param string|null $output Output steam path.
      */
-    public function __construct(string $input = null, string $output = null)
+    public function __construct(?string $input = null, ?string $output = null)
     {
         $this->reader = new Reader($input);
         $this->writer = new Writer($output);
@@ -294,7 +294,7 @@ class Interactor
      *
      * @return mixed
      */
-    public function prompt(string $text, $default = null, callable $fn = null, int $retry = 3): mixed
+    public function prompt(string $text, $default = null, ?callable $fn = null, int $retry = 3): mixed
     {
         $error  = 'Invalid value. Please try again!';
         $hidden = func_get_args()[4] ?? false;
@@ -328,7 +328,7 @@ class Interactor
      *
      * @return mixed
      */
-    public function promptHidden(string $text, callable $fn = null, int $retry = 3): mixed
+    public function promptHidden(string $text, ?callable $fn = null, int $retry = 3): mixed
     {
         return $this->prompt($text, null, $fn, $retry, true);
     }

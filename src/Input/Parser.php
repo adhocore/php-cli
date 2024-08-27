@@ -118,7 +118,7 @@ abstract class Parser
      *
      * @return bool Whether to eat next arg.
      */
-    protected function parseOptions(string $arg, string $nextArg = null): bool
+    protected function parseOptions(string $arg, ?string $nextArg = null): bool
     {
         $value = substr($nextArg ?? '', 0, 1) === '-' ? null : $nextArg;
 
@@ -155,7 +155,7 @@ abstract class Parser
      *
      * @return mixed If true it will indicate that value has been eaten.
      */
-    abstract protected function handleUnknown(string $arg, string $value = null): mixed;
+    abstract protected function handleUnknown(string $arg, ?string $value = null): mixed;
 
     /**
      * Emit the event with value.
@@ -175,7 +175,7 @@ abstract class Parser
      *
      * @return bool Indicating whether it has eaten adjoining arg to its right.
      */
-    protected function setValue(Parameter $parameter, string $value = null): bool
+    protected function setValue(Parameter $parameter, ?string $value = null): bool
     {
         $name  = $parameter->attributeName();
         $value = $this->_normalizer->normalizeValue($parameter, $value);

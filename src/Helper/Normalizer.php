@@ -57,7 +57,7 @@ class Normalizer
     /**
      * Normalizes value as per context and runs thorugh filter if possible.
      */
-    public function normalizeValue(Parameter $parameter, string $value = null): mixed
+    public function normalizeValue(Parameter $parameter, ?string $value = null): mixed
     {
         if ($parameter instanceof Option && $parameter->bool()) {
             return !$parameter->default();
