@@ -122,6 +122,15 @@ class WriterTest extends CliTestCase
     {
         $w = new Writer(static::$ou);
 
+        $terminal = $this->createMock(Terminal::class);
+        $terminal->expects($this->once())
+            ->method('width')
+            ->willReturn(80);
+
+        $reflection = new \ReflectionProperty(Writer::class, 'terminal');
+        $reflection->setAccessible(true);
+        $reflection->setValue($w, $terminal);
+
         $w->justify('PHP Version', PHP_VERSION, [
             'sep' => '-',
         ]);
