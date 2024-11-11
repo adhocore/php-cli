@@ -61,7 +61,16 @@ class Table
 
             [$start, $end] = $styles[['even', 'odd'][(int) $odd]];
             foreach ($head as $col => $size) {
-                $parts[] = str_pad($row[$col] ?? '', $size, ' ');
+                $text = $row[$col] ?? '';
+
+                if (preg_match('/(\\x1b(?:.+)m)/U', $text, $matches)) {
+                    $line = str_replace($matches[1], '', $text);
+                    $line = preg_replace('/\\x1b\[0m/', '', $line);
+
+                    $size += strlen($text) - strlen($line);
+                }
+
+                $parts[] = str_pad($text, $size, ' ');
             }
 
             $odd    = !$odd;
@@ -93,8 +102,19 @@ class Table
         }
 
         foreach ($head as $col => &$value) {
-            $cols   = array_column($rows, $col);
-            $span   = array_map(fn($col) => strlen($col ?? ''), $cols);
+            $cols = array_column($rows, $col);
+            $cols = array_map(function($col) {
+                $col ??= '';
+
+                if (preg_match('/(\\x1b(?:.+)m)/U', $col, $matches)) {
+                    $col = str_replace($matches[1], '', $col);
+                    $col = preg_replace('/\\x1b\[0m/', '', $col);
+                }
+
+                return $col;
+            }, $cols);
+
+            $span   = array_map('strlen', $cols);
             $span[] = strlen($col);
             $value  = max($span);
         }

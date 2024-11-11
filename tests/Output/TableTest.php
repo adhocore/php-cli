@@ -11,6 +11,7 @@
 
 namespace Ahc\Cli\Test\Output;
 
+use Ahc\Cli\Output\Color;
 use Ahc\Cli\Output\Table;
 use Ahc\Cli\Test\CliTestCase;
 
@@ -213,6 +214,55 @@ class TableTest extends CliTestCase
         $this->assertStringContainsString("<boldGreen>", $result);
         $this->assertStringContainsString("<bold>", $result);
         $this->assertStringContainsString("<comment>", $result);
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
+    public function test_render_with_ansi_color_codes_in_cell_content(): void
+    {
+        $rows = [
+            ['name' => "\033[31mJohn Doe\033[0m", 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => "\033[32m25\033[0m"],
+            ['name' => "\033[34mBob Johnson\033[0m", 'age' => '40']
+        ];
+
+        $expectedOutput =
+            "+-------------+-----+" . PHP_EOL .
+            "| Name        | Age |" . PHP_EOL .
+            "+-------------+-----+" . PHP_EOL .
+            "| \033[31mJohn Doe\033[0m    | 30  |" . PHP_EOL .
+            "| Jane Smith  | \033[32m25\033[0m  |" . PHP_EOL .
+            "| \033[34mBob Johnson\033[0m | 40  |" . PHP_EOL .
+            "+-------------+-----+";
+
+        $result = $this->table->render($rows);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
+
+    public function test_render_with_ansi_color_codes_in_cell_content_using_colors_class(): void
+    {
+        $color = new Color();
+
+        $rows = [
+            ['name' => $color->error('John Doe'), 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => $color->ok('25')],
+            ['name' => $color->info('Bob Johnson'), 'age' => '40']
+        ];
+
+        var_dump($color->ok('25'));
+        // exit;
+        $expectedOutput =
+            "+-------------+-----+" . PHP_EOL .
+            "| Name        | Age |" . PHP_EOL .
+            "+-------------+-----+" . PHP_EOL .
+            "| \033[0;31mJohn Doe\033[0m    | 30  |" . PHP_EOL .
+            "| Jane Smith  | \033[0;32m25\033[0m  |" . PHP_EOL .
+            "| \033[0;34mBob Johnson\033[0m | 40  |" . PHP_EOL .
+            "+-------------+-----+";
+
+        $result = $this->table->render($rows);
+
         $this->assertSame($expectedOutput, trim($result));
     }
 }
