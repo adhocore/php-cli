@@ -94,7 +94,7 @@ class Table
 
         foreach ($head as $col => &$value) {
             $cols   = array_column($rows, $col);
-            $span   = array_map('strlen', $cols);
+            $span   = array_map(fn($col) => strlen($col ?? ''), $cols);
             $span[] = strlen($col);
             $value  = max($span);
         }
