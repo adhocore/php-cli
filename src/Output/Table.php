@@ -72,13 +72,14 @@ class Table
                     $style = $styles['*:' . $colNumber] ?? $styles[$col];
                 } else if (isset($styles[$line . ':*'])) { // row, 2:*
                     $style = $styles[$line . ':*'];
+                } else if (isset($styles['*:*'])) { // any cell, *:*
+                    $style = $styles['*:*'];
                 } else {
                     $style = $styles[['even', 'odd'][(int) $odd]];
                 }
 
-                [$start, $end] = $style;
-
-                $text = $row[$col] ?? '';
+                $text          = $row[$col] ?? '';
+                [$start, $end] = $this->parseStyle($style, $text, $row, $rows);
 
                 if (preg_match('/(\\x1b(?:.+)m)/U', $text, $matches)) {
                     $word = str_replace($matches[1], '', $text);
@@ -150,12 +151,30 @@ class Table
 
         foreach ($styles as $for => $style) {
             if (is_string($style) && $style !== '') {
-                $style = ['<' . trim($style, '<> ') . '>', '</end>'];
+                $default[$for] = ['<' . trim($style, '<> ') . '>', '</end>'];
+            } else if (str_contains($for, ':') && is_callable($style)) {
+               $default[$for] = $style;
             }
-
-            $default[$for] = $style;
         }
 
         return $default;
+    }
+
+    protected function parseStyle(array|callable $style, $val, array $row, array $table): array
+    {
+        if (is_array($style)) {
+            return $style;
+        }
+
+        $style = call_user_func($style, $val, $row, $table);
+
+        if (is_string($style) && $style !== '') {
+            return ['<' . trim($style, '<> ') . '>', '</end>'];
+        }
+        if (is_array($style) && count($style) === 2) {
+            return $style;
+        }
+
+        return ['', ''];
     }
 }

@@ -363,6 +363,107 @@ class TableTest extends CliTestCase
         $this->assertSame($expectedOutput, trim($result));
     }
 
+    public function test_render_with_callable_styles(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => '25'],
+        ];
+
+        $styles = [
+            'head' => 'boldGreen',
+            '1:1' => function ($val, $row, $table) {
+                return $val === 'John Doe' ? 'boldRed' : '';
+            },
+            '2:2' => function ($val, $row, $table) {
+                return $val === '25' ? 'boldBlue' : '';
+            },
+        ];
+
+        $expectedOutput =
+            "+------------+-----+" . PHP_EOL .
+            "|<boldGreen> Name       </end>|<boldGreen> Age </end>|" . PHP_EOL .
+            "+------------+-----+" . PHP_EOL .
+            "|<boldRed> John Doe   </end>| 30  |" . PHP_EOL .
+            "| Jane Smith |<boldBlue> 25  </end>|" . PHP_EOL .
+            "+------------+-----+";
+
+        $result = $this->table->render($rows, $styles);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
+    public function test_render_with_callable_styles_using_row(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => '25'],
+            ['name' => 'Bob Johnson', 'age' => '40'],
+        ];
+
+        $styles = [
+            'head' => 'boldGreen',
+            '*:2' => function ($val, $row) {
+                if ($val == 25) {
+                    return 'boldYellow';
+                }
+
+                return $row['age'] >= 30 ? 'boldRed' : '';
+            },
+        ];
+
+        $expectedOutput =
+            "+-------------+-----+" . PHP_EOL .
+            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|" . PHP_EOL .
+            "+-------------+-----+" . PHP_EOL .
+            "| John Doe    |<boldRed> 30  </end>|" . PHP_EOL .
+            "| Jane Smith  |<boldYellow> 25  </end>|" . PHP_EOL .
+            "| Bob Johnson |<boldRed> 40  </end>|" . PHP_EOL .
+            "+-------------+-----+";
+
+        $result = $this->table->render($rows, $styles);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
+    public function test_render_with_callable_styles_on_any_cell(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => '25'],
+            ['name' => 'Alice Bob', 'age' => '10'],
+            ['name' => 'Bob Johnson', 'age' => '40'],
+            ['name' => 'Jane X', 'age' => '50'],
+        ];
+
+        $styles = [
+            'head' => 'boldGreen',
+            '*:*' => function ($val, $row) {
+                if ($val === 'Jane X') {
+                    return 'yellow';
+                }
+                if ($val == 10) {
+                    return 'purple';
+                }
+                return $row['age'] >= 30 ? 'boldRed' : '';
+            },
+        ];
+
+        $expectedOutput =
+            "+-------------+-----+" . PHP_EOL .
+            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|" . PHP_EOL .
+            "+-------------+-----+" . PHP_EOL .
+            "|<boldRed> John Doe    </end>|<boldRed> 30  </end>|" . PHP_EOL .
+            "| Jane Smith  | 25  |" . PHP_EOL .
+            "| Alice Bob   |<purple> 10  </end>|" . PHP_EOL .
+            "|<boldRed> Bob Johnson </end>|<boldRed> 40  </end>|" . PHP_EOL .
+            "|<yellow> Jane X      </end>|<boldRed> 50  </end>|" . PHP_EOL .
+            "+-------------+-----+";
+
+        $result = $this->table->render($rows, $styles);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
     public function test_render_with_mixed_specific_styles(): void
     {
         $rows = [
@@ -392,6 +493,35 @@ class TableTest extends CliTestCase
         $this->assertSame($expectedOutput, trim($result));
     }
 
+    public function test_render_with_styles_using_column_name(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30', 'city' => 'New York'],
+            ['name' => 'Jane Smith', 'age' => '25', 'city' => 'Los Angeles'],
+            ['name' => 'Bob Johnson', 'age' => '40', 'city' => 'Chicago'],
+        ];
+
+        $styles = [
+            'head' => 'boldGreen',
+            '1:2' => 'boldRed',    // Cell-specific style for first row, second column
+            'city' => 'boldBlue',
+            'name' => 'italic',
+        ];
+
+        $expectedOutput =
+            "+-------------+-----+-------------+" . PHP_EOL .
+            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|<boldGreen> City        </end>|" . PHP_EOL .
+            "+-------------+-----+-------------+" . PHP_EOL .
+            "|<italic> John Doe    </end>|<boldRed> 30  </end>|<boldBlue> New York    </end>|" . PHP_EOL .
+            "|<italic> Jane Smith  </end>| 25  |<boldBlue> Los Angeles </end>|" . PHP_EOL .
+            "|<italic> Bob Johnson </end>| 40  |<boldBlue> Chicago     </end>|" . PHP_EOL .
+            "+-------------+-----+-------------+";
+
+        $result = $this->table->render($rows, $styles);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
     public function test_render_with_empty_styles_array(): void
     {
         $rows = [
@@ -408,6 +538,31 @@ class TableTest extends CliTestCase
             "+------------+-----+";
 
         $result = $this->table->render($rows, []);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
+    public function test_render_handles_invalid_style_keys_gracefully(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => '25'],
+        ];
+
+        $invalidStyles = [
+            'invalidKey' => 'boldRed', // Invalid style key
+            'head' => 'boldGreen',
+        ];
+
+        $expectedOutput =
+            "+------------+-----+" . PHP_EOL .
+            "|<boldGreen> Name       </end>|<boldGreen> Age </end>|" . PHP_EOL .
+            "+------------+-----+" . PHP_EOL .
+            "| John Doe   | 30  |" . PHP_EOL .
+            "| Jane Smith | 25  |" . PHP_EOL .
+            "+------------+-----+";
+
+        $result = $this->table->render($rows, $invalidStyles);
 
         $this->assertSame($expectedOutput, trim($result));
     }
