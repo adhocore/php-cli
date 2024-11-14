@@ -609,11 +609,69 @@ $writer->table([
     'head' => 'boldGreen', // For the table heading
     'odd'  => 'bold',      // For the odd rows (1st row is odd, then 3, 5 etc)
     'even' => 'comment',   // For the even rows (2nd row is even, then 4, 6 etc)
+    '1:1'  => 'red',       // For cell in row 1 col 1 (1 based count, 'apple' in this example)
+    '2:*'  => '',          // For all cells in row 2 (1 based count)
+    '*:2'  => '',          // For all cells in col 2 (1 based count)
+    'b-c'  => '',          // For all columns named 'b-c' (same as '*:2' in this example)
+    '*:*'  => 'blue',      // For all cells in table (Set all cells to blue)
 ]);
-
-// 'head', 'odd', 'even' are all the styles for now
-// In future we may support styling a column by its name!
 ```
+
+You can define the style of a cell dynamically using a callback. You could then apply one style or another depending on a value.
+
+```php
+$rows = [
+    ['name' => 'John Doe', 'age' => '30'],
+    ['name' => 'Jane Smith', 'age' => '25'],
+    ['name' => 'Bob Johnson', 'age' => '40'],
+];
+
+$styles = [
+    '*:2' => function ($val, $row) {
+        return $row['age'] >= 30 ? 'boldRed' : '';
+    },
+];
+
+$writer->table($rows, $styles);
+```
+
+The example above only processes the cells in the second column of the table. Yf you want to process any cell, you can use the `*:*` key. You could then customise each cell in the table
+
+```php
+$rows = [
+    ['name' => 'John Doe', 'age' => '30'],
+    ['name' => 'Jane Smith', 'age' => '25'],
+    ['name' => 'Alice Bob', 'age' => '10'],
+    ['name' => 'Big Johnson', 'age' => '40'],
+    ['name' => 'Jane X', 'age' => '50'],
+    ['name' => 'John Smith', 'age' => '20'],
+    ['name' => 'Bob John', 'age' => '28'],
+];
+
+$styles = [
+    '*:*' => function ($val, $row) {
+        if ($val === 'Jane X') {
+            return 'yellow';
+        }
+        if ($val == 10 || $val == 20) {
+            return 'boldPurple';
+        }
+        if (str_contains($val, 'Bob')) {
+            return 'blue';
+        }
+        return $row['age'] >= 30 ? 'boldRed' : '';
+    },
+];
+
+$writer->table($rows, $styles);
+```
+
+> **Note: Priority in increasing order:**
+> - `odd` or `even`
+> - `2:*` (row)
+> - `*:2` or `b-c <-> column name` (col)
+> - `*:*` any cell in table
+> - `1:1` (cell) = **highest priority**
 
 #### Justify content (Display setting)
 
