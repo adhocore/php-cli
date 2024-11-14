@@ -45,36 +45,53 @@ class Table
         [$head, $rows] = $table;
 
         $styles = $this->normalizeStyles($styles);
-        $title  = $body = $dash = [];
+        $title  = $body = $dash = $positions = [];
 
         [$start, $end] = $styles['head'];
+        $pos = 0;
         foreach ($head as $col => $size) {
-            $dash[]  = str_repeat('-', $size + 2);
-            $title[] = str_pad($this->toWords($col), $size, ' ');
+            $dash[]          = str_repeat('-', $size + 2);
+            $title[]         = str_pad($this->toWords($col), $size, ' ');
+            $positions[$col] = ++$pos;
         }
 
         $title = "|$start " . implode(" $end|$start ", $title) . " $end|" . PHP_EOL;
 
         $odd = true;
-        foreach ($rows as $row) {
+        foreach ($rows as $line => $row) {
             $parts = [];
+            $line++;
 
             [$start, $end] = $styles[['even', 'odd'][(int) $odd]];
             foreach ($head as $col => $size) {
+                $colNumber = $positions[$col];
+
+                if (isset($styles[$line . ':' . $colNumber])) { // cell, 1:1
+                    $style = $styles[$line . ':' . $colNumber];
+                } else if (isset($styles[$col]) || isset($styles['*:' . $colNumber])) { // col, *:2 or b
+                    $style = $styles['*:' . $colNumber] ?? $styles[$col];
+                } else if (isset($styles[$line . ':*'])) { // row, 2:*
+                    $style = $styles[$line . ':*'];
+                } else {
+                    $style = $styles[['even', 'odd'][(int) $odd]];
+                }
+
+                [$start, $end] = $style;
+
                 $text = $row[$col] ?? '';
 
                 if (preg_match('/(\\x1b(?:.+)m)/U', $text, $matches)) {
-                    $line = str_replace($matches[1], '', $text);
-                    $line = preg_replace('/\\x1b\[0m/', '', $line);
+                    $word = str_replace($matches[1], '', $text);
+                    $word = preg_replace('/\\x1b\[0m/', '', $word);
 
-                    $size += strlen($text) - strlen($line);
+                    $size += strlen($text) - strlen($word);
                 }
 
-                $parts[] = str_pad($text, $size, ' ');
+                $parts[] = "$start " . str_pad($text, $size, ' ') . " $end";
             }
 
             $odd    = !$odd;
-            $body[] = "|$start " . implode(" $end|$start ", $parts) . " $end|";
+            $body[] = '|' . implode('|', $parts) . '|';
         }
 
         $dash  = '+' . implode('+', $dash) . '+' . PHP_EOL;
@@ -132,9 +149,11 @@ class Table
         ];
 
         foreach ($styles as $for => $style) {
-            if (isset($default[$for])) {
-                $default[$for] = ['<' . trim($style, '<> ') . '>', '</end>'];
+            if (is_string($style) && $style !== '') {
+                $style = ['<' . trim($style, '<> ') . '>', '</end>'];
             }
+
+            $default[$for] = $style;
         }
 
         return $default;

@@ -239,7 +239,6 @@ class TableTest extends CliTestCase
         $this->assertSame($expectedOutput, trim($result));
     }
 
-
     public function test_render_with_ansi_color_codes_in_cell_content_using_colors_class(): void
     {
         $color = new Color();
@@ -250,8 +249,6 @@ class TableTest extends CliTestCase
             ['name' => $color->info('Bob Johnson'), 'age' => '40']
         ];
 
-        var_dump($color->ok('25'));
-        // exit;
         $expectedOutput =
             "+-------------+-----+" . PHP_EOL .
             "| Name        | Age |" . PHP_EOL .
@@ -264,5 +261,155 @@ class TableTest extends CliTestCase
         $result = $this->table->render($rows);
 
         $this->assertSame($expectedOutput, trim($result));
+    }
+
+    public function test_render_with_cell_specific_styles(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => '25'],
+        ];
+
+        $styles = [
+            'head' => 'boldGreen',
+            '1:1' => 'boldRed',    // Cell-specific style for first row, first column
+            '2:2' => 'boldBlue',   // Cell-specific style for second row, second column
+        ];
+
+        $expectedOutput =
+            "+------------+-----+" . PHP_EOL .
+            "|<boldGreen> Name       </end>|<boldGreen> Age </end>|" . PHP_EOL .
+            "+------------+-----+" . PHP_EOL .
+            "|<boldRed> John Doe   </end>| 30  |" . PHP_EOL .
+            "| Jane Smith |<boldBlue> 25  </end>|" . PHP_EOL .
+            "+------------+-----+";
+
+        $result = $this->table->render($rows, $styles);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
+    public function test_render_with_column_specific_styles(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => '25'],
+        ];
+
+        $styles = [
+            'head' => 'boldGreen',
+            '*:2' => 'boldBlue',   // Column-specific style for the second column
+        ];
+
+        $expectedOutput =
+            "+------------+-----+" . PHP_EOL .
+            "|<boldGreen> Name       </end>|<boldGreen> Age </end>|" . PHP_EOL .
+            "+------------+-----+" . PHP_EOL .
+            "| John Doe   |<boldBlue> 30  </end>|" . PHP_EOL .
+            "| Jane Smith |<boldBlue> 25  </end>|" . PHP_EOL .
+            "+------------+-----+";
+
+        $result = $this->table->render($rows, $styles);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
+    public function test_render_with_row_specific_styles(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => '25'],
+            ['name' => 'Bob Johnson', 'age' => '40'],
+        ];
+
+        $styles = [
+            'head' => 'boldGreen',
+            '2:*' => 'boldRed',   // Row-specific style for the second row
+        ];
+
+        $expectedOutput =
+            "+-------------+-----+" . PHP_EOL .
+            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|" . PHP_EOL .
+            "+-------------+-----+" . PHP_EOL .
+            "| John Doe    | 30  |" . PHP_EOL .
+            "|<boldRed> Jane Smith  </end>|<boldRed> 25  </end>|" . PHP_EOL .
+            "| Bob Johnson | 40  |" . PHP_EOL .
+            "+-------------+-----+";
+
+        $result = $this->table->render($rows, $styles);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
+    public function test_render_with_mixed_specific_styles(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30', 'city' => 'New York'],
+            ['name' => 'Jane Smith', 'age' => '25', 'city' => 'Los Angeles'],
+            ['name' => 'Bob Johnson', 'age' => '40', 'city' => 'Chicago'],
+        ];
+
+        $styles = [
+            'head' => 'boldGreen',
+            '1:2' => 'boldRed',    // Cell-specific style for first row, second column
+            '*:3' => 'boldBlue',   // Column-specific style for the third column
+            '3:*' => 'italic',     // Row-specific style for the third row
+        ];
+
+        $expectedOutput =
+            "+-------------+-----+-------------+" . PHP_EOL .
+            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|<boldGreen> City        </end>|" . PHP_EOL .
+            "+-------------+-----+-------------+" . PHP_EOL .
+            "| John Doe    |<boldRed> 30  </end>|<boldBlue> New York    </end>|" . PHP_EOL .
+            "| Jane Smith  | 25  |<boldBlue> Los Angeles </end>|" . PHP_EOL .
+            "|<italic> Bob Johnson </end>|<italic> 40  </end>|<boldBlue> Chicago     </end>|" . PHP_EOL .
+            "+-------------+-----+-------------+";
+
+        $result = $this->table->render($rows, $styles);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
+    public function test_render_with_empty_styles_array(): void
+    {
+        $rows = [
+            ['name' => 'John Doe', 'age' => '30'],
+            ['name' => 'Jane Smith', 'age' => '25'],
+        ];
+
+        $expectedOutput =
+            "+------------+-----+" . PHP_EOL .
+            "| Name       | Age |" . PHP_EOL .
+            "+------------+-----+" . PHP_EOL .
+            "| John Doe   | 30  |" . PHP_EOL .
+            "| Jane Smith | 25  |" . PHP_EOL .
+            "+------------+-----+";
+
+        $result = $this->table->render($rows, []);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+    public function test_render_with_large_number_of_columns(): void
+    {
+        $columns = 100;
+        $rows = [
+            array_combine(
+                array_map(fn($i) => "col$i", range(1, $columns)),
+                array_map(fn($i) => "value$i", range(1, $columns))
+            )
+        ];
+
+        $result = $this->table->render($rows);
+
+        $this->assertStringContainsString('| Col1   | Col2   | Col3   |', $result);
+        $this->assertStringContainsString('| Col98   | Col99   | Col100   |', $result);
+        $this->assertStringContainsString('| value1 | value2 | value3 |', $result);
+        $this->assertStringContainsString('| value98 | value99 | value100 |', $result);
+
+        $expectedLineCount = 5; // Header, separator lines, and data row
+        $this->assertEquals($expectedLineCount, substr_count($result, PHP_EOL));
+
+        $expectedColumnCount = $columns + $columns + 2; // start + columns + separators + end
+        $this->assertEquals($expectedColumnCount, substr_count($result, '|'));
     }
 }
