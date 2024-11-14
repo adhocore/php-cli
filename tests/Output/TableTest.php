@@ -48,6 +48,28 @@ class TableTest extends CliTestCase
         $this->assertSame($expectedOutput, trim($result));
     }
 
+    public function test_render_with_single_column(): void
+    {
+        $rows = [
+            ['name' => 'John Doe'],
+            ['name' => 'Jane Smith'],
+            ['name' => 'Bob Johnson']
+        ];
+
+        $expectedOutput =
+            "+-------------+" . PHP_EOL .
+            "| Name        |" . PHP_EOL .
+            "+-------------+" . PHP_EOL .
+            "| John Doe    |" . PHP_EOL .
+            "| Jane Smith  |" . PHP_EOL .
+            "| Bob Johnson |" . PHP_EOL .
+            "+-------------+";
+
+        $result = $this->table->render($rows);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
+
     public function test_render_with_multiple_rows_and_columns(): void
     {
         $rows = [
@@ -411,5 +433,52 @@ class TableTest extends CliTestCase
 
         $expectedColumnCount = $columns + $columns + 2; // start + columns + separators + end
         $this->assertEquals($expectedColumnCount, substr_count($result, '|'));
+    }
+
+    public function test_render_handles_large_number_of_rows(): void
+    {
+        $rows = [];
+        for ($i = 0; $i < 1000; $i++) {
+            $rows[] = [
+                'id' => $i,
+                'name' => "Name $i",
+                'email' => "email$i@example.com"
+            ];
+        }
+
+        $result = $this->table->render($rows);
+
+        $this->assertStringContainsString('| Id  | Name     | Email                |', $result);
+        $this->assertStringContainsString('| 0   | Name 0   | email0@example.com   |', $result);
+        $this->assertStringContainsString('| 999 | Name 999 | email999@example.com |', $result);
+        $this->assertEquals(1004, substr_count($result, PHP_EOL)); // 1000 data rows + 4 border rows
+    }
+
+    public function test_render_with_html_like_tags_in_cell_content(): void
+    {
+        $rows = [
+            ['name' => '<b>John Doe</b>', 'age' => '30'],
+            ['name' => 'Jane <i>Smith</i>', 'age' => '25'],
+            ['name' => '<span>Bob Johnson</span>', 'age' => '40']
+        ];
+
+        $styles = [
+            'head' => 'boldGreen',
+            'odd'  => 'bold',
+            'even' => 'comment',
+        ];
+
+        $expectedOutput =
+            "+--------------------------+-----+" . PHP_EOL .
+            "|<boldGreen> Name                     </end>|<boldGreen> Age </end>|" . PHP_EOL .
+            "+--------------------------+-----+" . PHP_EOL .
+            "|<bold> <b>John Doe</b>          </end>|<bold> 30  </end>|" . PHP_EOL .
+            "|<comment> Jane <i>Smith</i>        </end>|<comment> 25  </end>|" . PHP_EOL .
+            "|<bold> <span>Bob Johnson</span> </end>|<bold> 40  </end>|" . PHP_EOL .
+            "+--------------------------+-----+";
+
+        $result = $this->table->render($rows, $styles);
+
+        $this->assertSame($expectedOutput, trim($result));
     }
 }
