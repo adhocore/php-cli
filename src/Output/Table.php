@@ -48,7 +48,7 @@ class Table
         $title  = $body = $dash = $positions = [];
 
         [$start, $end] = $styles['head'];
-        $pos = 0;
+        $pos           = 0;
         foreach ($head as $col => $size) {
             $dash[]          = str_repeat('-', $size + 2);
             $title[]         = str_pad($this->toWords($col), $size, ' ');
@@ -68,11 +68,11 @@ class Table
 
                 if (isset($styles[$line . ':' . $colNumber])) { // cell, 1:1
                     $style = $styles[$line . ':' . $colNumber];
-                } else if (isset($styles[$col]) || isset($styles['*:' . $colNumber])) { // col, *:2 or b
+                } elseif (isset($styles[$col]) || isset($styles['*:' . $colNumber])) { // col, *:2 or b
                     $style = $styles['*:' . $colNumber] ?? $styles[$col];
-                } else if (isset($styles[$line . ':*'])) { // row, 2:*
+                } elseif (isset($styles[$line . ':*'])) { // row, 2:*
                     $style = $styles[$line . ':*'];
-                } else if (isset($styles['*:*'])) { // any cell, *:*
+                } elseif (isset($styles['*:*'])) { // any cell, *:*
                     $style = $styles['*:*'];
                 } else {
                     $style = $styles[['even', 'odd'][(int) $odd]];
@@ -121,7 +121,7 @@ class Table
 
         foreach ($head as $col => &$value) {
             $cols = array_column($rows, $col);
-            $cols = array_map(function($col) {
+            $cols = array_map(function ($col) {
                 $col ??= '';
 
                 if (preg_match('/(\\x1b(?:.+)m)/U', $col, $matches)) {
@@ -152,8 +152,8 @@ class Table
         foreach ($styles as $for => $style) {
             if (is_string($style) && $style !== '') {
                 $default[$for] = ['<' . trim($style, '<> ') . '>', '</end>'];
-            } else if (str_contains($for, ':') && is_callable($style)) {
-               $default[$for] = $style;
+            } elseif (str_contains($for, ':') && is_callable($style)) {
+                $default[$for] = $style;
             }
         }
 

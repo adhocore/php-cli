@@ -35,13 +35,13 @@ class TableTest extends CliTestCase
 
     public function test_render_with_single_row_and_column(): void
     {
-        $rows = [['header' => 'values']];
+        $rows           = [['header' => 'values']];
         $expectedOutput =
-            "+--------+" . PHP_EOL .
-            "| Header |" . PHP_EOL .
-            "+--------+" . PHP_EOL .
-            "| values |" . PHP_EOL .
-            "+--------+";
+            '+--------+' . PHP_EOL .
+            '| Header |' . PHP_EOL .
+            '+--------+' . PHP_EOL .
+            '| values |' . PHP_EOL .
+            '+--------+';
 
         $result = $this->table->render($rows);
 
@@ -53,17 +53,17 @@ class TableTest extends CliTestCase
         $rows = [
             ['name' => 'John Doe'],
             ['name' => 'Jane Smith'],
-            ['name' => 'Bob Johnson']
+            ['name' => 'Bob Johnson'],
         ];
 
         $expectedOutput =
-            "+-------------+" . PHP_EOL .
-            "| Name        |" . PHP_EOL .
-            "+-------------+" . PHP_EOL .
-            "| John Doe    |" . PHP_EOL .
-            "| Jane Smith  |" . PHP_EOL .
-            "| Bob Johnson |" . PHP_EOL .
-            "+-------------+";
+            '+-------------+' . PHP_EOL .
+            '| Name        |' . PHP_EOL .
+            '+-------------+' . PHP_EOL .
+            '| John Doe    |' . PHP_EOL .
+            '| Jane Smith  |' . PHP_EOL .
+            '| Bob Johnson |' . PHP_EOL .
+            '+-------------+';
 
         $result = $this->table->render($rows);
 
@@ -75,17 +75,17 @@ class TableTest extends CliTestCase
         $rows = [
             ['name' => 'John Doe', 'age' => '30', 'city' => 'New York'],
             ['name' => 'Jane Smith', 'age' => '25', 'city' => 'Los Angeles'],
-            ['name' => 'Bob Johnson', 'age' => '40', 'city' => 'Chicago']
+            ['name' => 'Bob Johnson', 'age' => '40', 'city' => 'Chicago'],
         ];
 
         $expectedOutput =
-            "+-------------+-----+-------------+" . PHP_EOL .
-            "| Name        | Age | City        |" . PHP_EOL .
-            "+-------------+-----+-------------+" . PHP_EOL .
-            "| John Doe    | 30  | New York    |" . PHP_EOL .
-            "| Jane Smith  | 25  | Los Angeles |" . PHP_EOL .
-            "| Bob Johnson | 40  | Chicago     |" . PHP_EOL .
-            "+-------------+-----+-------------+" ;
+            '+-------------+-----+-------------+' . PHP_EOL .
+            '| Name        | Age | City        |' . PHP_EOL .
+            '+-------------+-----+-------------+' . PHP_EOL .
+            '| John Doe    | 30  | New York    |' . PHP_EOL .
+            '| Jane Smith  | 25  | Los Angeles |' . PHP_EOL .
+            '| Bob Johnson | 40  | Chicago     |' . PHP_EOL .
+            '+-------------+-----+-------------+';
 
         $result = $this->table->render($rows);
 
@@ -97,22 +97,22 @@ class TableTest extends CliTestCase
         $rows = [
             ['name' => 'John Doe', 'age' => '30'],
             ['name' => 'Jane Smith', 'age' => '25'],
-            ['name' => 'Bob Johnson', 'age' => '40']
+            ['name' => 'Bob Johnson', 'age' => '40'],
         ];
 
         $styles = [
-            'odd' => 'bold',
-            'even' => 'comment'
+            'odd'  => 'bold',
+            'even' => 'comment',
         ];
 
         $expectedOutput =
-            "+-------------+-----+" . PHP_EOL .
-            "| Name        | Age |" . PHP_EOL .
-            "+-------------+-----+" . PHP_EOL .
-            "|<bold> John Doe    </end>|<bold> 30  </end>|" . PHP_EOL .
-            "|<comment> Jane Smith  </end>|<comment> 25  </end>|" . PHP_EOL .
-            "|<bold> Bob Johnson </end>|<bold> 40  </end>|" . PHP_EOL .
-            "+-------------+-----+";
+            '+-------------+-----+' . PHP_EOL .
+            '| Name        | Age |' . PHP_EOL .
+            '+-------------+-----+' . PHP_EOL .
+            '|<bold> John Doe    </end>|<bold> 30  </end>|' . PHP_EOL .
+            '|<comment> Jane Smith  </end>|<comment> 25  </end>|' . PHP_EOL .
+            '|<bold> Bob Johnson </end>|<bold> 40  </end>|' . PHP_EOL .
+            '+-------------+-----+';
 
         $result = $this->table->render($rows, $styles);
 
@@ -124,17 +124,17 @@ class TableTest extends CliTestCase
         $rows = [
             ['name' => 'John', 'age' => '30'],
             ['name' => 'Jane Smith', 'age' => '25'],
-            ['name' => 'Bob', 'age' => '40']
+            ['name' => 'Bob', 'age' => '40'],
         ];
 
         $expectedOutput =
-            "+------------+-----+" . PHP_EOL .
-            "| Name       | Age |" . PHP_EOL .
-            "+------------+-----+" . PHP_EOL .
-            "| John       | 30  |" . PHP_EOL .
-            "| Jane Smith | 25  |" . PHP_EOL .
-            "| Bob        | 40  |" . PHP_EOL .
-            "+------------+-----+";
+            '+------------+-----+' . PHP_EOL .
+            '| Name       | Age |' . PHP_EOL .
+            '+------------+-----+' . PHP_EOL .
+            '| John       | 30  |' . PHP_EOL .
+            '| Jane Smith | 25  |' . PHP_EOL .
+            '| Bob        | 40  |' . PHP_EOL .
+            '+------------+-----+';
 
         $result = $this->table->render($rows);
 
@@ -145,23 +145,23 @@ class TableTest extends CliTestCase
     {
         $rows = [
             ['name' => 'John Doe', 'age' => '30'],
-            ['name' => 'Jane Smith', 'age' => '25']
+            ['name' => 'Jane Smith', 'age' => '25'],
         ];
 
         $expectedOutput =
-            "+------------+-----+" . PHP_EOL .
-            "| Name       | Age |" . PHP_EOL .
-            "+------------+-----+" . PHP_EOL .
-            "| John Doe   | 30  |" . PHP_EOL .
-            "| Jane Smith | 25  |" . PHP_EOL .
-            "+------------+-----+";
+            '+------------+-----+' . PHP_EOL .
+            '| Name       | Age |' . PHP_EOL .
+            '+------------+-----+' . PHP_EOL .
+            '| John Doe   | 30  |' . PHP_EOL .
+            '| Jane Smith | 25  |' . PHP_EOL .
+            '+------------+-----+';
 
         $result = $this->table->render($rows);
 
-        $this->assertStringContainsString("+------------+-----+" . PHP_EOL, $result);
-        $this->assertStringContainsString("| Name       | Age |" . PHP_EOL, $result);
-        $this->assertStringContainsString("+------------+-----+" . PHP_EOL, $result);
-        $this->assertEquals(3, substr_count($result, "+------------+-----+" . PHP_EOL));
+        $this->assertStringContainsString('+------------+-----+' . PHP_EOL, $result);
+        $this->assertStringContainsString('| Name       | Age |' . PHP_EOL, $result);
+        $this->assertStringContainsString('+------------+-----+' . PHP_EOL, $result);
+        $this->assertEquals(3, substr_count($result, '+------------+-----+' . PHP_EOL));
         $this->assertSame($expectedOutput, trim($result));
     }
 
@@ -170,17 +170,17 @@ class TableTest extends CliTestCase
         $rows = [
             ['name' => 'John Doe', 'age' => '30', 'city' => 'New York'],
             ['name' => 'Jane Smith', 'age' => '25'],
-            ['name' => 'Bob Johnson', 'city' => 'Chicago']
+            ['name' => 'Bob Johnson', 'city' => 'Chicago'],
         ];
 
         $expectedOutput =
-            "+-------------+-----+----------+" . PHP_EOL .
-            "| Name        | Age | City     |" . PHP_EOL .
-            "+-------------+-----+----------+" . PHP_EOL .
-            "| John Doe    | 30  | New York |" . PHP_EOL .
-            "| Jane Smith  | 25  |          |" . PHP_EOL .
-            "| Bob Johnson |     | Chicago  |" . PHP_EOL .
-            "+-------------+-----+----------+";
+            '+-------------+-----+----------+' . PHP_EOL .
+            '| Name        | Age | City     |' . PHP_EOL .
+            '+-------------+-----+----------+' . PHP_EOL .
+            '| John Doe    | 30  | New York |' . PHP_EOL .
+            '| Jane Smith  | 25  |          |' . PHP_EOL .
+            '| Bob Johnson |     | Chicago  |' . PHP_EOL .
+            '+-------------+-----+----------+';
 
         $result = $this->table->render($rows);
 
@@ -191,16 +191,16 @@ class TableTest extends CliTestCase
     {
         $rows = [
             ['first_name' => 'John', 'last_name' => 'Doe', 'age_in_years' => '30'],
-            ['first_name' => 'Jane', 'last_name' => 'Smith', 'age_in_years' => '25']
+            ['first_name' => 'Jane', 'last_name' => 'Smith', 'age_in_years' => '25'],
         ];
 
         $expectedOutput =
-            "+------------+-----------+--------------+" . PHP_EOL .
-            "| First Name | Last Name | Age In Years |" . PHP_EOL .
-            "+------------+-----------+--------------+" . PHP_EOL .
-            "| John       | Doe       | 30           |" . PHP_EOL .
-            "| Jane       | Smith     | 25           |" . PHP_EOL .
-            "+------------+-----------+--------------+";
+            '+------------+-----------+--------------+' . PHP_EOL .
+            '| First Name | Last Name | Age In Years |' . PHP_EOL .
+            '+------------+-----------+--------------+' . PHP_EOL .
+            '| John       | Doe       | 30           |' . PHP_EOL .
+            '| Jane       | Smith     | 25           |' . PHP_EOL .
+            '+------------+-----------+--------------+';
 
         $result = $this->table->render($rows);
 
@@ -224,18 +224,18 @@ class TableTest extends CliTestCase
         ];
 
         $expectedOutput =
-            "+------------+-----+" . PHP_EOL .
-            "|<boldGreen> Name       </end>|<boldGreen> Age </end>|" . PHP_EOL .
-            "+------------+-----+" . PHP_EOL .
-            "|<bold> John Doe   </end>|<bold> 30  </end>|" . PHP_EOL .
-            "|<comment> Jane Smith </end>|<comment> 25  </end>|" . PHP_EOL .
-            "+------------+-----+";
+            '+------------+-----+' . PHP_EOL .
+            '|<boldGreen> Name       </end>|<boldGreen> Age </end>|' . PHP_EOL .
+            '+------------+-----+' . PHP_EOL .
+            '|<bold> John Doe   </end>|<bold> 30  </end>|' . PHP_EOL .
+            '|<comment> Jane Smith </end>|<comment> 25  </end>|' . PHP_EOL .
+            '+------------+-----+';
 
         $result = $this->table->render($rows, $styles);
 
-        $this->assertStringContainsString("<boldGreen>", $result);
-        $this->assertStringContainsString("<bold>", $result);
-        $this->assertStringContainsString("<comment>", $result);
+        $this->assertStringContainsString('<boldGreen>', $result);
+        $this->assertStringContainsString('<bold>', $result);
+        $this->assertStringContainsString('<comment>', $result);
         $this->assertSame($expectedOutput, trim($result));
     }
 
@@ -244,17 +244,17 @@ class TableTest extends CliTestCase
         $rows = [
             ['name' => "\033[31mJohn Doe\033[0m", 'age' => '30'],
             ['name' => 'Jane Smith', 'age' => "\033[32m25\033[0m"],
-            ['name' => "\033[34mBob Johnson\033[0m", 'age' => '40']
+            ['name' => "\033[34mBob Johnson\033[0m", 'age' => '40'],
         ];
 
         $expectedOutput =
-            "+-------------+-----+" . PHP_EOL .
-            "| Name        | Age |" . PHP_EOL .
-            "+-------------+-----+" . PHP_EOL .
+            '+-------------+-----+' . PHP_EOL .
+            '| Name        | Age |' . PHP_EOL .
+            '+-------------+-----+' . PHP_EOL .
             "| \033[31mJohn Doe\033[0m    | 30  |" . PHP_EOL .
             "| Jane Smith  | \033[32m25\033[0m  |" . PHP_EOL .
             "| \033[34mBob Johnson\033[0m | 40  |" . PHP_EOL .
-            "+-------------+-----+";
+            '+-------------+-----+';
 
         $result = $this->table->render($rows);
 
@@ -268,17 +268,17 @@ class TableTest extends CliTestCase
         $rows = [
             ['name' => $color->error('John Doe'), 'age' => '30'],
             ['name' => 'Jane Smith', 'age' => $color->ok('25')],
-            ['name' => $color->info('Bob Johnson'), 'age' => '40']
+            ['name' => $color->info('Bob Johnson'), 'age' => '40'],
         ];
 
         $expectedOutput =
-            "+-------------+-----+" . PHP_EOL .
-            "| Name        | Age |" . PHP_EOL .
-            "+-------------+-----+" . PHP_EOL .
+            '+-------------+-----+' . PHP_EOL .
+            '| Name        | Age |' . PHP_EOL .
+            '+-------------+-----+' . PHP_EOL .
             "| \033[0;31mJohn Doe\033[0m    | 30  |" . PHP_EOL .
             "| Jane Smith  | \033[0;32m25\033[0m  |" . PHP_EOL .
             "| \033[0;34mBob Johnson\033[0m | 40  |" . PHP_EOL .
-            "+-------------+-----+";
+            '+-------------+-----+';
 
         $result = $this->table->render($rows);
 
@@ -294,17 +294,17 @@ class TableTest extends CliTestCase
 
         $styles = [
             'head' => 'boldGreen',
-            '1:1' => 'boldRed',    // Cell-specific style for first row, first column
-            '2:2' => 'boldBlue',   // Cell-specific style for second row, second column
+            '1:1'  => 'boldRed',    // Cell-specific style for first row, first column
+            '2:2'  => 'boldBlue',   // Cell-specific style for second row, second column
         ];
 
         $expectedOutput =
-            "+------------+-----+" . PHP_EOL .
-            "|<boldGreen> Name       </end>|<boldGreen> Age </end>|" . PHP_EOL .
-            "+------------+-----+" . PHP_EOL .
-            "|<boldRed> John Doe   </end>| 30  |" . PHP_EOL .
-            "| Jane Smith |<boldBlue> 25  </end>|" . PHP_EOL .
-            "+------------+-----+";
+            '+------------+-----+' . PHP_EOL .
+            '|<boldGreen> Name       </end>|<boldGreen> Age </end>|' . PHP_EOL .
+            '+------------+-----+' . PHP_EOL .
+            '|<boldRed> John Doe   </end>| 30  |' . PHP_EOL .
+            '| Jane Smith |<boldBlue> 25  </end>|' . PHP_EOL .
+            '+------------+-----+';
 
         $result = $this->table->render($rows, $styles);
 
@@ -320,16 +320,16 @@ class TableTest extends CliTestCase
 
         $styles = [
             'head' => 'boldGreen',
-            '*:2' => 'boldBlue',   // Column-specific style for the second column
+            '*:2'  => 'boldBlue',   // Column-specific style for the second column
         ];
 
         $expectedOutput =
-            "+------------+-----+" . PHP_EOL .
-            "|<boldGreen> Name       </end>|<boldGreen> Age </end>|" . PHP_EOL .
-            "+------------+-----+" . PHP_EOL .
-            "| John Doe   |<boldBlue> 30  </end>|" . PHP_EOL .
-            "| Jane Smith |<boldBlue> 25  </end>|" . PHP_EOL .
-            "+------------+-----+";
+            '+------------+-----+' . PHP_EOL .
+            '|<boldGreen> Name       </end>|<boldGreen> Age </end>|' . PHP_EOL .
+            '+------------+-----+' . PHP_EOL .
+            '| John Doe   |<boldBlue> 30  </end>|' . PHP_EOL .
+            '| Jane Smith |<boldBlue> 25  </end>|' . PHP_EOL .
+            '+------------+-----+';
 
         $result = $this->table->render($rows, $styles);
 
@@ -346,17 +346,17 @@ class TableTest extends CliTestCase
 
         $styles = [
             'head' => 'boldGreen',
-            '2:*' => 'boldRed',   // Row-specific style for the second row
+            '2:*'  => 'boldRed',   // Row-specific style for the second row
         ];
 
         $expectedOutput =
-            "+-------------+-----+" . PHP_EOL .
-            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|" . PHP_EOL .
-            "+-------------+-----+" . PHP_EOL .
-            "| John Doe    | 30  |" . PHP_EOL .
-            "|<boldRed> Jane Smith  </end>|<boldRed> 25  </end>|" . PHP_EOL .
-            "| Bob Johnson | 40  |" . PHP_EOL .
-            "+-------------+-----+";
+            '+-------------+-----+' . PHP_EOL .
+            '|<boldGreen> Name        </end>|<boldGreen> Age </end>|' . PHP_EOL .
+            '+-------------+-----+' . PHP_EOL .
+            '| John Doe    | 30  |' . PHP_EOL .
+            '|<boldRed> Jane Smith  </end>|<boldRed> 25  </end>|' . PHP_EOL .
+            '| Bob Johnson | 40  |' . PHP_EOL .
+            '+-------------+-----+';
 
         $result = $this->table->render($rows, $styles);
 
@@ -372,7 +372,7 @@ class TableTest extends CliTestCase
 
         $styles = [
             'head' => 'boldGreen',
-            '1:1' => function ($val, $row, $table) {
+            '1:1'  => function ($val, $row, $table) {
                 return $val === 'John Doe' ? 'boldRed' : '';
             },
             '2:2' => function ($val, $row, $table) {
@@ -381,12 +381,12 @@ class TableTest extends CliTestCase
         ];
 
         $expectedOutput =
-            "+------------+-----+" . PHP_EOL .
-            "|<boldGreen> Name       </end>|<boldGreen> Age </end>|" . PHP_EOL .
-            "+------------+-----+" . PHP_EOL .
-            "|<boldRed> John Doe   </end>| 30  |" . PHP_EOL .
-            "| Jane Smith |<boldBlue> 25  </end>|" . PHP_EOL .
-            "+------------+-----+";
+            '+------------+-----+' . PHP_EOL .
+            '|<boldGreen> Name       </end>|<boldGreen> Age </end>|' . PHP_EOL .
+            '+------------+-----+' . PHP_EOL .
+            '|<boldRed> John Doe   </end>| 30  |' . PHP_EOL .
+            '| Jane Smith |<boldBlue> 25  </end>|' . PHP_EOL .
+            '+------------+-----+';
 
         $result = $this->table->render($rows, $styles);
 
@@ -403,7 +403,7 @@ class TableTest extends CliTestCase
 
         $styles = [
             'head' => 'boldGreen',
-            '*:2' => function ($val, $row) {
+            '*:2'  => function ($val, $row) {
                 if ($val == 25) {
                     return 'boldYellow';
                 }
@@ -413,13 +413,13 @@ class TableTest extends CliTestCase
         ];
 
         $expectedOutput =
-            "+-------------+-----+" . PHP_EOL .
-            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|" . PHP_EOL .
-            "+-------------+-----+" . PHP_EOL .
-            "| John Doe    |<boldRed> 30  </end>|" . PHP_EOL .
-            "| Jane Smith  |<boldYellow> 25  </end>|" . PHP_EOL .
-            "| Bob Johnson |<boldRed> 40  </end>|" . PHP_EOL .
-            "+-------------+-----+";
+            '+-------------+-----+' . PHP_EOL .
+            '|<boldGreen> Name        </end>|<boldGreen> Age </end>|' . PHP_EOL .
+            '+-------------+-----+' . PHP_EOL .
+            '| John Doe    |<boldRed> 30  </end>|' . PHP_EOL .
+            '| Jane Smith  |<boldYellow> 25  </end>|' . PHP_EOL .
+            '| Bob Johnson |<boldRed> 40  </end>|' . PHP_EOL .
+            '+-------------+-----+';
 
         $result = $this->table->render($rows, $styles);
 
@@ -438,32 +438,34 @@ class TableTest extends CliTestCase
 
         $styles = [
             'head' => 'boldGreen',
-            '*:*' => function ($val, $row) {
+            '*:*'  => function ($val, $row) {
                 if ($val === 'Jane X') {
                     return 'yellow';
                 }
                 if ($val == 10) {
                     return 'purple';
                 }
+
                 return $row['age'] >= 30 ? 'boldRed' : '';
             },
         ];
 
         $expectedOutput =
-            "+-------------+-----+" . PHP_EOL .
-            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|" . PHP_EOL .
-            "+-------------+-----+" . PHP_EOL .
-            "|<boldRed> John Doe    </end>|<boldRed> 30  </end>|" . PHP_EOL .
-            "| Jane Smith  | 25  |" . PHP_EOL .
-            "| Alice Bob   |<purple> 10  </end>|" . PHP_EOL .
-            "|<boldRed> Bob Johnson </end>|<boldRed> 40  </end>|" . PHP_EOL .
-            "|<yellow> Jane X      </end>|<boldRed> 50  </end>|" . PHP_EOL .
-            "+-------------+-----+";
+            '+-------------+-----+' . PHP_EOL .
+            '|<boldGreen> Name        </end>|<boldGreen> Age </end>|' . PHP_EOL .
+            '+-------------+-----+' . PHP_EOL .
+            '|<boldRed> John Doe    </end>|<boldRed> 30  </end>|' . PHP_EOL .
+            '| Jane Smith  | 25  |' . PHP_EOL .
+            '| Alice Bob   |<purple> 10  </end>|' . PHP_EOL .
+            '|<boldRed> Bob Johnson </end>|<boldRed> 40  </end>|' . PHP_EOL .
+            '|<yellow> Jane X      </end>|<boldRed> 50  </end>|' . PHP_EOL .
+            '+-------------+-----+';
 
         $result = $this->table->render($rows, $styles);
 
         $this->assertSame($expectedOutput, trim($result));
     }
+
     public function test_render_with_mixed_specific_styles(): void
     {
         $rows = [
@@ -474,19 +476,19 @@ class TableTest extends CliTestCase
 
         $styles = [
             'head' => 'boldGreen',
-            '1:2' => 'boldRed',    // Cell-specific style for first row, second column
-            '*:3' => 'boldBlue',   // Column-specific style for the third column
-            '3:*' => 'italic',     // Row-specific style for the third row
+            '1:2'  => 'boldRed',    // Cell-specific style for first row, second column
+            '*:3'  => 'boldBlue',   // Column-specific style for the third column
+            '3:*'  => 'italic',     // Row-specific style for the third row
         ];
 
         $expectedOutput =
-            "+-------------+-----+-------------+" . PHP_EOL .
-            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|<boldGreen> City        </end>|" . PHP_EOL .
-            "+-------------+-----+-------------+" . PHP_EOL .
-            "| John Doe    |<boldRed> 30  </end>|<boldBlue> New York    </end>|" . PHP_EOL .
-            "| Jane Smith  | 25  |<boldBlue> Los Angeles </end>|" . PHP_EOL .
-            "|<italic> Bob Johnson </end>|<italic> 40  </end>|<boldBlue> Chicago     </end>|" . PHP_EOL .
-            "+-------------+-----+-------------+";
+            '+-------------+-----+-------------+' . PHP_EOL .
+            '|<boldGreen> Name        </end>|<boldGreen> Age </end>|<boldGreen> City        </end>|' . PHP_EOL .
+            '+-------------+-----+-------------+' . PHP_EOL .
+            '| John Doe    |<boldRed> 30  </end>|<boldBlue> New York    </end>|' . PHP_EOL .
+            '| Jane Smith  | 25  |<boldBlue> Los Angeles </end>|' . PHP_EOL .
+            '|<italic> Bob Johnson </end>|<italic> 40  </end>|<boldBlue> Chicago     </end>|' . PHP_EOL .
+            '+-------------+-----+-------------+';
 
         $result = $this->table->render($rows, $styles);
 
@@ -503,19 +505,19 @@ class TableTest extends CliTestCase
 
         $styles = [
             'head' => 'boldGreen',
-            '1:2' => 'boldRed',    // Cell-specific style for first row, second column
+            '1:2'  => 'boldRed',    // Cell-specific style for first row, second column
             'city' => 'boldBlue',
             'name' => 'italic',
         ];
 
         $expectedOutput =
-            "+-------------+-----+-------------+" . PHP_EOL .
-            "|<boldGreen> Name        </end>|<boldGreen> Age </end>|<boldGreen> City        </end>|" . PHP_EOL .
-            "+-------------+-----+-------------+" . PHP_EOL .
-            "|<italic> John Doe    </end>|<boldRed> 30  </end>|<boldBlue> New York    </end>|" . PHP_EOL .
-            "|<italic> Jane Smith  </end>| 25  |<boldBlue> Los Angeles </end>|" . PHP_EOL .
-            "|<italic> Bob Johnson </end>| 40  |<boldBlue> Chicago     </end>|" . PHP_EOL .
-            "+-------------+-----+-------------+";
+            '+-------------+-----+-------------+' . PHP_EOL .
+            '|<boldGreen> Name        </end>|<boldGreen> Age </end>|<boldGreen> City        </end>|' . PHP_EOL .
+            '+-------------+-----+-------------+' . PHP_EOL .
+            '|<italic> John Doe    </end>|<boldRed> 30  </end>|<boldBlue> New York    </end>|' . PHP_EOL .
+            '|<italic> Jane Smith  </end>| 25  |<boldBlue> Los Angeles </end>|' . PHP_EOL .
+            '|<italic> Bob Johnson </end>| 40  |<boldBlue> Chicago     </end>|' . PHP_EOL .
+            '+-------------+-----+-------------+';
 
         $result = $this->table->render($rows, $styles);
 
@@ -530,12 +532,12 @@ class TableTest extends CliTestCase
         ];
 
         $expectedOutput =
-            "+------------+-----+" . PHP_EOL .
-            "| Name       | Age |" . PHP_EOL .
-            "+------------+-----+" . PHP_EOL .
-            "| John Doe   | 30  |" . PHP_EOL .
-            "| Jane Smith | 25  |" . PHP_EOL .
-            "+------------+-----+";
+            '+------------+-----+' . PHP_EOL .
+            '| Name       | Age |' . PHP_EOL .
+            '+------------+-----+' . PHP_EOL .
+            '| John Doe   | 30  |' . PHP_EOL .
+            '| Jane Smith | 25  |' . PHP_EOL .
+            '+------------+-----+';
 
         $result = $this->table->render($rows, []);
 
@@ -551,29 +553,30 @@ class TableTest extends CliTestCase
 
         $invalidStyles = [
             'invalidKey' => 'boldRed', // Invalid style key
-            'head' => 'boldGreen',
+            'head'       => 'boldGreen',
         ];
 
         $expectedOutput =
-            "+------------+-----+" . PHP_EOL .
-            "|<boldGreen> Name       </end>|<boldGreen> Age </end>|" . PHP_EOL .
-            "+------------+-----+" . PHP_EOL .
-            "| John Doe   | 30  |" . PHP_EOL .
-            "| Jane Smith | 25  |" . PHP_EOL .
-            "+------------+-----+";
+            '+------------+-----+' . PHP_EOL .
+            '|<boldGreen> Name       </end>|<boldGreen> Age </end>|' . PHP_EOL .
+            '+------------+-----+' . PHP_EOL .
+            '| John Doe   | 30  |' . PHP_EOL .
+            '| Jane Smith | 25  |' . PHP_EOL .
+            '+------------+-----+';
 
         $result = $this->table->render($rows, $invalidStyles);
 
         $this->assertSame($expectedOutput, trim($result));
     }
+
     public function test_render_with_large_number_of_columns(): void
     {
         $columns = 100;
-        $rows = [
+        $rows    = [
             array_combine(
-                array_map(fn($i) => "col$i", range(1, $columns)),
-                array_map(fn($i) => "value$i", range(1, $columns))
-            )
+                array_map(fn ($i) => "col$i", range(1, $columns)),
+                array_map(fn ($i) => "value$i", range(1, $columns))
+            ),
         ];
 
         $result = $this->table->render($rows);
@@ -595,9 +598,9 @@ class TableTest extends CliTestCase
         $rows = [];
         for ($i = 0; $i < 1000; $i++) {
             $rows[] = [
-                'id' => $i,
-                'name' => "Name $i",
-                'email' => "email$i@example.com"
+                'id'    => $i,
+                'name'  => "Name $i",
+                'email' => "email$i@example.com",
             ];
         }
 
@@ -614,7 +617,7 @@ class TableTest extends CliTestCase
         $rows = [
             ['name' => '<b>John Doe</b>', 'age' => '30'],
             ['name' => 'Jane <i>Smith</i>', 'age' => '25'],
-            ['name' => '<span>Bob Johnson</span>', 'age' => '40']
+            ['name' => '<span>Bob Johnson</span>', 'age' => '40'],
         ];
 
         $styles = [
@@ -624,13 +627,13 @@ class TableTest extends CliTestCase
         ];
 
         $expectedOutput =
-            "+--------------------------+-----+" . PHP_EOL .
-            "|<boldGreen> Name                     </end>|<boldGreen> Age </end>|" . PHP_EOL .
-            "+--------------------------+-----+" . PHP_EOL .
-            "|<bold> <b>John Doe</b>          </end>|<bold> 30  </end>|" . PHP_EOL .
-            "|<comment> Jane <i>Smith</i>        </end>|<comment> 25  </end>|" . PHP_EOL .
-            "|<bold> <span>Bob Johnson</span> </end>|<bold> 40  </end>|" . PHP_EOL .
-            "+--------------------------+-----+";
+            '+--------------------------+-----+' . PHP_EOL .
+            '|<boldGreen> Name                     </end>|<boldGreen> Age </end>|' . PHP_EOL .
+            '+--------------------------+-----+' . PHP_EOL .
+            '|<bold> <b>John Doe</b>          </end>|<bold> 30  </end>|' . PHP_EOL .
+            '|<comment> Jane <i>Smith</i>        </end>|<comment> 25  </end>|' . PHP_EOL .
+            '|<bold> <span>Bob Johnson</span> </end>|<bold> 40  </end>|' . PHP_EOL .
+            '+--------------------------+-----+';
 
         $result = $this->table->render($rows, $styles);
 
