@@ -308,7 +308,7 @@ class Application
      */
     public function handle(array $argv): mixed
     {
-        if (count($argv) < 2) {
+        if ($this->default === '__default__' && count($argv) < 2) {
             return $this->showHelp();
         }
 
