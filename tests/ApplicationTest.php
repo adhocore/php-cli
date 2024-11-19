@@ -313,7 +313,7 @@ class ApplicationTest extends TestCase
 
         // Add some sample commands to the application
         $app->command('command1')->action(function () {
-          echo 'This should be the default command';
+            echo 'This should be the default command';
         });
         $app->command('command2');
 
