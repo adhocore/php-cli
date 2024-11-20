@@ -312,12 +312,20 @@ class ApplicationTest extends TestCase
         $app = $this->newApp('test');
 
         // Add some sample commands to the application
-        $app->command('command1');
+        $app->command('command1')->action(function () {
+            echo 'This should be the default command';
+        });
         $app->command('command2');
 
         // Test setting a valid default command
         $app->defaultCommand('command1');
         $this->assertEquals('command1', $app->getDefaultCommand());
+
+        // Test executing a default command
+        ob_start();
+        $app->handle(['test']);
+        $buffer = ob_get_clean();
+        $this->assertSame('This should be the default command', $buffer);
 
         // Test setting an invalid default command
         $this->expectException(InvalidArgumentException::class);
