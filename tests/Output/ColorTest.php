@@ -30,9 +30,9 @@ class ColorTest extends TestCase
 
     public function test_custom_style()
     {
-        Color::style('alert', ['bg' => Color::YELLOW, 'fg' => Color::RED, 'bold' => 1]);
+        Color::style('alert', ['bg' => '48;5;82', 'fg' => '38;5;57', 'bold' => 1]);
 
-        $this->assertSame("\033[1;31;43malert\033[0m", (new Color)->alert('alert'));
+        $this->assertSame("\033[1;38;5;57;48;5;82malert\033[0m", (new Color)->alert('alert'));
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Trying to define existing style');
