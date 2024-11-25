@@ -54,7 +54,11 @@ class Command extends Parser implements Groupable
 
     protected string $_help = '';
 
+<<<<<<< HEAD
     protected string $_logo = '';
+=======
+    protected string $logo = '';
+>>>>>>> 9e31270 (Add logo support for commands)
 
     private array $_events = [];
 
@@ -166,10 +170,17 @@ class Command extends Parser implements Groupable
     public function logo(?string $logo = null)
     {
         if (func_num_args() === 0) {
+<<<<<<< HEAD
             return $this->_logo;
         }
 
         $this->_logo = $logo;
+=======
+            return $this->logo;
+        }
+
+        $this->logo = $logo;
+>>>>>>> 9e31270 (Add logo support for commands)
 
         return $this;
     }
@@ -356,6 +367,10 @@ class Command extends Parser implements Groupable
 
         if (($logo = $this->logo()) || ($app && ($logo = $app->logo()) && $app->getDefaultCommand() === $this->_name)) {
             $io->logo($logo, true);
+        }
+
+        if ($this->logo) {
+            $io->write($this->logo, true);
         }
 
         $io->help_header("Command {$this->_name}, version {$this->_version}", true)->eol();
