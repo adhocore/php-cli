@@ -108,8 +108,8 @@ class Color
 
         $line = strtr($format, [
             ':mod:' => (int) ($style['mod'] ?? $style['bold']),
-            ':fg:'  => (int) $style['fg'],
-            ':bg:'  => (int) $style['bg'] + 10,
+            ':fg:'  => $style['fg'],
+            ':bg:'  => is_int($style['bg']) ? ($style['bg'] + 10) : $style['bg'],
             ':txt:' => $text,
         ]);
 
