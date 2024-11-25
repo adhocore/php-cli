@@ -37,7 +37,6 @@ use function strtolower;
  * @license MIT
  *
  * @link    https://github.com/adhocore/cli
-<<<<<<< HEAD
  *
  * @method Writer answer($text, $eol = false)
  * @method Writer bgBlack($text, $eol = false)
