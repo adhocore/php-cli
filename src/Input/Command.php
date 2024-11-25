@@ -298,9 +298,9 @@ class Command extends Parser implements Groupable
         $io     = $this->io();
         $helper = new OutputHelper($io->writer());
 
-        $io->bold("Command {$this->_name}, version {$this->_version}", true)->eol();
-        $io->comment($this->_desc, true)->eol();
-        $io->bold('Usage: ')->yellow("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
+        $io->help_header("Command {$this->_name}, version {$this->_version}", true)->eol();
+        $io->help_summary($this->_desc, true)->eol();
+        $io->help_text('Usage: ')->help_example("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
 
         $helper
             ->showArgumentsHelp($this->allArguments())
@@ -318,7 +318,7 @@ class Command extends Parser implements Groupable
      */
     public function showVersion(): mixed
     {
-        $this->writer()->bold($this->_version, true);
+        $this->writer()->version($this->_version, true);
 
         return $this->emit('_exit', 0);
     }
