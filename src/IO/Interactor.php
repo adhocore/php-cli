@@ -35,7 +35,7 @@ use function strtolower;
  *
  * @author  Jitendra Adhikari <jiten.adhikary@gmail.com>
  * @license MIT
- * 
+ *
  * @link    https://github.com/adhocore/cli
  * @method Writer bgBlack($text, $eol = false)
  * @method Writer bgBlue($text, $eol = false)
