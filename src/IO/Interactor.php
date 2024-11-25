@@ -181,8 +181,6 @@ use function strtolower;
  * @method Writer redBgPurple($text, $eol = false)
  * @method Writer redBgWhite($text, $eol = false)
  * @method Writer redBgYellow($text, $eol = false)
- * @method Writer table(array $rows, array $styles = [])
- * @method Writer version($text, $eol = false)
  * @method Writer warn($text, $eol = false)
  * @method Writer white($text, $eol = false)
  * @method Writer yellow($text, $eol = false)
