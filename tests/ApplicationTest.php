@@ -226,6 +226,21 @@ class ApplicationTest extends TestCase
         $this->assertSame($logo, $a->logo());
     }
 
+    public function test_logo_command()
+    {
+        $a = $this->newApp('test', '0.0.2');
+        $c = $a->command('cmd');
+
+        $this->assertSame($c, $c->logo($logo = '
+            | |_ ___  ___| |_
+            | __/ _ \/ __| __|
+            | ||  __/\__ \ |_
+             \__\___||___/\__|
+        '));
+
+        $this->assertSame($logo, $c->logo());
+    }
+
     public function test_add()
     {
         $a = $this->newApp('test', '0.0.1-test');

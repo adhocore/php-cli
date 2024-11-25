@@ -52,6 +52,8 @@ class Command extends Parser implements Groupable
 
     protected ?string $_alias = null;
 
+    protected string $logo = '';
+
     private array $_events = [];
 
     private bool $_argVariadic = false;
@@ -148,6 +150,24 @@ class Command extends Parser implements Groupable
     public function bind(?App $app = null): self
     {
         $this->_app = $app;
+
+        return $this;
+    }
+
+    /**
+     * Sets or gets the ASCII art logo.
+     *
+     * @param string|null $logo
+     *
+     * @return string|self
+     */
+    public function logo(?string $logo = null)
+    {
+        if (func_num_args() === 0) {
+            return $this->logo;
+        }
+
+        $this->logo = $logo;
 
         return $this;
     }
@@ -297,6 +317,10 @@ class Command extends Parser implements Groupable
     {
         $io     = $this->io();
         $helper = new OutputHelper($io->writer());
+
+        if ($this->logo) {
+            $io->write($this->logo, true);
+        }
 
         $io->bold("Command {$this->_name}, version {$this->_version}", true)->eol();
         $io->comment($this->_desc, true)->eol();

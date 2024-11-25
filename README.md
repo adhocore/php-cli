@@ -181,7 +181,8 @@ class InitCommand extends Ahc\Cli\Input\Command
                 '<bold>  init</end> <comment>--apple applet --ball ballon <arggg></end> ## details 1<eol/>' .
                 // $0 will be interpolated to actual command name
                 '<bold>  $0</end> <comment>-a applet -b ballon <arggg> [arg2]</end> ## details 2<eol/>'
-            );
+            )
+            ->logo('Ascii art logo of your app');
     }
 
     // This method is auto called before `self::execute()` and receives `Interactor $io` instance
