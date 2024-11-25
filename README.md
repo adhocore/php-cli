@@ -465,6 +465,38 @@ Ahc\Cli\Output\Color::style('mystyle', [
 echo $color->mystyle('My text');
 ```
 
+#### Built-in styles
+
+There are a number of pre-defined built-in styles that allows you granular customization to different output conditions such as help and prompts:
+
+ - answer
+ - choice
+ - comment
+ - error
+ - help_category
+ - help_description
+ - help_example
+ - help_footer
+ - help_group
+ - help_header
+ - help_item
+ - help_summary
+ - help_text
+ - info
+ - ok
+ - question
+ - version
+ - warn
+
+Overriding a built-in style works the same way as defining a new style:
+
+```php
+Ahc\Cli\Output\Color::style('error', [
+    'fg' => Ahc\Cli\Output\Color::RED,
+    'bold' => 1,
+]);
+```
+
 ### Cursor
 
 Move cursor around, erase line up or down, clear screen.
