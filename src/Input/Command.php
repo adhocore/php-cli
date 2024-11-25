@@ -354,10 +354,13 @@ class Command extends Parser implements Groupable
         $helper = new OutputHelper($io->writer());
         $app    = $this->app();
 
+<<<<<<< HEAD
         if (($logo = $this->logo()) || ($app && ($logo = $app->logo()) && $app->getDefaultCommand() === $this->_name)) {
             $io->write($logo, true);
         }
 
+=======
+>>>>>>> a6d6be1 (Make all written text built-in styles so that their styles can be customized)
         $io->help_header("Command {$this->_name}, version {$this->_version}", true)->eol();
         $io->help_summary($this->_desc, true)->eol();
         $io->help_text('Usage: ')->help_example("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);

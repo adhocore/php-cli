@@ -195,9 +195,8 @@ class Color
             throw new InvalidArgumentException('Trying to set empty or invalid style');
         }
 
-        $invisible = (isset($style['bg']) && isset($style['fg']) && $style['bg'] === $style['fg']);
-        if ($invisible && method_exists(static::class, $name)) {
-            throw new InvalidArgumentException('Built-in styles cannot be invisible');
+        if (isset(static::$styles[$name]) || method_exists(static::class, $name)) {
+            throw new InvalidArgumentException('Trying to define existing style');
         }
 
         static::$styles[$name] = $style;

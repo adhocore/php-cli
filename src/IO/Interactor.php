@@ -37,6 +37,7 @@ use function strtolower;
  * @license MIT
  *
  * @link    https://github.com/adhocore/cli
+<<<<<<< HEAD
  *
  * @method Writer answer($text, $eol = false)
  * @method Writer bgBlack($text, $eol = false)
@@ -192,6 +193,8 @@ use function strtolower;
  * @method Writer yellowBgPurple($text, $eol = false)
  * @method Writer yellowBgRed($text, $eol = false)
  * @method Writer yellowBgWhite($text, $eol = false)
+=======
+>>>>>>> a6d6be1 (Make all written text built-in styles so that their styles can be customized)
  */
 class Interactor
 {
