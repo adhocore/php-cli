@@ -35,7 +35,7 @@ use function strtolower;
  *
  * @author  Jitendra Adhikari <jiten.adhikary@gmail.com>
  * @license MIT
- *
+ * 
  * @link    https://github.com/adhocore/cli
 <<<<<<< HEAD
  *
