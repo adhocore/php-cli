@@ -267,6 +267,21 @@ $app->add((new ConfigListCommand)->inGroup('Config'));
 ...
 ```
 
+#### Default command
+
+By default, running your CLI app without any arguments will show the help screen. However you can set the default action to run one of your commands either by setting the third parameter of the `add` function to `true` or by using the `defaultCommand` function.
+
+```php
+$app->add(new InitCommand, 'i', true);
+
+# Alternatively
+$app->command('init', 'Init something', 'i');
+$app->defaultCommand('init');
+
+# Retrieve the name of the default command
+$default_command = $app->getDefaultCommand();
+```
+
 #### Exception handler
 
 Set a custom exception handler as callback. The callback receives exception & exit code. The callback may rethrow exception or may exit the program or just log exception and do nothing else.
