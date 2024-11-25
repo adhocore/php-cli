@@ -451,7 +451,7 @@ echo $color->ok('This is ok msg');
 ```php
 Ahc\Cli\Output\Color::style('mystyle', [
     'bg' => Ahc\Cli\Output\Color::CYAN,
-    'fg' => Ahc\Cli\Output\Color::WHITE,
+    'fg' => '38;5;57', // 256 colors can be used as well
     'bold' => 1, // You can experiment with 0, 1, 2, 3 ... as well
 ]);
 
