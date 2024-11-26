@@ -284,6 +284,13 @@ class CommandTest extends TestCase
             }
         };
     }
+ 
+    public function test_custom_help()
+    {
+        $p = $this->newCommand();
+        $p->help('This should be my custom help screen');
+        $this->assertStringContainsString('This should be my custom help screen', $p->help());
+    }
 
     public function test_custom_help()
     {

@@ -178,7 +178,11 @@ class InitCommand extends Ahc\Cli\Input\Command
             ->argument('[arg2]', 'The Arg2')
             ->option('-a --apple', 'The Apple')
             ->option('-b --ball', 'The ball')
+<<<<<<< HEAD
             ->help($writer->colorizer()->colors($help))
+=======
+            ->help('Custom help screen (if omitted one will be generated)')
+>>>>>>> 2c9858c (Add support for custom help screens)
             // Usage examples:
             ->usage(
                 // append details or explanation of given example with ` ## ` so they will be uniformly aligned when shown
