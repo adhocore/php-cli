@@ -120,7 +120,7 @@ class Color
     /**
      * Returns the color code for a 256 background color.
      */
-    public function bg256(int $code): string
+    public static function bg256(int $code): string
     {
         return "48;5;{$code}";
     }
@@ -128,7 +128,7 @@ class Color
     /**
      * Returns the color code for a 256 foreground color.
      */
-    public function fg256(int $code): string
+    public static function fg256(int $code): string
     {
         return "38;5;{$code}";
     }
