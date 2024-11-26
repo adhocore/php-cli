@@ -166,12 +166,12 @@ class Command extends Parser implements Groupable
     public function logo(?string $logo = null)
     {
         if (func_num_args() === 0) {
-            return $this->_logo;
+            return $this->logo;
         }
 
-        $this->_logo = $logo;
+        $this->logo = $logo;
 
-        return $this->_logo;
+        return $this;
     }
 
     /**
