@@ -197,7 +197,7 @@ class OutputHelper
         $group = $lastGroup = null;
 
         $withDefault = $for === 'Options' || $for === 'Arguments';
-        foreach ($this->sortItems($items, $padLen, $for) as $item) {
+        foreach (array_values($this->sortItems($items, $padLen, $for)) as $idx => $item) {
             $name  = $this->getName($item);
             if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
                 $this->writer->help_group($group ?: '*', true);
@@ -205,8 +205,13 @@ class OutputHelper
             }
             $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
 
-            $this->writer->help_item('  ' . str_pad($name, $padLen + $space));
-            $this->writer->help_description($desc, true);
+            if ($idx % 2 == 0) {
+              $this->writer->help_item_even('  ' . str_pad($name, $padLen + $space));
+              $this->writer->help_description_even($desc, true);
+            } else {
+              $this->writer->help_item_odd('  ' . str_pad($name, $padLen + $space));
+              $this->writer->help_description_odd($desc, true);
+            }
         }
 
         if ($footer) {
