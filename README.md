@@ -170,12 +170,16 @@ class InitCommand extends Ahc\Cli\Input\Command
     {
         parent::__construct('init', 'Init something');
 
+        $help = '<cyan>Custom help screen</end>';
+        $writer = new Ahc\Cli\Output\Writer();
+        $rendered_help = $writer->colorizer()->colors($help);
+
         $this
             ->argument('<arrg>', 'The Arrg')
             ->argument('[arg2]', 'The Arg2')
             ->option('-a --apple', 'The Apple')
             ->option('-b --ball', 'The ball')
-            ->help('Custom help screen (if omitted one will be generated)')
+            ->help($rendered_help)
             // Usage examples:
             ->usage(
                 // append details or explanation of given example with ` ## ` so they will be uniformly aligned when shown
