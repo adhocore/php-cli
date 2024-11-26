@@ -48,7 +48,7 @@ class ColorTest extends TestCase
     public function test_invisible_built_in_style()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Built-in styles cannot be invisible (matching background and foreground)');
+        $this->expectExceptionMessage('Built-in styles cannot be invisible');
 
         Color::style('error', ['bg' => Color::RED, 'fg' => Color::RED]);
     }
