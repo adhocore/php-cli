@@ -318,8 +318,8 @@ class Command extends Parser implements Groupable
         $io     = $this->io();
         $helper = new OutputHelper($io->writer());
 
-        if ($this->logo) {
-            $io->write($this->logo, true);
+        if ($logo = $this->logo()) {
+            $io->write($logo, true);
         }
 
         $io->bold("Command {$this->_name}, version {$this->_version}", true)->eol();

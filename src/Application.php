@@ -352,8 +352,8 @@ class Application
         $header = "{$this->name}, version {$this->version}";
         $footer = 'Run `<command> --help` for specific help';
 
-        if ($this->logo) {
-            $writer->write($this->logo, true);
+        if ($logo = $this->logo()) {
+            $writer->write($logo, true);
         }
 
         $this->outputHelper()->showCommandsHelp($this->commands(), $header, $footer);
