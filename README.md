@@ -459,12 +459,14 @@ There are a number of pre-defined built-in styles that allows you granular custo
  - comment
  - error
  - help_category
- - help_description
+ - help_description_even
+ - help_description_odd
  - help_example
  - help_footer
  - help_group
  - help_header
- - help_item
+ - help_item_even
+ - help_item_odd
  - help_summary
  - help_text
  - info
