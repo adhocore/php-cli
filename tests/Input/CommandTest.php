@@ -284,7 +284,7 @@ class CommandTest extends TestCase
             }
         };
     }
- 
+
     public function test_custom_help()
     {
         $p = $this->newCommand();
