@@ -317,8 +317,9 @@ class Command extends Parser implements Groupable
     {
         $io     = $this->io();
         $helper = new OutputHelper($io->writer());
+        $app    = $this->app();
 
-        if ($logo = $this->logo()) {
+        if (($logo = $this->logo()) || ($app && ($logo = $app->logo()) && $app->getDefaultCommand() === $this->_name)) {
             $io->write($logo, true);
         }
 
