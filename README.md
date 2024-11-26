@@ -469,6 +469,7 @@ There are a number of pre-defined built-in styles that allows you granular custo
  - help_summary
  - help_text
  - info
+ - logo
  - ok
  - question
  - version

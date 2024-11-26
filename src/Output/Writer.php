@@ -155,6 +155,7 @@ use const STDOUT;
  * @method Writer help_summary($text, $eol = false)
  * @method Writer help_text($text, $eol = false)
  * @method Writer info($text, $eol = false)
+ * @method Writer logo($text, $eol = false)
  * @method Writer ok($text, $eol = false)
  * @method Writer purple($text, $eol = false)
  * @method Writer purpleBgBlack($text, $eol = false)
