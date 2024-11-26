@@ -338,6 +338,7 @@ class Command extends Parser implements Groupable
         if ($help = $this->help()) {
             $writer = $this->io()->writer();
             $writer->write($help, true);
+
             return $this->emit('_exit', 0);
         }
 

@@ -52,7 +52,6 @@ class Application
     /** @var string Ascii art logo */
     protected string $logo = '';
 
-    /** @var string Custom help screen */
     protected string $_help = '';
 
     /** @var string Name of default command */
@@ -373,6 +372,7 @@ class Application
         if ($help = $this->help()) {
             $writer = $this->io()->writer();
             $writer->write($help, true);
+
             return ($this->onExit)();
         }
 
