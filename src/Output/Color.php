@@ -75,6 +75,46 @@ class Color
     ];
 
     /**
+     * Returns a line formatted as comment.
+     */
+    public function comment(string $text, array $style = []): string
+    {
+        return $this->line($text, static::$styles['comment'] + $style);
+    }
+
+    /**
+     * Returns a line formatted as comment.
+     */
+    public function error(string $text, array $style = []): string
+    {
+        return $this->line($text, static::$styles['error'] + $style);
+    }
+
+    /**
+     * Returns a line formatted as ok msg.
+     */
+    public function ok(string $text, array $style = []): string
+    {
+        return $this->line($text, static::$styles['ok'] + $style);
+    }
+
+    /**
+     * Returns a line formatted as warning.
+     */
+    public function warn(string $text, array $style = []): string
+    {
+        return $this->line($text, static::$styles['warn'] + $style);
+    }
+
+    /**
+     * Returns a line formatted as info.
+     */
+    public function info(string $text, array $style = []): string
+    {
+        return $this->line($text, static::$styles['info'] + $style);
+    }
+
+    /**
      * Returns a formatted/colored line.
      */
     public function line(string $text, array $style = []): string
