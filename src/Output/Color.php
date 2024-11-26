@@ -118,6 +118,22 @@ class Color
     }
 
     /**
+     * Returns the color code for a 256 background color
+     */
+    public function bg256(int $code)
+    {
+        return "48;5;{$code}";
+    }
+
+    /**
+     * Returns the color code for a 256 foreground color
+     */
+    public function fg256(int $code)
+    {
+        return "38;5;{$code}";
+    }
+
+    /**
      * Returns a formatted/colored line.
      */
     public function line(string $text, array $style = []): string
