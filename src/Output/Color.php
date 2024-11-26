@@ -118,6 +118,22 @@ class Color
     }
 
     /**
+     * Returns the color code for a 256 background color.
+     */
+    public static function bg256(int $code): string
+    {
+        return "48;5;{$code}";
+    }
+
+    /**
+     * Returns the color code for a 256 foreground color.
+     */
+    public static function fg256(int $code): string
+    {
+        return "38;5;{$code}";
+    }
+
+    /**
      * Returns a formatted/colored line.
      */
     public function line(string $text, array $style = []): string
@@ -130,8 +146,8 @@ class Color
 
         $line = strtr($format, [
             ':mod:' => (int) ($style['mod'] ?? $style['bold']),
-            ':fg:'  => (int) $style['fg'],
-            ':bg:'  => (int) $style['bg'] + 10,
+            ':fg:'  => $style['fg'],
+            ':bg:'  => is_int($style['bg']) ? ($style['bg'] + 10) : $style['bg'],
             ':txt:' => $text,
         ]);
 

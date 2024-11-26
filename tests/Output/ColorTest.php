@@ -30,11 +30,11 @@ class ColorTest extends TestCase
 
     public function test_custom_style()
     {
-        Color::style('alert', ['bg' => Color::YELLOW, 'fg' => Color::RED]);
+        Color::style('alert', ['bg' => '48;5;82', 'fg' => '38;5;57']);
 
-        $this->assertSame("\033[0;31;43malert\033[0m", (new Color)->alert('alert'));
-        $this->assertSame("\033[1;31;43malert\033[0m", (new Color)->boldAlert('alert'));
-        $this->assertSame("\033[1;31;43malert\033[0m", (new Color)->alertBold('alert'));
+        $this->assertSame("\033[0;38;5;57;48;5;82malert\033[0m", (new Color)->alert('alert'));
+        $this->assertSame("\033[1;38;5;57;48;5;82malert\033[0m", (new Color)->boldAlert('alert'));
+        $this->assertSame("\033[1;38;5;57;48;5;82malert\033[0m", (new Color)->alertBold('alert'));
     }
 
     public function test_invalid_custom_style()
