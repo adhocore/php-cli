@@ -52,6 +52,8 @@ class Command extends Parser implements Groupable
 
     protected ?string $_alias = null;
 
+    protected string $_help = '';
+
     private array $_events = [];
 
     private bool $_argVariadic = false;
@@ -291,9 +293,41 @@ class Command extends Parser implements Groupable
     }
 
     /**
-     * Shows command help then aborts.
+     * Sets or gets the custom help screen contents.
+     *
+     * @param string|null $help
+     *
+     * @return string|self
+     */
+    public function help(?string $help = null): mixed
+    {
+        if (func_num_args() === 0) {
+          return $this->_help;
+        }
+
+        $this->_help = $help;
+
+        return $this;
+    }
+
+    /**
+     * Show custom help screen if one is set, otherwise shows the default one.
      */
     public function showHelp(): mixed
+    {
+        if ($help = $this->help()) {
+            $writer = $this->io()->writer();
+            $writer->write($help, true);
+            return $this->emit('_exit', 0);
+        }
+
+        return $this->showDefaultHelp();
+    }
+
+    /**
+     * Shows command help then aborts.
+     */
+    public function showDefaultHelp(): mixed
     {
         $io     = $this->io();
         $helper = new OutputHelper($io->writer());

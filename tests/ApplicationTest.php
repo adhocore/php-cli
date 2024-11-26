@@ -147,6 +147,17 @@ class ApplicationTest extends TestCase
         $this->assertStringContainsString('stage change', $out);
     }
 
+    public function testCustomHelp()
+    {
+        $this->newApp('git', '0.0.2')
+          ->help('This should be my custom help screen')
+          ->parse(['git', '--help']);
+
+        $out = file_get_contents(static::$ou);
+
+        $this->assertStringContainsString('This should be my custom help screen', $out);
+    }
+
     public function test_action()
     {
         ($a = $this->newApp('git', '0.0.2'))
