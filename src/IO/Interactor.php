@@ -150,14 +150,22 @@ use function strtolower;
  * @method Writer greenBgWhite($text, $eol = false)
  * @method Writer greenBgYellow($text, $eol = false)
  * @method Writer help_category($text, $eol = false)
+<<<<<<< HEAD
  * @method Writer help_description_even($text, $eol = false)
  * @method Writer help_description_odd($text, $eol = false)
+=======
+ * @method Writer help_description($text, $eol = false)
+>>>>>>> f2d8922 (Add new method definitions for Writer and Interactor classes)
  * @method Writer help_example($text, $eol = false)
  * @method Writer help_footer($text, $eol = false)
  * @method Writer help_group($text, $eol = false)
  * @method Writer help_header($text, $eol = false)
+<<<<<<< HEAD
  * @method Writer help_item_even($text, $eol = false)
  * @method Writer help_item_odd($text, $eol = false)
+=======
+ * @method Writer help_item($text, $eol = false)
+>>>>>>> f2d8922 (Add new method definitions for Writer and Interactor classes)
  * @method Writer help_summary($text, $eol = false)
  * @method Writer help_text($text, $eol = false)
  * @method Writer info($text, $eol = false)
@@ -180,6 +188,11 @@ use function strtolower;
  * @method Writer redBgPurple($text, $eol = false)
  * @method Writer redBgWhite($text, $eol = false)
  * @method Writer redBgYellow($text, $eol = false)
+<<<<<<< HEAD
+=======
+ * @method Writer table(array $rows, array $styles = [])
+ * @method Writer version($text, $eol = false)
+>>>>>>> f2d8922 (Add new method definitions for Writer and Interactor classes)
  * @method Writer warn($text, $eol = false)
  * @method Writer white($text, $eol = false)
  * @method Writer yellow($text, $eol = false)
