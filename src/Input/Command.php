@@ -52,7 +52,7 @@ class Command extends Parser implements Groupable
 
     protected ?string $_alias = null;
 
-    protected string $logo = '';
+    protected string $_logo = '';
 
     private array $_events = [];
 
@@ -164,10 +164,10 @@ class Command extends Parser implements Groupable
     public function logo(?string $logo = null)
     {
         if (func_num_args() === 0) {
-            return $this->logo;
+            return $this->_logo;
         }
 
-        $this->logo = $logo;
+        $this->_logo = $logo;
 
         return $this;
     }
