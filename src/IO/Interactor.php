@@ -38,6 +38,7 @@ use function strtolower;
  *
  * @link    https://github.com/adhocore/cli
  *
+ * @method Writer answer($text, $eol = false)
  * @method Writer bgBlack($text, $eol = false)
  * @method Writer bgBlue($text, $eol = false)
  * @method Writer bgCyan($text, $eol = false)
@@ -127,6 +128,7 @@ use function strtolower;
  * @method Writer boldYellowBgPurple($text, $eol = false)
  * @method Writer boldYellowBgRed($text, $eol = false)
  * @method Writer boldYellowBgWhite($text, $eol = false)
+ * @method Writer choice($text, $eol = false)
  * @method Writer colors($text)
  * @method Writer comment($text, $eol = false)
  * @method Writer cyan($text, $eol = false)
@@ -147,7 +149,19 @@ use function strtolower;
  * @method Writer greenBgRed($text, $eol = false)
  * @method Writer greenBgWhite($text, $eol = false)
  * @method Writer greenBgYellow($text, $eol = false)
+ * @method Writer help_category($text, $eol = false)
+ * @method Writer help_description_even($text, $eol = false)
+ * @method Writer help_description_odd($text, $eol = false)
+ * @method Writer help_example($text, $eol = false)
+ * @method Writer help_footer($text, $eol = false)
+ * @method Writer help_group($text, $eol = false)
+ * @method Writer help_header($text, $eol = false)
+ * @method Writer help_item_even($text, $eol = false)
+ * @method Writer help_item_odd($text, $eol = false)
+ * @method Writer help_summary($text, $eol = false)
+ * @method Writer help_text($text, $eol = false)
  * @method Writer info($text, $eol = false)
+ * @method Writer logo($text, $eol = false)
  * @method Writer ok($text, $eol = false)
  * @method Writer purple($text, $eol = false)
  * @method Writer purpleBgBlack($text, $eol = false)
@@ -157,6 +171,7 @@ use function strtolower;
  * @method Writer purpleBgRed($text, $eol = false)
  * @method Writer purpleBgWhite($text, $eol = false)
  * @method Writer purpleBgYellow($text, $eol = false)
+ * @method Writer question($text, $eol = false)
  * @method Writer red($text, $eol = false)
  * @method Writer redBgBlack($text, $eol = false)
  * @method Writer redBgBlue($text, $eol = false)
@@ -166,6 +181,7 @@ use function strtolower;
  * @method Writer redBgWhite($text, $eol = false)
  * @method Writer redBgYellow($text, $eol = false)
  * @method Writer table(array $rows, array $styles = [])
+ * @method Writer version($text, $eol = false)
  * @method Writer warn($text, $eol = false)
  * @method Writer white($text, $eol = false)
  * @method Writer yellow($text, $eol = false)
@@ -241,7 +257,7 @@ class Interactor
      */
     public function choice(string $text, array $choices, $default = null, bool $case = false): mixed
     {
-        $this->writer->yellow($text);
+        $this->writer->question($text);
 
         $this->listOptions($choices, $default, false);
 
@@ -262,7 +278,7 @@ class Interactor
      */
     public function choices(string $text, array $choices, $default = null, bool $case = false): mixed
     {
-        $this->writer->yellow($text);
+        $this->writer->question($text);
 
         $this->listOptions($choices, $default, true);
 
@@ -300,7 +316,7 @@ class Interactor
         $hidden = func_get_args()[4] ?? false;
         $readFn = ['read', 'readHidden'][(int) $hidden];
 
-        $this->writer->yellow($text)->comment(null !== $default ? " [$default]: " : ': ');
+        $this->writer->question($text)->answer(null !== $default ? " [$default]: " : ': ');
 
         try {
             $input = $this->reader->{$readFn}($default, $fn);
@@ -310,7 +326,7 @@ class Interactor
         }
 
         if ($retry > 0 && $input === '') {
-            $this->writer->bgRed($error, true);
+            $this->writer->error($error, true);
 
             return $this->prompt($text, $default, $fn, $retry - 1, $hidden);
         }
@@ -351,12 +367,12 @@ class Interactor
         $maxLen = max(array_map('strlen', array_keys($choices)));
 
         foreach ($choices as $choice => $desc) {
-            $this->writer->eol()->cyan(str_pad("  [$choice]", $maxLen + 6))->comment($desc);
+            $this->writer->eol()->choice(str_pad("  [$choice]", $maxLen + 6))->answer($desc);
         }
 
         $label = $multi ? 'Choices (comma separated)' : 'Choice';
 
-        $this->writer->eol()->yellow($label);
+        $this->writer->eol()->question($label);
 
         return $this->promptOptions(array_keys($choices), $default);
     }
@@ -369,7 +385,7 @@ class Interactor
         $options = '';
 
         foreach ($choices as $choice) {
-            $style    = in_array($choice, (array) $default) ? 'boldCyan' : 'cyan';
+            $style    = in_array($choice, (array) $default) ? 'boldChoice' : 'choice';
             $options .= "/<$style>$choice</end>";
         }
 

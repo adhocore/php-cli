@@ -30,14 +30,11 @@ class ColorTest extends TestCase
 
     public function test_custom_style()
     {
-        Color::style('alert', ['bg' => Color::YELLOW, 'fg' => Color::RED, 'bold' => 1]);
+        Color::style('alert', ['bg' => Color::YELLOW, 'fg' => Color::RED]);
 
-        $this->assertSame("\033[1;31;43malert\033[0m", (new Color)->alert('alert'));
-
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Trying to define existing style');
-
-        Color::style('alert', ['bg' => Color::BLACK]);
+        $this->assertSame("\033[0;31;43malert\033[0m", (new Color)->alert('alert'));
+        $this->assertSame("\033[1;31;43malert\033[0m", (new Color)->boldAlert('alert'));
+        $this->assertSame("\033[1;31;43malert\033[0m", (new Color)->alertBold('alert'));
     }
 
     public function test_invalid_custom_style()
@@ -46,6 +43,14 @@ class ColorTest extends TestCase
         $this->expectExceptionMessage('Trying to set empty or invalid style');
 
         Color::style('alert', ['invalid' => true]);
+    }
+
+    public function test_invisible_built_in_style()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Built-in styles cannot be invisible');
+
+        Color::style('error', ['bg' => Color::RED, 'fg' => Color::RED]);
     }
 
     public function test_colors()

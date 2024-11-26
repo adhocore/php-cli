@@ -390,7 +390,7 @@ class Application
         $footer = 'Run `<command> --help` for specific help';
 
         if ($this->logo) {
-            $writer->write($this->logo, true);
+            $writer->logo($this->logo, true);
         }
 
         $this->outputHelper()->showCommandsHelp($this->commands(), $header, $footer);
