@@ -205,7 +205,6 @@ class OutputHelper
             }
             $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
 
-<<<<<<< HEAD
             if ($idx % 2 == 0) {
                 $this->writer->help_item_even('  ' . str_pad($name, $padLen + $space));
                 $this->writer->help_description_even($desc, true);
@@ -213,10 +212,6 @@ class OutputHelper
                 $this->writer->help_item_odd('  ' . str_pad($name, $padLen + $space));
                 $this->writer->help_description_odd($desc, true);
             }
-=======
-            $this->writer->help_item('  ' . str_pad($name, $padLen + $space));
-            $this->writer->help_description($desc, true);
->>>>>>> a6d6be1 (Make all written text built-in styles so that their styles can be customized)
         }
 
         if ($footer) {
