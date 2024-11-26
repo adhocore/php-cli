@@ -68,6 +68,7 @@ class Color
         'help_summary'      => ['fg' => 37, 'mod' => 2],
         'help_text'         => ['fg' => 37, 'mod' => 1],
         'info'              => ['fg' => 34],
+        'logo'              => ['fg' => 37],
         'ok'                => ['fg' => 32],
         'question'          => ['fg' => 33],
         'version'           => ['fg' => 37, 'mod' => 1],
