@@ -52,6 +52,10 @@ class Application
     /** @var string Ascii art logo */
     protected string $logo = '';
 
+    /** @var string Custom help screen */
+    protected string $_help = '';
+
+    /** @var string Name of default command */
     protected string $default = '__default__';
 
     /** @var null|Interactor */
@@ -344,9 +348,41 @@ class Application
     }
 
     /**
-     * Show help of all commands.
+     * Sets or gets the custom help screen contents.
+     *
+     * @param string|null $help
+     *
+     * @return string|self
+     */
+    public function help(?string $help = null): mixed
+    {
+        if (func_num_args() === 0) {
+          return $this->_help;
+        }
+
+        $this->_help = $help;
+
+        return $this;
+    }
+
+    /**
+     * Show custom help screen if one is set, otherwise shows the default one.
      */
     public function showHelp(): mixed
+    {
+        if ($help = $this->help()) {
+            $writer = $this->io()->writer();
+            $writer->write($help, true);
+            return ($this->onExit)();
+        }
+
+        return $this->showDefaultHelp();
+    }
+
+    /**
+     * Shows command help then aborts.
+     */
+    public function showDefaultHelp(): mixed
     {
         $writer = $this->io()->writer();
         $header = "{$this->name}, version {$this->version}";
