@@ -53,7 +53,7 @@ class Application
     protected string $logo = '';
 
     /** @var string Custom help screen */
-    protected string $custom_help = '';
+    protected string $help = '';
 
     /** @var string Name of default command */
     protected string $default = '__default__';
@@ -357,10 +357,10 @@ class Application
     public function help(?string $help = null): mixed
     {
         if (func_num_args() === 0) {
-            return $this->custom_help;
+            return $this->help;
         }
 
-        $this->custom_help = $help;
+        $this->help = $help;
 
         return $this;
     }
