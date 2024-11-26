@@ -292,13 +292,6 @@ class CommandTest extends TestCase
         $this->assertStringContainsString('This should be my custom help screen', $p->help());
     }
 
-    public function test_custom_help()
-    {
-        $p = $this->newCommand();
-        $p->help('This should be my custom help screen');
-        $this->assertStringContainsString('This should be my custom help screen', $p->help());
-    }
-
     protected function newCommand(string $version = '0.0.1', string $desc = '', bool $allowUnknown = false, $app = null)
     {
         $p = new Command('cmd', $desc, $allowUnknown, $app);
