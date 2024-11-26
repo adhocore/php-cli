@@ -302,7 +302,7 @@ class Command extends Parser implements Groupable
     public function help(?string $help = null): mixed
     {
         if (func_num_args() === 0) {
-          return $this->_help;
+            return $this->_help;
         }
 
         $this->_help = $help;
