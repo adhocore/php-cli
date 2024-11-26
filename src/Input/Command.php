@@ -358,8 +358,8 @@ class Command extends Parser implements Groupable
             $io->logo($logo, true);
         }
 
-        if ($this->logo) {
-            $io->write($this->logo, true);
+        if ($logo = $this->logo()) {
+            $io->write($logo, true);
         }
 
         $io->help_header("Command {$this->_name}, version {$this->_version}", true)->eol();
