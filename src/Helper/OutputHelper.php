@@ -206,11 +206,11 @@ class OutputHelper
             $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
 
             if ($idx % 2 == 0) {
-              $this->writer->help_item_even('  ' . str_pad($name, $padLen + $space));
-              $this->writer->help_description_even($desc, true);
+                $this->writer->help_item_even('  ' . str_pad($name, $padLen + $space));
+                $this->writer->help_description_even($desc, true);
             } else {
-              $this->writer->help_item_odd('  ' . str_pad($name, $padLen + $space));
-              $this->writer->help_description_odd($desc, true);
+                $this->writer->help_item_odd('  ' . str_pad($name, $padLen + $space));
+                $this->writer->help_description_odd($desc, true);
             }
         }
 
