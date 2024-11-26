@@ -274,11 +274,11 @@ By default, running your CLI app without any arguments will show the help screen
 ```php
 $app->add(new InitCommand, 'i', true);
 
-# Alternatively
+// Alternatively
 $app->command('init', 'Init something', 'i');
 $app->defaultCommand('init');
 
-# Retrieve the name of the default command
+// Retrieve the name of the default command
 $default_command = $app->getDefaultCommand();
 ```
 
