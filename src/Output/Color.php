@@ -118,7 +118,7 @@ class Color
     }
 
     /**
-     * Returns the color code for a 256 background color
+     * Returns the color code for a 256 background color.
      */
     public function bg256(int $code)
     {
@@ -126,7 +126,7 @@ class Color
     }
 
     /**
-     * Returns the color code for a 256 foreground color
+     * Returns the color code for a 256 foreground color.
      */
     public function fg256(int $code)
     {
