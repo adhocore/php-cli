@@ -175,6 +175,7 @@ class InitCommand extends Ahc\Cli\Input\Command
             ->argument('[arg2]', 'The Arg2')
             ->option('-a --apple', 'The Apple')
             ->option('-b --ball', 'The ball')
+            ->help('Custom help screen (if omitted one will be generated)')
             // Usage examples:
             ->usage(
                 // append details or explanation of given example with ` ## ` so they will be uniformly aligned when shown
@@ -242,6 +243,9 @@ $app->add(new OtherCommand, 'o');
 
 // Set logo
 $app->logo('Ascii art logo of your app');
+
+// Custom help screen
+$app->help('Custom help screen (if omitted one will be generated)');
 
 $app->handle($_SERVER['argv']); // if argv[1] is `i` or `init` it executes InitCommand
 ```
