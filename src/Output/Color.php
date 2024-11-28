@@ -50,7 +50,7 @@ class Color
     const GRAY     = 47;
     const DARKGRAY = 100;
 
-    static bool $colors_enabled = true;
+    public static bool $colors_enabled = true;
 
     protected string $format = "\033[:mod:;:fg:;:bg:m:txt:\033[0m";
 
