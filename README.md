@@ -514,7 +514,6 @@ Ahc\Cli\Output\Color::style('error', [
 Ahc\Cli\Output\Color::$colors_enabled = false;
 ```
 
-
 ### Cursor
 
 Move cursor around, erase line up or down, clear screen.
