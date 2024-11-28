@@ -235,7 +235,11 @@ class Color
         }
 
         if (!method_exists($this, $name)) {
-            throw new InvalidArgumentException(sprintf('Style "%s" not defined', $name));
+            if (self::$colors_enabled) {
+                throw new InvalidArgumentException(sprintf('Style "%s" not defined', $name));
+            }
+
+            return $text;
         }
 
         return $this->{$name}($text, $style);
