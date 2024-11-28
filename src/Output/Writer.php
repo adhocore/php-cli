@@ -339,7 +339,7 @@ class Writer
 
         $second        = (string) $second;
         $terminalWidth = $this->terminal->width() ?? 80;
-        $dashWidth     = $terminalWidth - (strlen($first) + strlen($second));
+        $dashWidth     = $terminalWidth - (mb_strwidth($first) + mb_strwidth($second));
         // remove left and right margins because we're going to add 1 space on each side (after/before the text).
         // if we don't have a second element, we just remove the left margin
         $dashWidth -= $second === '' ? 1 : 2;
