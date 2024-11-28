@@ -50,7 +50,7 @@ class Color
     const GRAY     = 47;
     const DARKGRAY = 100;
 
-    public static bool $colors_enabled = true;
+    public static bool $enabled = true;
 
     protected string $format = "\033[:mod:;:fg:;:bg:m:txt:\033[0m";
 
@@ -140,7 +140,7 @@ class Color
      */
     public function line(string $text, array $style = []): string
     {
-        if (!self::$colors_enabled) {
+        if (!self::$enabled) {
             return $text;
         }
 
@@ -235,7 +235,7 @@ class Color
         }
 
         if (!method_exists($this, $name)) {
-            if (!self::$colors_enabled) {
+            if (!self::$enabled) {
                 return $text;
             }
 

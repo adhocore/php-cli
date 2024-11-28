@@ -511,7 +511,7 @@ Ahc\Cli\Output\Color::style('error', [
 #### Disable colors
 
 ```php
-Ahc\Cli\Output\Color::$colors_enabled = false;
+Ahc\Cli\Output\Color::$enabled = false;
 ```
 
 ### Cursor
