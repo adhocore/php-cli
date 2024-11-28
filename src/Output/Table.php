@@ -23,11 +23,11 @@ use function gettype;
 use function implode;
 use function is_array;
 use function max;
+use function mb_strwidth;
+use function mb_substr;
 use function reset;
 use function sprintf;
-use function str_pad;
 use function str_repeat;
-use function strlen;
 use function trim;
 
 use const PHP_EOL;
@@ -51,7 +51,7 @@ class Table
         $pos           = 0;
         foreach ($head as $col => $size) {
             $dash[]          = str_repeat('-', $size + 2);
-            $title[]         = str_pad($this->toWords($col), $size, ' ');
+            $title[]         = $this->strPad($this->toWords($col), $size, ' ');
             $positions[$col] = ++$pos;
         }
 
@@ -62,7 +62,6 @@ class Table
             $parts = [];
             $line++;
 
-            [$start, $end] = $styles[['even', 'odd'][(int) $odd]];
             foreach ($head as $col => $size) {
                 $colNumber = $positions[$col];
 
@@ -85,10 +84,10 @@ class Table
                     $word = str_replace($matches[1], '', $text);
                     $word = preg_replace('/\\x1b\[0m/', '', $word);
 
-                    $size += strlen($text) - strlen($word);
+                    $size += mb_strwidth($text) - mb_strwidth($word);
                 }
 
-                $parts[] = "$start " . str_pad($text, $size, ' ') . " $end";
+                $parts[] = "$start " . $this->strPad($text, $size, ' ') . " $end";
             }
 
             $odd    = !$odd;
@@ -132,8 +131,8 @@ class Table
                 return $col;
             }, $cols);
 
-            $span   = array_map('strlen', $cols);
-            $span[] = strlen($col);
+            $span   = array_map('mb_strwidth', $cols);
+            $span[] = mb_strwidth($col);
             $value  = max($span);
         }
 
@@ -176,5 +175,17 @@ class Table
         }
 
         return ['', ''];
+    }
+
+    /**
+     * Pad a multibyte string to a certain length with another multibyte string
+     */
+    protected function strPad(string $string, int $length, string $pad_string = ' '): string
+    {
+        if (1 > $paddingRequired = $length - mb_strwidth($string)) {
+            return $string;
+        }
+
+        return $string . mb_substr(str_repeat($pad_string, $paddingRequired), 0, $paddingRequired);
     }
 }
