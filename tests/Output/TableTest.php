@@ -642,6 +642,10 @@ class TableTest extends CliTestCase
 
     public function test_render_with_unicode_characters_in_cell_content(): void
     {
+        if (! extension_loaded('mbstring')) {
+            $this->markTestSkipped('The mbstring extension is not installed. This test will faill without it');
+        }
+
         $rows = [
             ['name' => 'François', 'greeting' => 'Bonjour'],
             ['name' => 'Jürgen', 'greeting' => 'Guten Tag'],
