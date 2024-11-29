@@ -53,7 +53,7 @@ trait InflectsString
     }
 
     /**
-     * Return width of string
+     * Return width of string.
      */
     public function strwidth(string $string): int
     {
@@ -65,7 +65,7 @@ trait InflectsString
     }
 
     /**
-     * Get part of string
+     * Get part of string.
      */
     public function substr(string $string, int $start, ?int $length = null): string
     {
