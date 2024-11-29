@@ -12,7 +12,11 @@
 namespace Ahc\Cli\Helper;
 
 use function lcfirst;
+use function mb_strwidth;
+use function mb_substr;
 use function str_replace;
+use function strlen;
+use function substr;
 use function trim;
 use function ucwords;
 
@@ -46,5 +50,29 @@ trait InflectsString
         $words = trim(str_replace(['-', '_'], ' ', $string));
 
         return ucwords($words);
+    }
+
+    /**
+     * Return width of string
+     */
+    public function strwidth(string $string): int
+    {
+        if (function_exists('mb_strwidth')) {
+            return mb_strwidth($string);
+        }
+
+        return strlen($string);
+    }
+
+    /**
+     * Get part of string
+     */
+    public function substr(string $string, int $start, ?int $length = null): string
+    {
+        if (function_exists('mb_substr')) {
+            return mb_substr($string, $start, $length);
+        }
+
+        return substr($string, $start, $length);
     }
 }

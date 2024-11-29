@@ -11,6 +11,7 @@
 
 namespace Ahc\Cli\Output;
 
+use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\Terminal;
 
 use function fopen;
@@ -19,7 +20,6 @@ use function max;
 use function method_exists;
 use function str_repeat;
 use function stripos;
-use function strlen;
 use function strpos;
 use function ucfirst;
 
@@ -190,6 +190,8 @@ use const STDOUT;
  */
 class Writer
 {
+    use InflectsString;
+
     /** @var resource Output file handle */
     protected $stream;
 
@@ -339,7 +341,7 @@ class Writer
 
         $second        = (string) $second;
         $terminalWidth = $this->terminal->width() ?? 80;
-        $dashWidth     = $terminalWidth - (mb_strwidth($first) + mb_strwidth($second));
+        $dashWidth     = $terminalWidth - ($this->strwidth($first) + $this->strwidth($second));
         // remove left and right margins because we're going to add 1 space on each side (after/before the text).
         // if we don't have a second element, we just remove the left margin
         $dashWidth -= $second === '' ? 1 : 2;

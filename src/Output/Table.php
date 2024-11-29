@@ -23,8 +23,6 @@ use function gettype;
 use function implode;
 use function is_array;
 use function max;
-use function mb_strwidth;
-use function mb_substr;
 use function reset;
 use function sprintf;
 use function str_repeat;
@@ -84,7 +82,7 @@ class Table
                     $word = str_replace($matches[1], '', $text);
                     $word = preg_replace('/\\x1b\[0m/', '', $word);
 
-                    $size += mb_strwidth($text) - mb_strwidth($word);
+                    $size += $this->strwidth($text) - $this->strwidth($word);
                 }
 
                 $parts[] = "$start " . $this->strPad($text, $size, ' ') . " $end";
@@ -131,8 +129,8 @@ class Table
                 return $col;
             }, $cols);
 
-            $span   = array_map('mb_strwidth', $cols);
-            $span[] = mb_strwidth($col);
+            $span   = array_map([$this, 'strwidth'], $cols);
+            $span[] = $this->strwidth($col);
             $value  = max($span);
         }
 
@@ -182,10 +180,10 @@ class Table
      */
     protected function strPad(string $string, int $length, string $pad_string = ' '): string
     {
-        if (1 > $paddingRequired = $length - mb_strwidth($string)) {
+        if (1 > $paddingRequired = $length - $this->strwidth($string)) {
             return $string;
         }
 
-        return $string . mb_substr(str_repeat($pad_string, $paddingRequired), 0, $paddingRequired);
+        return $string . $this->substr(str_repeat($pad_string, $paddingRequired), 0, $paddingRequired);
     }
 }
