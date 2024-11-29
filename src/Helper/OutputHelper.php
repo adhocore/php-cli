@@ -99,7 +99,7 @@ class OutputHelper
             $traceStr .= "  <comment>$i)</end> <red>$symbol</end><comment>($args)</end>";
             if ('' !== $trace['file']) {
                 $file      = realpath($trace['file']);
-                $traceStr .= "<eol/>     <yellow>at $file</end><white>:{$trace['line']}</end><eol/>";
+                $traceStr .= "<eol/>     <yellow>{$this->translate('thrownAt')} $file</end><white>:{$trace['line']}</end><eol/>";
             }
         }
 

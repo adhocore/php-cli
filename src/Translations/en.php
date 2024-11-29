@@ -28,6 +28,7 @@ return [
     'showVersion'        => 'Show version',
     'stackTrace'         => 'Stack Trace',
     'thrownIn'           => 'thrown in',
+    'thrownAt'           => 'at',
     'usage'              => 'Usage',
     'usageExamples'      => 'Usage Examples',
     'version'            => 'version',
