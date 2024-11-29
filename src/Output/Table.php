@@ -176,7 +176,7 @@ class Table
     }
 
     /**
-     * Pad a multibyte string to a certain length with another multibyte string
+     * Pad a multibyte string to a certain length with another multibyte string.
      */
     protected function strPad(string $string, int $length, string $pad_string = ' '): string
     {
