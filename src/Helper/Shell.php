@@ -37,6 +37,8 @@ use function stream_set_blocking;
  */
 class Shell
 {
+    use InflectsString;
+
     const STDIN_DESCRIPTOR_KEY  = 0;
     const STDOUT_DESCRIPTOR_KEY = 1;
     const STDERR_DESCRIPTOR_KEY = 2;
@@ -99,7 +101,7 @@ class Shell
     {
         // @codeCoverageIgnoreStart
         if (!function_exists('proc_open')) {
-            throw new RuntimeException('Required proc_open could not be found in your PHP setup.');
+            throw new RuntimeException($this->translate('procOpenMissing'));
         }
         // @codeCoverageIgnoreEnd
 
@@ -181,7 +183,7 @@ class Shell
         if ($executionDuration > $this->processTimeout) {
             $this->kill();
 
-            throw new RuntimeException('Timeout occurred, process terminated.');
+            throw new RuntimeException($this->translate('timeoutOccured'));
         }
         // @codeCoverageIgnoreStart
     }
@@ -216,7 +218,7 @@ class Shell
     public function execute(bool $async = false, ?array $stdin = null, ?array $stdout = null, ?array $stderr = null): self
     {
         if ($this->isRunning()) {
-            throw new RuntimeException('Process is already running.');
+            throw new RuntimeException($this->translate('processAlreadyRun'));
         }
 
         $this->descriptors      = $this->prepareDescriptors($stdin, $stdout, $stderr);
@@ -234,7 +236,7 @@ class Shell
 
         // @codeCoverageIgnoreStart
         if (!is_resource($this->process)) {
-            throw new RuntimeException('Bad program could not be started.');
+            throw new RuntimeException($this->translate('badProgram'));
         }
         // @codeCoverageIgnoreEnd
 

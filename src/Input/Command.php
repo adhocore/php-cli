@@ -83,9 +83,9 @@ class Command extends Parser implements Groupable
      */
     protected function defaults(): self
     {
-        $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
-        $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
-        $this->option('-v, --verbosity', 'Verbosity level', null, 0)->on(
+        $this->option('-h, --help', $this->translate('showHelp'))->on([$this, 'showHelp']);
+        $this->option('-V, --version', $this->translate('showVersion'))->on([$this, 'showVersion']);
+        $this->option('-v, --verbosity', $this->translate('verbosityLevel'), null, 0)->on(
             fn () => $this->set('verbosity', ($this->verbosity ?? 0) + 1) && false
         );
 
@@ -196,7 +196,7 @@ class Command extends Parser implements Groupable
         $argument = new Argument($raw, $desc, $default);
 
         if ($this->_argVariadic) {
-            throw new InvalidParameterException('Only last argument can be variadic');
+            throw new InvalidParameterException($this->translate('argumentVariadic'));
         }
 
         if ($argument->variadic()) {
@@ -303,9 +303,7 @@ class Command extends Parser implements Groupable
 
         // Has some value, error!
         if ($values) {
-            throw new RuntimeException(
-                sprintf('Option "%s" not registered', $arg)
-            );
+            throw new RuntimeException($this->translate('optionNotRegistered', [$arg]));
         }
 
         // Has no value, show help!
@@ -358,13 +356,13 @@ class Command extends Parser implements Groupable
             $io->logo($logo, true);
         }
 
-        $io->help_header("Command {$this->_name}, version {$this->_version}", true)->eol();
+        $io->help_header("{$this->translate('command')} {$this->_name}, {$this->translate('version')} {$this->_version}", true)->eol();
         $io->help_summary($this->_desc, true)->eol();
-        $io->help_text('Usage: ')->help_example("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
+        $io->help_text("{$this->translate('usage')}: ")->help_example("{$this->_name} {$this->translate('helpExample')}", true);
 
         $helper
             ->showArgumentsHelp($this->allArguments())
-            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional] variadic...');
+            ->showOptionsHelp($this->allOptions(), '', $this->translate('optionHelp'));
 
         if ($this->_usage) {
             $helper->showUsage($this->_usage);

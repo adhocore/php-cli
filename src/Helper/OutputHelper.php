@@ -58,6 +58,8 @@ use const STR_PAD_LEFT;
  */
 class OutputHelper
 {
+    use InflectsString;
+
     protected Writer $writer;
 
     /** @var int Max width of command name */
@@ -77,7 +79,7 @@ class OutputHelper
 
         $this->writer->colors(
             "{$eClass} <red>{$e->getMessage()}</end><eol/>" .
-            "(thrown in <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end>"
+            "({$this->translate('thrownIn')} <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end>"
         );
 
         // @codeCoverageIgnoreStart
@@ -87,7 +89,7 @@ class OutputHelper
         }
         // @codeCoverageIgnoreEnd
 
-        $traceStr = '<eol/><eol/><bold>Stack Trace:</end><eol/><eol/>';
+        $traceStr = "<eol/><eol/><bold>{$this->translate('stackTrace')}:</end><eol/><eol/>";
 
         foreach ($e->getTrace() as $i => $trace) {
             $trace += ['class' => '', 'type' => '', 'function' => '', 'file' => '', 'line' => '', 'args' => []];
@@ -185,7 +187,7 @@ class OutputHelper
             $this->writer->help_header($header, true);
         }
 
-        $this->writer->eol()->help_category($for . ':', true);
+        $this->writer->eol()->help_category($this->translate(strtolower($for)) . ':', true);
 
         if (empty($items)) {
             $this->writer->help_text('  (n/a)', true);
@@ -229,7 +231,7 @@ class OutputHelper
         $usage = str_replace('$0', $_SERVER['argv'][0] ?? '[cmd]', $usage);
 
         if (!str_contains($usage, ' ## ')) {
-            $this->writer->eol()->help_category('Usage Examples:', true)->colors($usage)->eol();
+            $this->writer->eol()->help_category($this->translate('usageExamples') . ':', true)->colors($usage)->eol();
 
             return $this;
         }
@@ -246,7 +248,7 @@ class OutputHelper
             return str_pad('# ', $maxlen - array_shift($lines), ' ', STR_PAD_LEFT);
         }, $usage);
 
-        $this->writer->eol()->help_category('Usage Examples:', true)->colors($usage)->eol();
+        $this->writer->eol()->help_category($this->translate('usageExamples') . ':', true)->colors($usage)->eol();
 
         return $this;
     }
@@ -261,11 +263,11 @@ class OutputHelper
             }
         }
 
-        $this->writer->error("Command $attempted not found", true);
+        $this->writer->error($this->translate('commandNotFound', [$attempted]), true);
         if ($closest) {
             asort($closest);
             $closest = key($closest);
-            $this->writer->bgRed("Did you mean $closest?", true);
+            $this->writer->bgRed($this->translate('commandSuggestion', [$closest]), true);
         }
 
         return $this;

@@ -24,7 +24,6 @@ use function implode;
 use function is_array;
 use function max;
 use function reset;
-use function sprintf;
 use function str_repeat;
 use function trim;
 
@@ -107,7 +106,7 @@ class Table
 
         if (!is_array($head)) {
             throw new InvalidArgumentException(
-                sprintf('Rows must be array of assoc arrays, %s given', gettype($head))
+                $this->translate('invalidTableRowsType', [gettype($head)])
             );
         }
 

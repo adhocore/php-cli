@@ -13,6 +13,7 @@ namespace Ahc\Cli\Input;
 
 use Ahc\Cli\Exception\InvalidParameterException;
 use Ahc\Cli\Exception\RuntimeException;
+use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\Normalizer;
 use InvalidArgumentException;
 
@@ -37,6 +38,8 @@ use function substr;
  */
 abstract class Parser
 {
+    use InflectsString;
+
     /** @var string|null The last seen variadic option name */
     protected ?string $_lastVariadic = null;
 
@@ -264,9 +267,9 @@ abstract class Parser
     protected function ifAlreadyRegistered(Parameter $param): void
     {
         if ($this->registered($param->attributeName())) {
-            throw new InvalidParameterException(sprintf(
-                'The parameter "%s" is already registered',
-                $param instanceof Option ? $param->long() : $param->name()
+            throw new InvalidParameterException($this->translate(
+                'parameterAlreadyRegistered',
+                [$param instanceof Option ? $param->long() : $param->name()]
             ));
         }
     }
