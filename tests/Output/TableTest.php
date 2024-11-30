@@ -639,4 +639,30 @@ class TableTest extends CliTestCase
 
         $this->assertSame($expectedOutput, trim($result));
     }
+
+    public function test_render_with_unicode_characters_in_cell_content(): void
+    {
+        if (!extension_loaded('mbstring')) {
+            $this->markTestSkipped('The mbstring extension is not installed. This test will faill without it');
+        }
+
+        $rows = [
+            ['name' => 'François', 'greeting' => 'Bonjour'],
+            ['name' => 'Jürgen', 'greeting' => 'Guten Tag'],
+            ['name' => '北京', 'greeting' => '你好'],
+        ];
+
+        $expectedOutput =
+            '+----------+-----------+' . PHP_EOL .
+            '| Name     | Greeting  |' . PHP_EOL .
+            '+----------+-----------+' . PHP_EOL .
+            '| François | Bonjour   |' . PHP_EOL .
+            '| Jürgen   | Guten Tag |' . PHP_EOL .
+            '| 北京     | 你好      |' . PHP_EOL .
+            '+----------+-----------+';
+
+        $result = $this->table->render($rows);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
 }
