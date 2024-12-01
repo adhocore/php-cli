@@ -140,7 +140,7 @@ class Color
      */
     public function line(string $text, array $style = []): string
     {
-        if (!self::$enabled) {
+        if (!self::$enabled || getenv('NO_COLOR')) {
             return $text;
         }
 
@@ -235,7 +235,7 @@ class Color
         }
 
         if (!method_exists($this, $name)) {
-            if (!self::$enabled) {
+            if (!self::$enabled || getenv('NO_COLOR')) {
                 return $text;
             }
 
