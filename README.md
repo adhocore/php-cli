@@ -508,6 +508,14 @@ Ahc\Cli\Output\Color::style('error', [
 ]);
 ```
 
+#### Disable colors
+
+```php
+Ahc\Cli\Output\Color::$enabled = false;
+```
+
+Colors will be automatically disabled if the `NO_COLOR` environment variable is set to true.
+
 ### Cursor
 
 Move cursor around, erase line up or down, clear screen.

@@ -50,6 +50,8 @@ class Color
     const GRAY     = 47;
     const DARKGRAY = 100;
 
+    public static bool $enabled = true;
+
     protected string $format = "\033[:mod:;:fg:;:bg:m:txt:\033[0m";
 
     /** @var array Custom styles */
@@ -138,6 +140,10 @@ class Color
      */
     public function line(string $text, array $style = []): string
     {
+        if (!self::$enabled || getenv('NO_COLOR')) {
+            return $text;
+        }
+
         $style += ['bg' => null, 'fg' => static::WHITE, 'bold' => 0, 'mod' => null];
 
         $format = $style['bg'] === null
@@ -229,6 +235,10 @@ class Color
         }
 
         if (!method_exists($this, $name)) {
+            if (!self::$enabled || getenv('NO_COLOR')) {
+                return $text;
+            }
+
             throw new InvalidArgumentException(sprintf('Style "%s" not defined', $name));
         }
 
