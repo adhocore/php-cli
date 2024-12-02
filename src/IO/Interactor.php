@@ -315,7 +315,7 @@ class Interactor
      */
     public function prompt(string $text, $default = null, ?callable $fn = null, int $retry = 3): mixed
     {
-        $error  = $this->translate('promptInvalidValue');
+        $error  = $this->translate('Invalid value. Please try again!');
         $hidden = func_get_args()[4] ?? false;
         $readFn = ['read', 'readHidden'][(int) $hidden];
 
@@ -373,7 +373,7 @@ class Interactor
             $this->writer->eol()->choice(str_pad("  [$choice]", $maxLen + 6))->answer($desc);
         }
 
-        $label = $this->translate($multi ? 'choices' : 'choice');
+        $label = $this->translate($multi ? 'Choices (comma separated)' : 'Choice');
 
         $this->writer->eol()->question($label);
 

@@ -12,6 +12,7 @@
 namespace Ahc\Cli;
 
 use Ahc\Cli\Exception\InvalidArgumentException;
+use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\Input\Command;
 use Ahc\Cli\IO\Interactor;
@@ -28,7 +29,6 @@ use function in_array;
 use function is_array;
 use function is_int;
 use function method_exists;
-use function sprintf;
 
 /**
  * A cli application.
@@ -40,6 +40,25 @@ use function sprintf;
  */
 class Application
 {
+    use InflectsString;
+
+    /**
+     * Locale of CLI.
+     */
+    public static $locale = 'en';
+
+    /**
+     * list of translations for each supported locale
+     *
+     * @var array<string, array>
+     *
+     * @example
+     * ```php
+     *  ['locale' => ['key1' => 'value1', 'key2' => 'value2']]
+     * ```
+     */
+    public static $locales = [];
+
     /** @var Command[] */
     protected array $commands = [];
 
@@ -130,6 +149,15 @@ class Application
         return $this;
     }
 
+    public static function addLocale(string $locale, array $texts, bool $default = false)
+    {
+        if ($default) {
+            self::$locale = $locale;
+        }
+
+        self::$locales[$locale] = $texts;
+    }
+
     /**
      * Add a command by its name desc alias etc and return command.
      */
@@ -161,7 +189,7 @@ class Application
             $this->aliases[$alias] ??
             null
         ) {
-            throw new InvalidArgumentException(sprintf('Command "%s" already added', $name));
+            throw new InvalidArgumentException($this->translate('Command "%s" already added', [$name]));
         }
 
         if ($alias) {
@@ -190,7 +218,7 @@ class Application
     public function defaultCommand(string $commandName): self
     {
         if (!isset($this->commands[$commandName])) {
-            throw new InvalidArgumentException(sprintf('Command "%s" does not exist', $commandName));
+            throw new InvalidArgumentException($this->translate('Command "%s" does not exist', [$commandName]));
         }
 
         $this->default = $commandName;
@@ -386,8 +414,8 @@ class Application
     public function showDefaultHelp(): mixed
     {
         $writer = $this->io()->writer();
-        $header = "{$this->name}, version {$this->version}";
-        $footer = 'Run `<command> --help` for specific help';
+        $header = "{$this->name}, {$this->translate('version')} {$this->version}";
+        $footer = $this->translate('Run `<command> --help` for specific help');
 
         if ($this->logo) {
             $writer->logo($this->logo, true);

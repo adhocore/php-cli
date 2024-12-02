@@ -101,7 +101,7 @@ class Shell
     {
         // @codeCoverageIgnoreStart
         if (!function_exists('proc_open')) {
-            throw new RuntimeException($this->translate('procOpenMissing'));
+            throw new RuntimeException($this->translate('Required proc_open could not be found in your PHP setup.'));
         }
         // @codeCoverageIgnoreEnd
 
@@ -183,7 +183,7 @@ class Shell
         if ($executionDuration > $this->processTimeout) {
             $this->kill();
 
-            throw new RuntimeException($this->translate('timeoutOccured'));
+            throw new RuntimeException($this->translate('Timeout occurred, process terminated.'));
         }
         // @codeCoverageIgnoreStart
     }
@@ -218,7 +218,7 @@ class Shell
     public function execute(bool $async = false, ?array $stdin = null, ?array $stdout = null, ?array $stderr = null): self
     {
         if ($this->isRunning()) {
-            throw new RuntimeException($this->translate('processAlreadyRun'));
+            throw new RuntimeException($this->translate('Process is already running.'));
         }
 
         $this->descriptors      = $this->prepareDescriptors($stdin, $stdout, $stderr);
@@ -236,7 +236,7 @@ class Shell
 
         // @codeCoverageIgnoreStart
         if (!is_resource($this->process)) {
-            throw new RuntimeException($this->translate('badProgram'));
+            throw new RuntimeException($this->translate('Bad program could not be started.'));
         }
         // @codeCoverageIgnoreEnd
 

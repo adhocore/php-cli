@@ -225,7 +225,7 @@ abstract class Parser
             }
 
             throw new RuntimeException(
-                sprintf('%s "%s" is required', $label, $name)
+                $this->translate('%s "%s" is required', [$label, $name])
             );
         }
     }
@@ -268,7 +268,7 @@ abstract class Parser
     {
         if ($this->registered($param->attributeName())) {
             throw new InvalidParameterException($this->translate(
-                'parameterAlreadyRegistered',
+                'The parameter "%s" is already registered',
                 [$param instanceof Option ? $param->long() : $param->name()]
             ));
         }

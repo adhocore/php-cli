@@ -83,7 +83,7 @@ abstract class Parameter
             return $this->desc;
         }
 
-        return ltrim($this->translate('descWithDefault', [$this->desc, json_encode($this->default)]));
+        return ltrim($this->translate('%s [default: %s]', [$this->desc, json_encode($this->default)]));
     }
 
     /**

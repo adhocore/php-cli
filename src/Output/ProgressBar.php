@@ -136,7 +136,7 @@ class ProgressBar
     {
         if (is_string($key)) {
             if (empty($value)) {
-                throw new UnexpectedValueException($this->translate('configOptionMissing'));
+                throw new UnexpectedValueException($this->translate('Configuration option value is required'));
             }
 
             $key = [$key => $value];
@@ -166,11 +166,13 @@ class ProgressBar
     {
         if ($this->total == 0) {
             // Avoid dividing by 0
-            throw new UnexpectedValueException($this->translate('progressbarTotalMin'));
+            throw new UnexpectedValueException($this->translate('The progress total must be greater than zero.'));
         }
-        
+
         if ($current > $this->total) {
-            throw new UnexpectedValueException($this->translate('progressbarCurrentMax', [$current, $this->total]));
+            throw new UnexpectedValueException(
+                $this->translate('The current (%d) is greater than the total (%d).', [$current, $this->total])
+            );
         }
 
         $this->drawProgressBar($current, $label);

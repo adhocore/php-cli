@@ -11,7 +11,7 @@
 
 namespace Ahc\Cli\Helper;
 
-use Ahc\Cli\Translations\Translator;
+use Ahc\Cli\Application;
 
 use function lcfirst;
 use function mb_strwidth;
@@ -32,8 +32,6 @@ use function ucwords;
  */
 trait InflectsString
 {
-    private static ?Translator $translator = null;
-
     /**
      * Convert a string to camel case.
      */
@@ -83,12 +81,11 @@ trait InflectsString
     /**
      * Translates a message using the translator.
      */
-    public static function translate(string $key, array $args = []): string
+    public static function translate(string $text, array $args = []): string
     {
-        if (self::$translator === null) {
-            self::$translator = new Translator();
-        }
+        $translations = Application::$locales[Application::$locale] ?? [];
+        $text         = $translations[$text] ?? $text;
 
-        return self::$translator->getMessage($key, $args);
+        return sprintf($text, ...$args);
     }
 }

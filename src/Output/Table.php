@@ -106,7 +106,7 @@ class Table
 
         if (!is_array($head)) {
             throw new InvalidArgumentException(
-                $this->translate('invalidTableRowsType', [gettype($head)])
+                $this->translate('Rows must be array of assoc arrays, %s given', [gettype($head)])
             );
         }
 
