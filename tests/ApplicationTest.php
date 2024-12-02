@@ -326,6 +326,23 @@ class ApplicationTest extends TestCase
         $app->handle(['test', 'cmd']);
     }
 
+    public function test_app_translated()
+    {
+        $app = $this->newApp('test');
+        $app->addLocale('fr', [
+            'Show version' => 'Afficher la version',
+            'Verbosity level' => 'Niveau de verbocité',
+            '%s [default: %s]' => '%s [par défaut: %s]',
+        ], true);
+        $app->command('rmdir');
+
+        $app->handle(['test', 'rmdir', '--help']);
+        $o = file_get_contents(static::$ou);
+
+        $this->assertStringContainsString('Afficher la version', $o);
+        $this->assertStringContainsString('Niveau de verbocité [par défaut: 0]', $o);
+    }
+
     protected function newApp(string $name, string $version = '')
     {
         $app = new Application($name, $version ?: '0.0.1', fn () => false);
