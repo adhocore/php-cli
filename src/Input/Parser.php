@@ -221,7 +221,7 @@ abstract class Parser
                 [$name, $label] = [$item->long(), 'Option'];
             }
 
-            throw new RuntimeException(t('%s "%s" is required', [$label, $name]));
+            throw new RuntimeException(t('%1$s "%2$s" is required', [$label, $name]));
         }
     }
 

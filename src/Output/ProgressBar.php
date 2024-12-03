@@ -169,7 +169,7 @@ class ProgressBar
 
         if ($current > $this->total) {
             throw new UnexpectedValueException(
-                t('The current (%d) is greater than the total (%d).', [$current, $this->total])
+                t('The current (%1$d) is greater than the total (%2$d).', [$current, $this->total])
             );
         }
 

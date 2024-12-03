@@ -331,7 +331,7 @@ class ApplicationTest extends TestCase
     public function test_default_translations()
     {
         $this->assertSame('Show version', t('Show version'));
-        $this->assertSame('Verbosity level [default: 0]', t('%s [default: %s]', ['Verbosity level', 0]));
+        $this->assertSame('Verbosity level [default: 0]', t('%1$s [default: %2$s]', ['Verbosity level', 0]));
         $this->assertSame('Command "rmdir" already added', t('Command "%s" already added', ['rmdir']));
     }
 
@@ -339,12 +339,12 @@ class ApplicationTest extends TestCase
     {
         Application::addLocale('fr', [
             'Show version' => 'Afficher la version',
-            '%s [default: %s]' => '%s [par défaut: %s]',
+            '%1$s [default: %2$s]' => '%1$s [par défaut: %2$s]',
             'Command "%s" already added' => 'La commande "%s" a déjà été ajoutée'
         ], true);
 
         $this->assertSame('Afficher la version', t('Show version'));
-        $this->assertSame('Niveau de verbosite [par défaut: 0]', t('%s [default: %s]', ['Niveau de verbosite', 0]));
+        $this->assertSame('Niveau de verbosite [par défaut: 0]', t('%1$s [default: %2$s]', ['Niveau de verbosite', 0]));
         $this->assertSame('La commande "rmdir" a déjà été ajoutée', t('Command "%s" already added', ['rmdir']));
 
         // untranslated key
@@ -357,7 +357,7 @@ class ApplicationTest extends TestCase
         $app->addLocale('fr', [
             'Show version' => 'Afficher la version',
             'Verbosity level' => 'Niveau de verbocité',
-            '%s [default: %s]' => '%s [par défaut: %s]',
+            '%1$s [default: %2$s]' => '%s [par défaut: %s]',
         ], true);
         $app->command('rmdir');
 

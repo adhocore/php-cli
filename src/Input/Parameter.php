@@ -84,7 +84,7 @@ abstract class Parameter
             return $this->desc;
         }
 
-        return ltrim(t('%s [default: %s]', [$this->desc, json_encode($this->default)]));
+        return ltrim(t('%1$s [default: %2$s]', [$this->desc, json_encode($this->default)]));
     }
 
     /**
