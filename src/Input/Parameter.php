@@ -13,6 +13,7 @@ namespace Ahc\Cli\Input;
 
 use Ahc\Cli\Helper\InflectsString;
 
+use function Ahc\Cli\t;
 use function json_encode;
 use function ltrim;
 use function strpos;
@@ -83,7 +84,7 @@ abstract class Parameter
             return $this->desc;
         }
 
-        return ltrim($this->translate('%s [default: %s]', [$this->desc, json_encode($this->default)]));
+        return ltrim(t('%s [default: %s]', [$this->desc, json_encode($this->default)]));
     }
 
     /**

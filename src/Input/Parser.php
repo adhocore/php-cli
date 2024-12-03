@@ -13,10 +13,10 @@ namespace Ahc\Cli\Input;
 
 use Ahc\Cli\Exception\InvalidParameterException;
 use Ahc\Cli\Exception\RuntimeException;
-use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\Normalizer;
 use InvalidArgumentException;
 
+use function Ahc\Cli\t;
 use function array_diff_key;
 use function array_filter;
 use function array_key_exists;
@@ -25,7 +25,6 @@ use function array_shift;
 use function count;
 use function in_array;
 use function reset;
-use function sprintf;
 use function substr;
 
 /**
@@ -38,8 +37,6 @@ use function substr;
  */
 abstract class Parser
 {
-    use InflectsString;
-
     /** @var string|null The last seen variadic option name */
     protected ?string $_lastVariadic = null;
 
@@ -224,9 +221,7 @@ abstract class Parser
                 [$name, $label] = [$item->long(), 'Option'];
             }
 
-            throw new RuntimeException(
-                $this->translate('%s "%s" is required', [$label, $name])
-            );
+            throw new RuntimeException(t('%s "%s" is required', [$label, $name]));
         }
     }
 
@@ -267,7 +262,7 @@ abstract class Parser
     protected function ifAlreadyRegistered(Parameter $param): void
     {
         if ($this->registered($param->attributeName())) {
-            throw new InvalidParameterException($this->translate(
+            throw new InvalidParameterException(t(
                 'The parameter "%s" is already registered',
                 [$param instanceof Option ? $param->long() : $param->name()]
             ));

@@ -11,11 +11,11 @@
 
 namespace Ahc\Cli\IO;
 
-use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Input\Reader;
 use Ahc\Cli\Output\Writer;
 use Throwable;
 
+use function Ahc\Cli\t;
 use function array_keys;
 use function array_map;
 use function count;
@@ -196,8 +196,6 @@ use function strtolower;
  */
 class Interactor
 {
-    use InflectsString;
-
     protected Reader $reader;
     protected Writer $writer;
 
@@ -315,7 +313,7 @@ class Interactor
      */
     public function prompt(string $text, $default = null, ?callable $fn = null, int $retry = 3): mixed
     {
-        $error  = $this->translate('Invalid value. Please try again!');
+        $error  = t('Invalid value. Please try again!');
         $hidden = func_get_args()[4] ?? false;
         $readFn = ['read', 'readHidden'][(int) $hidden];
 
@@ -373,7 +371,7 @@ class Interactor
             $this->writer->eol()->choice(str_pad("  [$choice]", $maxLen + 6))->answer($desc);
         }
 
-        $label = $this->translate($multi ? 'Choices (comma separated)' : 'Choice');
+        $label = t($multi ? 'Choices (comma separated)' : 'Choice');
 
         $this->writer->eol()->question($label);
 

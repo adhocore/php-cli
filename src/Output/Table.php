@@ -14,6 +14,7 @@ namespace Ahc\Cli\Output;
 use Ahc\Cli\Exception\InvalidArgumentException;
 use Ahc\Cli\Helper\InflectsString;
 
+use function Ahc\Cli\t;
 use function array_column;
 use function array_fill_keys;
 use function array_keys;
@@ -106,7 +107,7 @@ class Table
 
         if (!is_array($head)) {
             throw new InvalidArgumentException(
-                $this->translate('Rows must be array of assoc arrays, %s given', [gettype($head)])
+                t('Rows must be array of assoc arrays, %s given', [gettype($head)])
             );
         }
 

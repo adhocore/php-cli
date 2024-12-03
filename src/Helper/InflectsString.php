@@ -11,8 +11,6 @@
 
 namespace Ahc\Cli\Helper;
 
-use Ahc\Cli\Application;
-
 use function lcfirst;
 use function mb_strwidth;
 use function mb_substr;
@@ -76,16 +74,5 @@ trait InflectsString
         }
 
         return substr($string, $start, $length);
-    }
-
-    /**
-     * Translates a message using the translator.
-     */
-    public static function translate(string $text, array $args = []): string
-    {
-        $translations = Application::$locales[Application::$locale] ?? [];
-        $text         = $translations[$text] ?? $text;
-
-        return sprintf($text, ...$args);
     }
 }

@@ -40,8 +40,6 @@ use function method_exists;
  */
 class Application
 {
-    use InflectsString;
-
     /**
      * Locale of CLI.
      */
@@ -189,7 +187,7 @@ class Application
             $this->aliases[$alias] ??
             null
         ) {
-            throw new InvalidArgumentException($this->translate('Command "%s" already added', [$name]));
+            throw new InvalidArgumentException(t('Command "%s" already added', [$name]));
         }
 
         if ($alias) {
@@ -218,7 +216,7 @@ class Application
     public function defaultCommand(string $commandName): self
     {
         if (!isset($this->commands[$commandName])) {
-            throw new InvalidArgumentException($this->translate('Command "%s" does not exist', [$commandName]));
+            throw new InvalidArgumentException(t('Command "%s" does not exist', [$commandName]));
         }
 
         $this->default = $commandName;
@@ -414,8 +412,8 @@ class Application
     public function showDefaultHelp(): mixed
     {
         $writer = $this->io()->writer();
-        $header = "{$this->name}, {$this->translate('version')} {$this->version}";
-        $footer = $this->translate('Run `<command> --help` for specific help');
+        $header = "{$this->name}, " . t('version') . " {$this->version}";
+        $footer = t('Run `<command> --help` for specific help');
 
         if ($this->logo) {
             $writer->logo($this->logo, true);

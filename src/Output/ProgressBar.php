@@ -11,10 +11,10 @@
 
 namespace Ahc\Cli\Output;
 
-use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\Terminal;
 use UnexpectedValueException;
 
+use function Ahc\Cli\t;
 use function count;
 use function implode;
 use function in_array;
@@ -32,8 +32,6 @@ use function trim;
  */
 class ProgressBar
 {
-    use InflectsString;
-
     /**
      * The total number of items involved.
      */
@@ -136,7 +134,7 @@ class ProgressBar
     {
         if (is_string($key)) {
             if (empty($value)) {
-                throw new UnexpectedValueException($this->translate('Configuration option value is required'));
+                throw new UnexpectedValueException(t('Configuration option value is required'));
             }
 
             $key = [$key => $value];
@@ -166,12 +164,12 @@ class ProgressBar
     {
         if ($this->total == 0) {
             // Avoid dividing by 0
-            throw new UnexpectedValueException($this->translate('The progress total must be greater than zero.'));
+            throw new UnexpectedValueException(t('The progress total must be greater than zero.'));
         }
 
         if ($current > $this->total) {
             throw new UnexpectedValueException(
-                $this->translate('The current (%d) is greater than the total (%d).', [$current, $this->total])
+                t('The current (%d) is greater than the total (%d).', [$current, $this->total])
             );
         }
 

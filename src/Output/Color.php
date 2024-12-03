@@ -12,8 +12,8 @@
 namespace Ahc\Cli\Output;
 
 use Ahc\Cli\Exception\InvalidArgumentException;
-use Ahc\Cli\Helper\InflectsString;
 
+use function Ahc\Cli\t;
 use function array_intersect_key;
 use function constant;
 use function defined;
@@ -39,8 +39,6 @@ use const PHP_EOL;
  */
 class Color
 {
-    use InflectsString;
-
     const BLACK    = 30;
     const RED      = 31;
     const GREEN    = 32;
@@ -200,12 +198,12 @@ class Color
         $style = array_intersect_key($style, $allow);
 
         if (empty($style)) {
-            throw new InvalidArgumentException(self::translate('Trying to set empty or invalid style'));
+            throw new InvalidArgumentException(t('Trying to set empty or invalid style'));
         }
 
         $invisible = (isset($style['bg']) && isset($style['fg']) && $style['bg'] === $style['fg']);
         if ($invisible && method_exists(static::class, $name)) {
-            throw new InvalidArgumentException(self::translate('Built-in styles cannot be invisible'));
+            throw new InvalidArgumentException(t('Built-in styles cannot be invisible'));
         }
 
         static::$styles[$name] = $style;
@@ -222,7 +220,7 @@ class Color
     public function __call(string $name, array $arguments): string
     {
         if (!isset($arguments[0])) {
-            throw new InvalidArgumentException($this->translate('Text required'));
+            throw new InvalidArgumentException(t('Text required'));
         }
 
         [$name, $text, $style] = $this->parseCall($name, $arguments);
@@ -237,7 +235,7 @@ class Color
         }
 
         if (!method_exists($this, $name)) {
-            throw new InvalidArgumentException($this->translate('Style "%s" not defined', [$name]));
+            throw new InvalidArgumentException(t('Style "%s" not defined', [$name]));
         }
 
         return $this->{$name}($text, $style);

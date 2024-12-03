@@ -18,6 +18,8 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
+use function Ahc\Cli\t;
+
 class ApplicationTest extends TestCase
 {
     protected static $in = __DIR__ . '/input.test';
@@ -324,6 +326,29 @@ class ApplicationTest extends TestCase
         $cmd = (new Command('cmd'))->action(fn () => throw new InvalidArgumentException($msg));
         $app = $this->newApp('test')->add($cmd)->onException(fn (Throwable $e) => throw $e);
         $app->handle(['test', 'cmd']);
+    }
+
+    public function test_default_translations()
+    {
+        $this->assertSame('Show version', t('Show version'));
+        $this->assertSame('Verbosity level [default: 0]', t('%s [default: %s]', ['Verbosity level', 0]));
+        $this->assertSame('Command "rmdir" already added', t('Command "%s" already added', ['rmdir']));
+    }
+
+    public function test_custom_translations(): void
+    {
+        Application::addLocale('fr', [
+            'Show version' => 'Afficher la version',
+            '%s [default: %s]' => '%s [par défaut: %s]',
+            'Command "%s" already added' => 'La commande "%s" a déjà été ajoutée'
+        ], true);
+
+        $this->assertSame('Afficher la version', t('Show version'));
+        $this->assertSame('Niveau de verbosite [par défaut: 0]', t('%s [default: %s]', ['Niveau de verbosite', 0]));
+        $this->assertSame('La commande "rmdir" a déjà été ajoutée', t('Command "%s" already added', ['rmdir']));
+
+        // untranslated key
+        $this->assertSame('Show help', t('Show help'));
     }
 
     public function test_app_translated()
