@@ -12,7 +12,6 @@
 namespace Ahc\Cli;
 
 use Ahc\Cli\Exception\InvalidArgumentException;
-use Ahc\Cli\Helper\InflectsString;
 use Ahc\Cli\Helper\OutputHelper;
 use Ahc\Cli\Input\Command;
 use Ahc\Cli\IO\Interactor;
@@ -46,7 +45,7 @@ class Application
     public static $locale = 'en';
 
     /**
-     * list of translations for each supported locale
+     * list of translations for each supported locale.
      *
      * @var array<string, array>
      *
