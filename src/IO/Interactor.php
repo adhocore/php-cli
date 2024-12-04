@@ -15,6 +15,7 @@ use Ahc\Cli\Input\Reader;
 use Ahc\Cli\Output\Writer;
 use Throwable;
 
+use function Ahc\Cli\t;
 use function array_keys;
 use function array_map;
 use function count;
@@ -312,7 +313,7 @@ class Interactor
      */
     public function prompt(string $text, $default = null, ?callable $fn = null, int $retry = 3): mixed
     {
-        $error  = 'Invalid value. Please try again!';
+        $error  = t('Invalid value. Please try again!');
         $hidden = func_get_args()[4] ?? false;
         $readFn = ['read', 'readHidden'][(int) $hidden];
 
@@ -370,7 +371,7 @@ class Interactor
             $this->writer->eol()->choice(str_pad("  [$choice]", $maxLen + 6))->answer($desc);
         }
 
-        $label = $multi ? 'Choices (comma separated)' : 'Choice';
+        $label = t($multi ? 'Choices (comma separated)' : 'Choice');
 
         $this->writer->eol()->question($label);
 

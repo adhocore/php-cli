@@ -13,6 +13,7 @@ namespace Ahc\Cli\Helper;
 
 use Ahc\Cli\Exception\RuntimeException;
 
+use function Ahc\Cli\t;
 use function fclose;
 use function function_exists;
 use function fwrite;
@@ -99,7 +100,7 @@ class Shell
     {
         // @codeCoverageIgnoreStart
         if (!function_exists('proc_open')) {
-            throw new RuntimeException('Required proc_open could not be found in your PHP setup.');
+            throw new RuntimeException(t('Required proc_open could not be found in your PHP setup.'));
         }
         // @codeCoverageIgnoreEnd
 
@@ -181,7 +182,7 @@ class Shell
         if ($executionDuration > $this->processTimeout) {
             $this->kill();
 
-            throw new RuntimeException('Timeout occurred, process terminated.');
+            throw new RuntimeException(t('Timeout occurred, process terminated.'));
         }
         // @codeCoverageIgnoreStart
     }
@@ -216,7 +217,7 @@ class Shell
     public function execute(bool $async = false, ?array $stdin = null, ?array $stdout = null, ?array $stderr = null): self
     {
         if ($this->isRunning()) {
-            throw new RuntimeException('Process is already running.');
+            throw new RuntimeException(t('Process is already running.'));
         }
 
         $this->descriptors      = $this->prepareDescriptors($stdin, $stdout, $stderr);
@@ -234,7 +235,7 @@ class Shell
 
         // @codeCoverageIgnoreStart
         if (!is_resource($this->process)) {
-            throw new RuntimeException('Bad program could not be started.');
+            throw new RuntimeException(t('Bad program could not be started.'));
         }
         // @codeCoverageIgnoreEnd
 

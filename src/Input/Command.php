@@ -21,12 +21,12 @@ use Ahc\Cli\Output\ProgressBar;
 use Ahc\Cli\Output\Writer;
 use Closure;
 
+use function Ahc\Cli\t;
 use function array_filter;
 use function array_keys;
 use function end;
 use function explode;
 use function func_num_args;
-use function sprintf;
 use function str_contains;
 use function strstr;
 
@@ -83,9 +83,9 @@ class Command extends Parser implements Groupable
      */
     protected function defaults(): self
     {
-        $this->option('-h, --help', 'Show help')->on([$this, 'showHelp']);
-        $this->option('-V, --version', 'Show version')->on([$this, 'showVersion']);
-        $this->option('-v, --verbosity', 'Verbosity level', null, 0)->on(
+        $this->option('-h, --help', t('Show help'))->on([$this, 'showHelp']);
+        $this->option('-V, --version', t('Show version'))->on([$this, 'showVersion']);
+        $this->option('-v, --verbosity', t('Verbosity level'), null, 0)->on(
             fn () => $this->set('verbosity', ($this->verbosity ?? 0) + 1) && false
         );
 
@@ -196,7 +196,7 @@ class Command extends Parser implements Groupable
         $argument = new Argument($raw, $desc, $default);
 
         if ($this->_argVariadic) {
-            throw new InvalidParameterException('Only last argument can be variadic');
+            throw new InvalidParameterException(t('Only last argument can be variadic'));
         }
 
         if ($argument->variadic()) {
@@ -303,9 +303,7 @@ class Command extends Parser implements Groupable
 
         // Has some value, error!
         if ($values) {
-            throw new RuntimeException(
-                sprintf('Option "%s" not registered', $arg)
-            );
+            throw new RuntimeException(t('Option "%s" not registered', [$arg]));
         }
 
         // Has no value, show help!
@@ -358,13 +356,13 @@ class Command extends Parser implements Groupable
             $io->logo($logo, true);
         }
 
-        $io->help_header("Command {$this->_name}, version {$this->_version}", true)->eol();
+        $io->help_header(t('Command') . " {$this->_name}, " . t('version') . " {$this->_version}", true)->eol();
         $io->help_summary($this->_desc, true)->eol();
-        $io->help_text('Usage: ')->help_example("{$this->_name} [OPTIONS...] [ARGUMENTS...]", true);
+        $io->help_text(t('Usage') . ': ')->help_example("{$this->_name} " . t('[OPTIONS...] [ARGUMENTS...]'), true);
 
         $helper
             ->showArgumentsHelp($this->allArguments())
-            ->showOptionsHelp($this->allOptions(), '', 'Legend: <required> [optional] variadic...');
+            ->showOptionsHelp($this->allOptions(), '', t('Legend: <required> [optional] variadic...'));
 
         if ($this->_usage) {
             $helper->showUsage($this->_usage);

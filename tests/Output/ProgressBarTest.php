@@ -78,6 +78,7 @@ class ProgressBarTest extends CliTestCase
         $this->assertNotNull((new Terminal)->height());
 
         $this->expectException(UnexpectedValueException::class);
+        $this->expectExceptionMessage('The current (2) is greater than the total (1).');
         (new ProgressBar(1))->current(2);
     }
 }

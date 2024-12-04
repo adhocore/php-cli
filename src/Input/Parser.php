@@ -16,6 +16,7 @@ use Ahc\Cli\Exception\RuntimeException;
 use Ahc\Cli\Helper\Normalizer;
 use InvalidArgumentException;
 
+use function Ahc\Cli\t;
 use function array_diff_key;
 use function array_filter;
 use function array_key_exists;
@@ -24,7 +25,6 @@ use function array_shift;
 use function count;
 use function in_array;
 use function reset;
-use function sprintf;
 use function substr;
 
 /**
@@ -221,9 +221,7 @@ abstract class Parser
                 [$name, $label] = [$item->long(), 'Option'];
             }
 
-            throw new RuntimeException(
-                sprintf('%s "%s" is required', $label, $name)
-            );
+            throw new RuntimeException(t('%1$s "%2$s" is required', [$label, $name]));
         }
     }
 
@@ -264,9 +262,9 @@ abstract class Parser
     protected function ifAlreadyRegistered(Parameter $param): void
     {
         if ($this->registered($param->attributeName())) {
-            throw new InvalidParameterException(sprintf(
+            throw new InvalidParameterException(t(
                 'The parameter "%s" is already registered',
-                $param instanceof Option ? $param->long() : $param->name()
+                [$param instanceof Option ? $param->long() : $param->name()]
             ));
         }
     }

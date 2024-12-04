@@ -29,7 +29,10 @@
     "autoload": {
         "psr-4": {
             "Ahc\\Cli\\": "src/"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

@@ -18,6 +18,8 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
+use function Ahc\Cli\t;
+
 class ApplicationTest extends TestCase
 {
     protected static $in = __DIR__ . '/input.test';
@@ -324,6 +326,46 @@ class ApplicationTest extends TestCase
         $cmd = (new Command('cmd'))->action(fn () => throw new InvalidArgumentException($msg));
         $app = $this->newApp('test')->add($cmd)->onException(fn (Throwable $e) => throw $e);
         $app->handle(['test', 'cmd']);
+    }
+
+    public function test_default_translations()
+    {
+        $this->assertSame('Show version', t('Show version'));
+        $this->assertSame('Verbosity level [default: 0]', t('%1$s [default: %2$s]', ['Verbosity level', 0]));
+        $this->assertSame('Command "rmdir" already added', t('Command "%s" already added', ['rmdir']));
+    }
+
+    public function test_custom_translations(): void
+    {
+        Application::addLocale('fr', [
+            'Show version' => 'Afficher la version',
+            '%1$s [default: %2$s]' => '%1$s [par défaut: %2$s]',
+            'Command "%s" already added' => 'La commande "%s" a déjà été ajoutée'
+        ], true);
+
+        $this->assertSame('Afficher la version', t('Show version'));
+        $this->assertSame('Niveau de verbosite [par défaut: 0]', t('%1$s [default: %2$s]', ['Niveau de verbosite', 0]));
+        $this->assertSame('La commande "rmdir" a déjà été ajoutée', t('Command "%s" already added', ['rmdir']));
+
+        // untranslated key
+        $this->assertSame('Show help', t('Show help'));
+    }
+
+    public function test_app_translated()
+    {
+        $app = $this->newApp('test');
+        $app->addLocale('fr', [
+            'Show version' => 'Afficher la version',
+            'Verbosity level' => 'Niveau de verbocité',
+            '%1$s [default: %2$s]' => '%s [par défaut: %s]',
+        ], true);
+        $app->command('rmdir');
+
+        $app->handle(['test', 'rmdir', '--help']);
+        $o = file_get_contents(static::$ou);
+
+        $this->assertStringContainsString('Afficher la version', $o);
+        $this->assertStringContainsString('Niveau de verbocité [par défaut: 0]', $o);
     }
 
     protected function newApp(string $name, string $version = '')
