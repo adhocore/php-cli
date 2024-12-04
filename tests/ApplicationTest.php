@@ -338,9 +338,9 @@ class ApplicationTest extends TestCase
     public function test_custom_translations(): void
     {
         Application::addLocale('fr', [
-            'Show version' => 'Afficher la version',
-            '%1$s [default: %2$s]' => '%1$s [par défaut: %2$s]',
-            'Command "%s" already added' => 'La commande "%s" a déjà été ajoutée'
+            'Show version'               => 'Afficher la version',
+            '%1$s [default: %2$s]'       => '%1$s [par défaut: %2$s]',
+            'Command "%s" already added' => 'La commande "%s" a déjà été ajoutée',
         ], true);
 
         $this->assertSame('Afficher la version', t('Show version'));
@@ -355,8 +355,8 @@ class ApplicationTest extends TestCase
     {
         $app = $this->newApp('test');
         $app->addLocale('fr', [
-            'Show version' => 'Afficher la version',
-            'Verbosity level' => 'Niveau de verbocité',
+            'Show version'         => 'Afficher la version',
+            'Verbosity level'      => 'Niveau de verbocité',
             '%1$s [default: %2$s]' => '%s [par défaut: %s]',
         ], true);
         $app->command('rmdir');
