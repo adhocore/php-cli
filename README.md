@@ -701,7 +701,7 @@ $styles = [
 $writer->table($rows, $styles);
 ```
 
-The example above only processes the cells in the second column of the table. Yf you want to process any cell, you can use the `*:*` key. You could then customise each cell in the table
+The example above only processes the cells in the second column of the table. If you want to process any cell, you can use the `*:*` key. You could then customise each cell in the table
 
 ```php
 $rows = [
@@ -848,7 +848,7 @@ You can also change the default English text to make the description more explic
 ]);
 ```
 
-vous pouvez trouver toutes les clés de traduction supportées par le paquet dans cette gist : https://gist.github.com/dimtrovich/1597c16d5c74334e68eef15a4e7ba3fd
+you can find all the translation keys supported by the package in this gist : https://gist.github.com/dimtrovich/1597c16d5c74334e68eef15a4e7ba3fd
 
 ## Autocompletion
 
