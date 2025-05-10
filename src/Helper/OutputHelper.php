@@ -61,11 +61,18 @@ class OutputHelper
 {
     use InflectsString;
 
+    /**
+     * The output writer instance used to write formatted output.
+     * @var Writer
+     */
     protected Writer $writer;
-
     /** @var int Max width of command name */
     protected int $maxCmdName = 0;
 
+    /**
+     * Class constructor.
+     * @param Writer|null $writer The output writer instance used to write formatted output.
+     */
     public function __construct(?Writer $writer = null)
     {
         $this->writer = $writer ?? new Writer;
@@ -107,6 +114,18 @@ class OutputHelper
         $this->writer->colors($traceStr);
     }
 
+    /**
+     * Converts an array of arguments into a string representation.
+     *
+     * Each array element is converted based on its type:
+     * - Scalar values (int, float, string, bool) are var_exported
+     * - Objects are converted using __toString() if available, otherwise class name is used
+     * - Arrays are recursively processed and wrapped in square brackets
+     * - Other types are converted to their type name
+     *
+     * @param array $args Array of arguments to be stringified
+     * @return string The comma-separated string representation of all arguments
+     */
     public function stringifyArgs(array $args): string
     {
         $holder = [];
@@ -116,23 +135,6 @@ class OutputHelper
         }
 
         return implode(', ', $holder);
-    }
-
-    protected function stringifyArg($arg): string
-    {
-        if (is_scalar($arg)) {
-            return var_export($arg, true);
-        }
-
-        if (is_object($arg)) {
-            return method_exists($arg, '__toString') ? (string) $arg : get_class($arg);
-        }
-
-        if (is_array($arg)) {
-            return '[' . $this->stringifyArgs($arg) . ']';
-        }
-
-        return gettype($arg);
     }
 
     /**
@@ -175,6 +177,67 @@ class OutputHelper
         $this->maxCmdName = $commands ? max(array_map(static fn (Command $cmd) => strlen($cmd->name()), $commands)) : 0;
 
         $this->showHelp('Commands', $commands, $header, $footer);
+
+        return $this;
+    }
+
+    /**
+     * Show usage examples of a Command.
+     *
+     * It replaces $0 with actual command name and properly pads ` ## ` segments.
+     */
+    public function showUsage(string $usage): self
+    {
+        $usage = str_replace('$0', $_SERVER['argv'][0] ?? '[cmd]', $usage);
+
+        if (!str_contains($usage, ' ## ')) {
+            $this->writer->eol()->help_category(t('Usage Examples') . ':', true)->colors($usage)->eol();
+
+            return $this;
+        }
+
+        $lines = explode("\n", str_replace(['<eol>', '<eol/>', '</eol>', "\r\n"], "\n", $usage));
+        foreach ($lines as $i => &$pos) {
+            if (false === $pos = strrpos(preg_replace('~</?\w+/?>~', '', $pos), ' ##')) {
+                unset($lines[$i]);
+            }
+        }
+
+        $maxlen = ($lines ? max($lines) : 0) + 4;
+        $usage  = preg_replace_callback('~ ## ~', static function () use (&$lines, $maxlen) {
+            return str_pad('# ', $maxlen - array_shift($lines), ' ', STR_PAD_LEFT);
+        }, $usage);
+
+        $this->writer->eol()->help_category(t('Usage Examples') . ':', true)->colors($usage)->eol();
+
+        return $this;
+    }
+
+    /**
+     * Shows an error message when a command is not found and suggests similar commands.
+     * Uses levenshtein distance to find commands that are similar to the attempted one.
+     *
+     * @param string $attempted The command name that was attempted to be executed
+     * @param array $available List of available command names
+     *
+     * @return OutputHelper For method chaining
+     */
+    public function showCommandNotFound(string $attempted, array $available): self
+    {
+        $closest = [];
+        foreach ($available as $cmd) {
+            $lev = levenshtein($attempted, $cmd);
+            if ($lev > 0 && $lev < 5) {
+                $closest[$cmd] = $lev;
+            }
+        }
+
+        $this->writer->error(t('Command %s not found', [$attempted]), true);
+        if ($closest) {
+            asort($closest);
+            $closest = key($closest);
+            $this->writer->bgRed(t('Did you mean %s?', [$closest]), true);
+        }
 
         return $this;
     }
@@ -224,64 +287,26 @@ class OutputHelper
     }
 
     /**
-     * Show usage examples of a Command.
+     * Converts the provided argument into a string representation.
      *
-     * It replaces $0 with actual command name and properly pads ` ## ` segments.
+     * @param mixed $arg The argument to be converted into a string. This can be of any type.
+     * @return string A string representation of the provided argument.
      */
-    public function showUsage(string $usage): self
+    protected function stringifyArg(mixed $arg): string
     {
-        $usage = str_replace('$0', $_SERVER['argv'][0] ?? '[cmd]', $usage);
-
-        if (!str_contains($usage, ' ## ')) {
-            $this->writer->eol()->help_category(t('Usage Examples') . ':', true)->colors($usage)->eol();
-
-            return $this;
+        if (is_scalar($arg)) {
+            return var_export($arg, true);
         }
 
-        $lines = explode("\n", str_replace(['<eol>', '<eol/>', '</eol>', "\r\n"], "\n", $usage));
-        foreach ($lines as $i => &$pos) {
-            if (false === $pos = strrpos(preg_replace('~</?\w+/?>~', '', $pos), ' ##')) {
-                unset($lines[$i]);
-            }
+        if (is_object($arg)) {
+            return method_exists($arg, '__toString') ? (string)$arg : get_class($arg);
         }
 
-        $maxlen = ($lines ? max($lines) : 0) + 4;
-        $usage  = preg_replace_callback('~ ## ~', static function () use (&$lines, $maxlen) {
-            return str_pad('# ', $maxlen - array_shift($lines), ' ', STR_PAD_LEFT);
-        }, $usage);
-
-        $this->writer->eol()->help_category(t('Usage Examples') . ':', true)->colors($usage)->eol();
-
-        return $this;
-    }
-
-    /**
-     * Shows an error message when a command is not found and suggests similar commands.
-     * Uses levenshtein distance to find commands that are similar to the attempted one.
-     *
-     * @param string $attempted The command name that was attempted to be executed
-     * @param array $available List of available command names
-     *
-     * @return OutputHelper For method chaining
-     */
-    public function showCommandNotFound(string $attempted, array $available): self
-    {
-        $closest = [];
-        foreach ($available as $cmd) {
-            $lev = levenshtein($attempted, $cmd);
-            if ($lev > 0 || $lev < 5) {
-                $closest[$cmd] = $lev;
-            }
+        if (is_array($arg)) {
+            return '[' . $this->stringifyArgs($arg) . ']';
         }
 
-        $this->writer->error(t('Command %s not found', [$attempted]), true);
-        if ($closest) {
-            asort($closest);
-            $closest = key($closest);
-            $this->writer->bgRed(t('Did you mean %s?', [$closest]), true);
-        }
-
-        return $this;
+        return gettype($arg);
     }
 
     /**
@@ -302,6 +327,8 @@ class OutputHelper
         }
 
         uasort($items, static function ($a, $b) {
+            // Items in the default group (where group() returns empty/falsy) are prefixed with '__'
+            // to ensure they appear at the top of the sorted list, whilst grouped items follow after
             $aName = $a instanceof Groupable ? ($a->group() ?: '__') . $a->name() : $a->name();
             $bName = $b instanceof Groupable ? ($b->group() ?: '__') . $b->name() : $b->name();
 
@@ -318,7 +345,7 @@ class OutputHelper
      *
      * @return string
      */
-    protected function getName($item): string
+    protected function getName(Parameter|Command $item): string
     {
         $name = $item->name();
 
