@@ -203,7 +203,7 @@ class OutputHelper
         foreach (array_values($this->sortItems($items, $padLen, $for)) as $idx => $item) {
             $name  = $this->getName($item);
             if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
-                $this->writer->help_group($group ?: '*', true);
+                $this->writer->help_group($group ?: '', true);
                 $lastGroup = $group;
             }
             $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));

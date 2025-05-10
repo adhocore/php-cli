@@ -95,7 +95,7 @@ class OutputHelperTest extends TestCase
             'group',
             '  group:mkdir    Make a folder',
             '  group:rm       Remove file or folder',
-            '*',
+            '',
             '  mkdir          Make a folder',
             '  rm             Remove file or folder',
             '',
