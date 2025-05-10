@@ -267,8 +267,9 @@ class OutputHelper
             $name  = $this->getName($item);
             if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
                 $lastGroup = $group;
-                if ($group !== '')
+                if ($group !== '') {
                     $this->writer->help_group($group, true);
+                }
             }
             $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
 

@@ -28,7 +28,7 @@ use const FILE_IGNORE_NEW_LINES;
 
 class OutputHelperTest extends TestCase
 {
-    protected static $ou = __DIR__ . '/output';
+    protected static string $ou = __DIR__ . '/output';
 
     public function setUp(): void
     {
@@ -150,7 +150,7 @@ class OutputHelperTest extends TestCase
         $this->assertSame("[NULL, 'string', 10000, 12.345, DateTime]", $str);
     }
 
-    public function newHelper()
+    public function newHelper(): OutputHelper
     {
         return new OutputHelper(new Writer(static::$ou, new class extends Color {
             protected string $format = ':txt:';
