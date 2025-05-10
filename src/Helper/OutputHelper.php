@@ -259,7 +259,7 @@ class OutputHelper
             return;
         }
 
-        $space = 4;
+        $space     = 4;
         $lastGroup = null;
 
         $withDefault = $for === 'Options' || $for === 'Arguments';
