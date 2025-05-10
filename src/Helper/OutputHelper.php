@@ -79,7 +79,7 @@ class OutputHelper
         $eClass = get_class($e);
 
         $this->writer->colors(
-            "{$eClass} <red>{$e->getMessage()}</end><eol/>" .
+            "$eClass <red>{$e->getMessage()}</end><eol/>" .
             '(' . t('thrown in') . " <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end>"
         );
 
@@ -197,14 +197,15 @@ class OutputHelper
         }
 
         $space = 4;
-        $group = $lastGroup = null;
+        $lastGroup = null;
 
         $withDefault = $for === 'Options' || $for === 'Arguments';
         foreach (array_values($this->sortItems($items, $padLen, $for)) as $idx => $item) {
             $name  = $this->getName($item);
             if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
-                $this->writer->help_group($group ?: '', true);
                 $lastGroup = $group;
+                if ($group !== '')
+                    $this->writer->help_group($group, true);
             }
             $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
 
@@ -254,6 +255,15 @@ class OutputHelper
         return $this;
     }
 
+    /**
+     * Shows an error message when a command is not found and suggests similar commands.
+     * Uses levenshtein distance to find commands that are similar to the attempted one.
+     *
+     * @param string $attempted The command name that was attempted to be executed
+     * @param array $available List of available command names
+     *
+     * @return OutputHelper For method chaining
+     */
     public function showCommandNotFound(string $attempted, array $available): self
     {
         $closest = [];
@@ -278,12 +288,12 @@ class OutputHelper
      * Sort items by name. As a side effect sets max length of all names.
      *
      * @param Parameter[]|Command[] $items
-     * @param int                   $max
+     * @param int|null              $max
      * @param string                $for
      *
      * @return array
      */
-    protected function sortItems(array $items, &$max = 0, string $for = ''): array
+    protected function sortItems(array $items, ?int &$max = 0, string $for = ''): array
     {
         $max = max(array_map(fn ($item) => strlen($this->getName($item)), $items));
 
@@ -292,8 +302,8 @@ class OutputHelper
         }
 
         uasort($items, static function ($a, $b) {
-            $aName = $a instanceof Groupable ? $a->group() . $a->name() : $a->name();
-            $bName = $b instanceof Groupable ? $b->group() . $b->name() : $b->name();
+            $aName = $a instanceof Groupable ? ($a->group() ?: '__') . $a->name() : $a->name();
+            $bName = $b instanceof Groupable ? ($b->group() ?: '__') . $b->name() : $b->name();
 
             return $aName <=> $bName;
         });
