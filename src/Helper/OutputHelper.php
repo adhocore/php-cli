@@ -63,6 +63,7 @@ class OutputHelper
 
     /**
      * The output writer instance used to write formatted output.
+     *
      * @var Writer
      */
     protected Writer $writer;
@@ -71,6 +72,7 @@ class OutputHelper
 
     /**
      * Class constructor.
+     *
      * @param Writer|null $writer The output writer instance used to write formatted output.
      */
     public function __construct(?Writer $writer = null)
@@ -218,7 +220,7 @@ class OutputHelper
      * Uses levenshtein distance to find commands that are similar to the attempted one.
      *
      * @param string $attempted The command name that was attempted to be executed
-     * @param array $available List of available command names
+     * @param array  $available List of available command names
      *
      * @return OutputHelper For method chaining
      */
@@ -291,6 +293,7 @@ class OutputHelper
      * Converts the provided argument into a string representation.
      *
      * @param mixed $arg The argument to be converted into a string. This can be of any type.
+     *
      * @return string A string representation of the provided argument.
      */
     protected function stringifyArg(mixed $arg): string
@@ -300,7 +303,7 @@ class OutputHelper
         }
 
         if (is_object($arg)) {
-            return method_exists($arg, '__toString') ? (string)$arg : get_class($arg);
+            return method_exists($arg, '__toString') ? (string) $arg : get_class($arg);
         }
 
         if (is_array($arg)) {
