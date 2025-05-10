@@ -126,6 +126,7 @@ class OutputHelper
      * - Other types are converted to their type name
      *
      * @param array $args Array of arguments to be stringified
+     *
      * @return string The comma-separated string representation of all arguments
      */
     public function stringifyArgs(array $args): string
