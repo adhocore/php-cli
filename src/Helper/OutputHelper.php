@@ -67,7 +67,11 @@ class OutputHelper
      * @var Writer
      */
     protected Writer $writer;
-    /** @var int Max width of command name */
+    /**
+     * Max width of command name.
+     *
+     * @var int
+     */
     protected int $maxCmdName = 0;
 
     /**
@@ -141,6 +145,30 @@ class OutputHelper
     }
 
     /**
+     * Converts the provided argument into a string representation.
+     *
+     * @param mixed $arg The argument to be converted into a string. This can be of any type.
+     *
+     * @return string A string representation of the provided argument.
+     */
+    protected function stringifyArg(mixed $arg): string
+    {
+        if (is_scalar($arg)) {
+            return var_export($arg, true);
+        }
+
+        if (is_object($arg)) {
+            return method_exists($arg, '__toString') ? (string) $arg : get_class($arg);
+        }
+
+        if (is_array($arg)) {
+            return '[' . $this->stringifyArgs($arg) . ']';
+        }
+
+        return gettype($arg);
+    }
+
+    /**
      * @param Argument[] $arguments
      * @param string     $header
      * @param string     $footer
@@ -182,6 +210,51 @@ class OutputHelper
         $this->showHelp('Commands', $commands, $header, $footer);
 
         return $this;
+    }
+
+    /**
+     * Show help with headers and footers.
+     */
+    protected function showHelp(string $for, array $items, string $header = '', string $footer = ''): void
+    {
+        if ($header) {
+            $this->writer->help_header($header, true);
+        }
+
+        $this->writer->eol()->help_category(t($for) . ':', true);
+
+        if (empty($items)) {
+            $this->writer->help_text('  (n/a)', true);
+
+            return;
+        }
+
+        $space     = 4;
+        $lastGroup = null;
+
+        $withDefault = $for === 'Options' || $for === 'Arguments';
+        foreach (array_values($this->sortItems($items, $padLen, $for)) as $idx => $item) {
+            $name  = $this->getName($item);
+            if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
+                $lastGroup = $group;
+                if ($group !== '') {
+                    $this->writer->help_group($group, true);
+                }
+            }
+            $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
+
+            if ($idx % 2 == 0) {
+                $this->writer->help_item_even('  ' . str_pad($name, $padLen + $space));
+                $this->writer->help_description_even($desc, true);
+            } else {
+                $this->writer->help_item_odd('  ' . str_pad($name, $padLen + $space));
+                $this->writer->help_description_odd($desc, true);
+            }
+        }
+
+        if ($footer) {
+            $this->writer->eol()->help_footer($footer, true);
+        }
     }
 
     /**
@@ -243,75 +316,6 @@ class OutputHelper
         }
 
         return $this;
-    }
-
-    /**
-     * Show help with headers and footers.
-     */
-    protected function showHelp(string $for, array $items, string $header = '', string $footer = ''): void
-    {
-        if ($header) {
-            $this->writer->help_header($header, true);
-        }
-
-        $this->writer->eol()->help_category(t($for) . ':', true);
-
-        if (empty($items)) {
-            $this->writer->help_text('  (n/a)', true);
-
-            return;
-        }
-
-        $space     = 4;
-        $lastGroup = null;
-
-        $withDefault = $for === 'Options' || $for === 'Arguments';
-        foreach (array_values($this->sortItems($items, $padLen, $for)) as $idx => $item) {
-            $name  = $this->getName($item);
-            if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
-                $lastGroup = $group;
-                if ($group !== '') {
-                    $this->writer->help_group($group, true);
-                }
-            }
-            $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
-
-            if ($idx % 2 == 0) {
-                $this->writer->help_item_even('  ' . str_pad($name, $padLen + $space));
-                $this->writer->help_description_even($desc, true);
-            } else {
-                $this->writer->help_item_odd('  ' . str_pad($name, $padLen + $space));
-                $this->writer->help_description_odd($desc, true);
-            }
-        }
-
-        if ($footer) {
-            $this->writer->eol()->help_footer($footer, true);
-        }
-    }
-
-    /**
-     * Converts the provided argument into a string representation.
-     *
-     * @param mixed $arg The argument to be converted into a string. This can be of any type.
-     *
-     * @return string A string representation of the provided argument.
-     */
-    protected function stringifyArg(mixed $arg): string
-    {
-        if (is_scalar($arg)) {
-            return var_export($arg, true);
-        }
-
-        if (is_object($arg)) {
-            return method_exists($arg, '__toString') ? (string) $arg : get_class($arg);
-        }
-
-        if (is_array($arg)) {
-            return '[' . $this->stringifyArgs($arg) . ']';
-        }
-
-        return gettype($arg);
     }
 
     /**
