@@ -665,4 +665,33 @@ class TableTest extends CliTestCase
 
         $this->assertSame($expectedOutput, trim($result));
     }
+
+    /**
+     * Tests the rendering of table data where cell content includes formatting tags.
+     *
+     * Validates that the table rendering properly handles formatting tags by not including their length in the final
+     * column width computation.
+     *
+     * @return void
+     */
+    public function test_render_with_formatting_tags_in_cell_content(): void
+    {
+        $rows = [
+            ['name' => "<bold>Robert Smith</end>", 'age' => '<yellow>30</end>'],
+            ['name' => "<bold>Elizabeth Fraser</end>", 'age' => '<yellow>25</end>'],
+        ];
+
+        $expectedOutput = implode(PHP_EOL, [
+            '+------------------+-----+',
+            '| Name             | Age |',
+            '+------------------+-----+',
+            '| <bold>Robert Smith</end>     | <yellow>30</end>  |',
+            '| <bold>Elizabeth Fraser</end> | <yellow>25</end>  |',
+            '+------------------+-----+'
+        ]);
+
+        $result = $this->table->render($rows);
+
+        $this->assertSame($expectedOutput, trim($result));
+    }
 }
