@@ -61,11 +61,24 @@ class OutputHelper
 {
     use InflectsString;
 
+    /**
+     * The output writer instance used to write formatted output.
+     *
+     * @var Writer
+     */
     protected Writer $writer;
-
-    /** @var int Max width of command name */
+    /**
+     * Max width of command name.
+     *
+     * @var int
+     */
     protected int $maxCmdName = 0;
 
+    /**
+     * Class constructor.
+     *
+     * @param Writer|null $writer The output writer instance used to write formatted output.
+     */
     public function __construct(?Writer $writer = null)
     {
         $this->writer = $writer ?? new Writer;
@@ -79,7 +92,7 @@ class OutputHelper
         $eClass = get_class($e);
 
         $this->writer->colors(
-            "{$eClass} <red>{$e->getMessage()}</end><eol/>" .
+            "$eClass <red>{$e->getMessage()}</end><eol/>" .
             '(' . t('thrown in') . " <yellow>{$e->getFile()}</end><white>:{$e->getLine()})</end>"
         );
 
@@ -107,6 +120,19 @@ class OutputHelper
         $this->writer->colors($traceStr);
     }
 
+    /**
+     * Converts an array of arguments into a string representation.
+     *
+     * Each array element is converted based on its type:
+     * - Scalar values (int, float, string, bool) are var_exported
+     * - Objects are converted using __toString() if available, otherwise class name is used
+     * - Arrays are recursively processed and wrapped in square brackets
+     * - Other types are converted to their type name
+     *
+     * @param array $args Array of arguments to be stringified
+     *
+     * @return string The comma-separated string representation of all arguments
+     */
     public function stringifyArgs(array $args): string
     {
         $holder = [];
@@ -118,7 +144,14 @@ class OutputHelper
         return implode(', ', $holder);
     }
 
-    protected function stringifyArg($arg): string
+    /**
+     * Converts the provided argument into a string representation.
+     *
+     * @param mixed $arg The argument to be converted into a string. This can be of any type.
+     *
+     * @return string A string representation of the provided argument.
+     */
+    protected function stringifyArg(mixed $arg): string
     {
         if (is_scalar($arg)) {
             return var_export($arg, true);
@@ -196,15 +229,17 @@ class OutputHelper
             return;
         }
 
-        $space = 4;
-        $group = $lastGroup = null;
+        $space     = 4;
+        $lastGroup = null;
 
         $withDefault = $for === 'Options' || $for === 'Arguments';
         foreach (array_values($this->sortItems($items, $padLen, $for)) as $idx => $item) {
             $name  = $this->getName($item);
             if ($for === 'Commands' && $lastGroup !== $group = $item->group()) {
-                $this->writer->help_group($group ?: '*', true);
                 $lastGroup = $group;
+                if ($group !== '') {
+                    $this->writer->help_group($group, true);
+                }
             }
             $desc  = str_replace(["\r\n", "\n"], str_pad("\n", $padLen + $space + 3), $item->desc($withDefault));
 
@@ -254,12 +289,21 @@ class OutputHelper
         return $this;
     }
 
+    /**
+     * Shows an error message when a command is not found and suggests similar commands.
+     * Uses levenshtein distance to find commands that are similar to the attempted one.
+     *
+     * @param string $attempted The command name that was attempted to be executed
+     * @param array  $available List of available command names
+     *
+     * @return OutputHelper For method chaining
+     */
     public function showCommandNotFound(string $attempted, array $available): self
     {
         $closest = [];
         foreach ($available as $cmd) {
             $lev = levenshtein($attempted, $cmd);
-            if ($lev > 0 || $lev < 5) {
+            if ($lev > 0 && $lev < 5) {
                 $closest[$cmd] = $lev;
             }
         }
@@ -278,12 +322,12 @@ class OutputHelper
      * Sort items by name. As a side effect sets max length of all names.
      *
      * @param Parameter[]|Command[] $items
-     * @param int                   $max
+     * @param int|null              $max
      * @param string                $for
      *
      * @return array
      */
-    protected function sortItems(array $items, &$max = 0, string $for = ''): array
+    protected function sortItems(array $items, ?int &$max = 0, string $for = ''): array
     {
         $max = max(array_map(fn ($item) => strlen($this->getName($item)), $items));
 
@@ -292,8 +336,10 @@ class OutputHelper
         }
 
         uasort($items, static function ($a, $b) {
-            $aName = $a instanceof Groupable ? $a->group() . $a->name() : $a->name();
-            $bName = $b instanceof Groupable ? $b->group() . $b->name() : $b->name();
+            // Items in the default group (where group() returns empty/falsy) are prefixed with '__'
+            // to ensure they appear at the top of the sorted list, whilst grouped items follow after
+            $aName = $a instanceof Groupable ? ($a->group() ?: '__') . $a->name() : $a->name();
+            $bName = $b instanceof Groupable ? ($b->group() ?: '__') . $b->name() : $b->name();
 
             return $aName <=> $bName;
         });
@@ -308,7 +354,7 @@ class OutputHelper
      *
      * @return string
      */
-    protected function getName($item): string
+    protected function getName(Parameter|Command $item): string
     {
         $name = $item->name();
 
