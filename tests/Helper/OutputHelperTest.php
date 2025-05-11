@@ -28,7 +28,7 @@ use const FILE_IGNORE_NEW_LINES;
 
 class OutputHelperTest extends TestCase
 {
-    protected static $ou = __DIR__ . '/output';
+    protected static string $ou = __DIR__ . '/output';
 
     public function setUp(): void
     {
@@ -88,16 +88,16 @@ class OutputHelperTest extends TestCase
             new Command('group:mkdir', 'Make a folder'),
         ], 'Cmd Header', 'Cmd Footer');
 
+        // If the default group exists, we expect visually to be rendered at the very top.
         $this->assertSame([
             'Cmd Header',
             '',
             'Commands:',
+            '  mkdir          Make a folder',
+            '  rm             Remove file or folder',
             'group',
             '  group:mkdir    Make a folder',
             '  group:rm       Remove file or folder',
-            '*',
-            '  mkdir          Make a folder',
-            '  rm             Remove file or folder',
             '',
             'Cmd Footer',
         ], $this->output());
@@ -150,7 +150,7 @@ class OutputHelperTest extends TestCase
         $this->assertSame("[NULL, 'string', 10000, 12.345, DateTime]", $str);
     }
 
-    public function newHelper()
+    public function newHelper(): OutputHelper
     {
         return new OutputHelper(new Writer(static::$ou, new class extends Color {
             protected string $format = ':txt:';
