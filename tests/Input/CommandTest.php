@@ -276,7 +276,7 @@ class CommandTest extends TestCase
 
     public function test_progress()
     {
-        new class($this) extends Command {
+        new class ($this) extends Command {
             public function __construct($tester)
             {
                 $this->_app = null;

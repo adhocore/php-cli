@@ -62,7 +62,7 @@ class ProgressBarTest extends CliTestCase
     {
         $progress = new ProgressBar(3, new Writer(static::$ou));
         $progress->each([]);
-        $progress->each(new class() implements IteratorAggregate {
+        $progress->each(new class () implements IteratorAggregate {
             public $a = 1;
             public $b = 2;
             public $c = 3;

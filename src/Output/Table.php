@@ -157,7 +157,7 @@ class Table
         return $default;
     }
 
-    protected function parseStyle(array|callable $style, $val, array $row, array $table): array
+    protected function parseStyle(array | callable $style, $val, array $row, array $table): array
     {
         if (is_array($style)) {
             return $style;

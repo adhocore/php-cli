@@ -354,7 +354,7 @@ class OutputHelper
      *
      * @return string
      */
-    protected function getName(Parameter|Command $item): string
+    protected function getName(Parameter | Command $item): string
     {
         $name = $item->name();
 

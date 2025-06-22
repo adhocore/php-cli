@@ -130,7 +130,7 @@ class ProgressBar
     /**
      * Set progress bar options.
      */
-    public function option(string|array $key, ?string $value = null): self
+    public function option(string | array $key, ?string $value = null): self
     {
         if (is_string($key)) {
             if (empty($value)) {
